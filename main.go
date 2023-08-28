@@ -1,45 +1,40 @@
 package main
 
 import (
-	// "fmt"
 	"time"
+
 	"github.com/PiterWeb/RemoteController/gamepad"
 )
-
-
 
 func main() {
 	gamepads := gamepad.All{}
 
-	// prev := int16(0)
-
-	go func ()  {
-		
-		for range time.Tick(1 * time.Millisecond) {
-			gamepads.Update()
-			for i := range gamepads {
-				pad := &gamepads[i]
-				if !pad.Connected {
-					continue
-				}
-				
-				// if pad.Raw.ThumbLX != prev {
-				// 	fmt.Println(time.Now().Nanosecond(), pad.Raw.ThumbLX, pad.Raw.ThumbRX)
-				// 	prev = pad.Raw.ThumbLX
-				// }
-			}
-		}
-	}()
-
-	virtualDevice, err := gamepad.InitializeEmulatedDevice()
+	virtualDevice, err := gamepad.GenerateVirtualDevice()
 
 	if err != nil {
 		panic(err)
 	}
 
-	err = gamepad.EmulateDevice(virtualDevice)
+	defer gamepad.FreeTargetAndDisconnect(virtualDevice)
 
-	if err != nil {
-		panic(err)
+	virtualStates := [gamepad.ID(4)]*gamepad.XInputState{}
+
+	for range time.Tick(1 * time.Millisecond) {
+		gamepads.Update()
+		for i := range gamepads {
+			pad := &gamepads[i]
+			virtualState := virtualStates[i]
+
+			if !pad.Connected {
+				continue
+			}
+
+			if virtualStates[i] == nil {
+				virtualState = new(gamepad.XInputState)
+			}
+
+			gamepad.UpdateVirtualDevice(virtualDevice, *pad, virtualState)
+
+		}
 	}
 }

@@ -37,6 +37,20 @@ type State struct {
 	}
 }
 
+func (state *State) toXInput(virtualState *XInputState)  {
+
+	virtualState.dwPacketNumber = DWORD(state.Packet)
+	virtualState.Gamepad = _XINPUT_GAMEPAD{
+		wButtons: WORD(state.Raw.Buttons),
+		bLeftTrigger: BYTE(state.Raw.LeftTrigger),
+		bRightTrigger: BYTE(state.Raw.RightTrigger),
+		sThumbLX: SHORT(state.Raw.ThumbLX),
+		sThumbLY: SHORT(state.Raw.ThumbLY),
+		sThumbRX: SHORT(state.Raw.ThumbRX),
+		sThumbRY: SHORT(state.Raw.ThumbRY),
+	}
+}
+
 func (state *State) Pressed(button Button) bool { return state.Raw.Buttons&button != 0 }
 
 func (state *State) Update() error { return Get(state.ID, state) }
@@ -210,7 +224,6 @@ func init() {
 		dll, err = syscall.LoadDLL("xinput1_3.dll")
 		if err != nil {
 			dll, err = syscall.LoadDLL("xinput9_1_0.dll")
-			return
 		}
 	}
 
