@@ -75,7 +75,7 @@ func init() {
 		panic(err)
 	}
 
-	exec.Command("regsvr32", path+"/gamepad/ViGEmClient.dll")
+	exec.Command("regsvr32", path+"/ViGEmClient.dll")
 
 	vigemDLL = syscall.NewLazyDLL("ViGEmClient.dll")
 	vigem_disconect_proc = vigemDLL.NewProc("vigem_disconnect")
