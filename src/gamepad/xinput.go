@@ -24,12 +24,11 @@ func (all *All) Update() (firsterr error) {
 type State struct {
 	ID        ID
 	Connected bool
-
-	Packet uint32
-	Raw    StateRaw
+	Packet    uint32
+	Raw       RawControls
 }
 
-type StateRaw struct {
+type RawControls struct {
 	Buttons      Button
 	LeftTrigger  uint8
 	RightTrigger uint8
@@ -39,9 +38,9 @@ type StateRaw struct {
 	ThumbRY      int16
 }
 
-func (state State) toXInput(virtualState *XInputState) {
+func (state State) ToXInput(virtualState *ViGEmState) {
 
-	virtualState.dwPacketNumber = DWORD(state.Packet)
+	virtualState.DwPacketNumber = uint32(state.Packet)
 	virtualState.Gamepad.UpdateFromRawState(state.Raw)
 }
 

@@ -3,10 +3,14 @@ package main
 import (
 	"time"
 
-	"github.com/PiterWeb/RemoteController/gamepad"
+	"github.com/PiterWeb/RemoteController/src/gamepad"
+	"github.com/PiterWeb/RemoteController/src/desktop"
 )
 
 func main() {
+
+	go desktop.InitWindow()
+
 	gamepads := gamepad.All{}
 
 	virtualDevice, err := gamepad.GenerateVirtualDevice()
@@ -17,7 +21,7 @@ func main() {
 
 	defer gamepad.FreeTargetAndDisconnect(virtualDevice)
 
-	virtualState := new(gamepad.XInputState)
+	virtualState := new(gamepad.ViGEmState)
 
 	for range time.Tick(1 * time.Millisecond) {
 		gamepads.Update()
