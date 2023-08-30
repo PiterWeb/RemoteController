@@ -2,52 +2,46 @@ package desktop
 
 import (
 	"image/color"
-	"os"
 
-	"gioui.org/app"
 	"gioui.org/io/system"
+	"gioui.org/text"
+
 	"gioui.org/layout"
 	"gioui.org/op"
-	"gioui.org/text"
+
+	"gioui.org/app"
 	"gioui.org/widget/material"
 )
 
-func InitWindow() {
+func styleWindowUI(w *app.Window) {
+	w.Option(app.Title("RemoteController"))
+	w.Option(app.Size(500, 800))
+}
 
-	go func () {
+func frameUI(e system.FrameEvent, ops *op.Ops, th *material.Theme) {
+	setWindowBackground(th)
+	gtx := layout.NewContext(ops, e)
+	drawTitle(gtx, th)
+	e.Frame(gtx.Ops)
+}
 
-		w:= app.NewWindow()
-		if err := runWindow(w); err != nil {
-			panic(err)
-		}
+func setWindowBackground(th *material.Theme) {
 
-		os.Exit(0)
-
-	}()
-
-	app.Main()
+	*th = th.WithPalette(material.Palette{
+		Bg: color.NRGBA{
+			R: 8, G: 103, B: 126, A: 255,
+		},
+	})
 
 }
 
-func runWindow(w *app.Window) error {
+func drawTitle(gtx layout.Context, th *material.Theme) {
 
-	th := material.NewTheme()
-	var ops op.Ops
-	for {
-		e := <-w.Events()
-		switch e := e.(type) {
-		case system.DestroyEvent:
-			return e.Err
-		case system.FrameEvent:
+	const titleText = "Remote Controller"
 
-			gtx := layout.NewContext(&ops, e)
-			title := material.H1(th, "Hello, Gio")
-			maroon := color.NRGBA{R: 127, G: 0, B: 0, A: 255}
-			title.Color = maroon
-			title.Alignment = text.Middle
-			title.Layout(gtx)
-			e.Frame(gtx.Ops)
-		}
-	}
-
+	title := material.H1(th, titleText)
+	textColor := color.NRGBA{R: 121, G: 212, B: 253, A: 255}
+	title.Color = textColor
+	title.Alignment = text.Middle
+	title.Layout(gtx)
 }
