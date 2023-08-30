@@ -26,29 +26,23 @@ type State struct {
 	Connected bool
 
 	Packet uint32
-	Raw    struct {
-		Buttons      Button
-		LeftTrigger  uint8
-		RightTrigger uint8
-		ThumbLX      int16
-		ThumbLY      int16
-		ThumbRX      int16
-		ThumbRY      int16
-	}
+	Raw    StateRaw
 }
 
-func (state *State) toXInput(virtualState *XInputState)  {
+type StateRaw struct {
+	Buttons      Button
+	LeftTrigger  uint8
+	RightTrigger uint8
+	ThumbLX      int16
+	ThumbLY      int16
+	ThumbRX      int16
+	ThumbRY      int16
+}
+
+func (state State) toXInput(virtualState *XInputState) {
 
 	virtualState.dwPacketNumber = DWORD(state.Packet)
-	virtualState.Gamepad = _XINPUT_GAMEPAD{
-		wButtons: WORD(state.Raw.Buttons),
-		bLeftTrigger: BYTE(state.Raw.LeftTrigger),
-		bRightTrigger: BYTE(state.Raw.RightTrigger),
-		sThumbLX: SHORT(state.Raw.ThumbLX),
-		sThumbLY: SHORT(state.Raw.ThumbLY),
-		sThumbRX: SHORT(state.Raw.ThumbRX),
-		sThumbRY: SHORT(state.Raw.ThumbRY),
-	}
+	virtualState.Gamepad.UpdateFromRawState(state.Raw)
 }
 
 func (state *State) Pressed(button Button) bool { return state.Raw.Buttons&button != 0 }
