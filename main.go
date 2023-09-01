@@ -2,14 +2,13 @@ package main
 
 import (
 	"time"
-
-	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/PiterWeb/RemoteController/src/desktop"
+	"github.com/PiterWeb/RemoteController/src/gamepad"
 )
 
 func main() {
 
-	go desktop.InitWindow()
+	go desktop.RunDesktop()
 
 	gamepads := gamepad.All{}
 

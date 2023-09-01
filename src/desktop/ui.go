@@ -1,47 +1,42 @@
 package desktop
 
 import (
-	"image/color"
-
-	"gioui.org/io/system"
-	"gioui.org/text"
-
-	"gioui.org/layout"
-	"gioui.org/op"
-
-	"gioui.org/app"
-	"gioui.org/widget/material"
+	"github.com/rodrigocfd/windigo/ui"
+	"github.com/rodrigocfd/windigo/win"
+	"github.com/rodrigocfd/windigo/win/co"
 )
 
-func styleWindowUI(w *app.Window) {
-	w.Option(app.Title("RemoteController"))
-	w.Option(app.Size(500, 800))
-}
+// Creates a new instance of our main window.
+func newWindow() *MyWindow {
+	wnd := ui.NewWindowMain(
+		ui.WindowMainOpts().
+			Title("Remote Controller").
+			ClientArea(win.SIZE{Cx: 500, Cy: 800}).WndStyles(co.WS_CAPTION | co.WS_SYSMENU | co.WS_CLIPCHILDREN | co.WS_VISIBLE | co.WS_MINIMIZEBOX | co.WS_MAXIMIZEBOX | co.WS_SIZEBOX).IconId(101),
+	)
 
-func frameUI(e system.FrameEvent, ops *op.Ops, th *material.Theme) {
-	setWindowBackground(th)
-	gtx := layout.NewContext(ops, e)
-	drawTitle(gtx, th)
-	e.Frame(gtx.Ops)
-}
+	me := &MyWindow{
+		wnd: wnd,
+		lblName: ui.NewStatic(wnd,
+			ui.StaticOpts().
+				Text("Connection ID").
+				Position(win.POINT{X: 10, Y: 22}),
+		),
+		txtName: ui.NewEdit(wnd,
+			ui.EditOpts().
+				Position(win.POINT{X: 90, Y: 20}).
+				Size(win.SIZE{Cx: 150}),
+		),
+		btnShow: ui.NewButton(wnd,
+			ui.ButtonOpts().
+				Text("&Connect").
+				Position(win.POINT{X: 250, Y: 19}),
+		),
+	}
 
-func setWindowBackground(th *material.Theme) {
-
-	*th = th.WithPalette(material.Palette{
-		Bg: color.NRGBA{
-			R: 8, G: 103, B: 126, A: 255,
-		},
+	me.btnShow.On().BnClicked(func() {
+		const msg string = "Connection Stablished"
+		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
 	})
 
-}
-
-func drawTitle(gtx layout.Context, th *material.Theme) {
-
-	const titleText = "Remote Controller"
-
-	title := material.H1(th, titleText)
-	textColor := color.NRGBA{R: 121, G: 212, B: 253, A: 255}
-	title.Color = textColor
-	title.Alignment = text.Middle
-	title.Layout(gtx)
+	return me
 }

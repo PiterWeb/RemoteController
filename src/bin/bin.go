@@ -1,6 +1,8 @@
 package bin
 
-import _ "embed"
+import (
+	_ "embed"
+)
 
 //go:embed ViGEmClient_x64.dll
 var ViGEmClient_x64 []byte
