@@ -2,13 +2,16 @@ package net
 
 import (
 	"fmt"
+	"github.com/pion/webrtc/v3"
 	"os"
 	"time"
-	"github.com/pion/webrtc/v3"
 )
 
-func CreateWebRTCConn() {
+func InitOffer(offerChan chan<- string) { //nolint:gocognit
 
+	// Everything below is the Pion WebRTC API! Thanks for using it ❤️.
+
+	// Prepare the configuration
 	config := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
@@ -28,6 +31,12 @@ func CreateWebRTCConn() {
 		}
 	}()
 
+	// Create a datachannel with label 'data'
+	dataChannel, err := peerConnection.CreateDataChannel("data", nil)
+	if err != nil {
+		panic(err)
+	}
+
 	// Set the handler for Peer connection state
 	// This will notify you when the peer has connected/disconnected
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
@@ -42,54 +51,38 @@ func CreateWebRTCConn() {
 		}
 	})
 
-	// Register data channel creation handling
-	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
-		fmt.Printf("New DataChannel %s %d\n", d.Label(), d.ID())
+	// Register channel opening handling
+	dataChannel.OnOpen(func() {
+		fmt.Printf("Data channel '%s'-'%d' open. Random messages will now be sent to any connected DataChannels every 5 seconds\n", dataChannel.Label(), dataChannel.ID())
 
-		// Register channel opening handling
-		d.OnOpen(func() {
-			fmt.Printf("Data channel '%s'-'%d' open. Random messages will now be sent to any connected DataChannels every 5 seconds\n", d.Label(), d.ID())
+		for range time.NewTicker(5 * time.Second).C {
+			message := randSeq(15)
+			fmt.Printf("Sending '%s'\n", message)
 
-			for range time.NewTicker(5 * time.Second).C {
-				message := randSeq(15)
-				fmt.Printf("Sending '%s'\n", message)
-
-				// Send the message as text
-				sendErr := d.SendText(message)
-				if sendErr != nil {
-					panic(sendErr)
-				}
+			// Send the message as text
+			sendTextErr := dataChannel.SendText(message)
+			if sendTextErr != nil {
+				panic(sendTextErr)
 			}
-		})
-
-		// Register text message handling
-		d.OnMessage(func(msg webrtc.DataChannelMessage) {
-			fmt.Printf("Message from DataChannel '%s': '%s'\n", d.Label(), string(msg.Data))
-		})
+		}
 	})
 
-	// Wait for the offer to be pasted
-	offer := webrtc.SessionDescription{}
-	signalDecode(signalMustReadStdin(), &offer)
+	// Register text message handling
+	dataChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
+		fmt.Printf("Message from DataChannel '%s': '%s'\n", dataChannel.Label(), string(msg.Data))
+	})
 
-	// Set the remote SessionDescription
-	err = peerConnection.SetRemoteDescription(offer)
+	// Create an offer to send to the other process
+	offer, err := peerConnection.CreateOffer(nil)
 	if err != nil {
 		panic(err)
 	}
 
-	// Create an answer
-	answer, err := peerConnection.CreateAnswer(nil)
-	if err != nil {
-		panic(err)
-	}
-
-	// Create channel that is blocked until ICE Gathering is complete
 	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
 	// Sets the LocalDescription, and starts our UDP listeners
-	err = peerConnection.SetLocalDescription(answer)
-	if err != nil {
+	// Note: this will start the gathering of ICE candidates
+	if err = peerConnection.SetLocalDescription(offer); err != nil {
 		panic(err)
 	}
 
@@ -98,8 +91,7 @@ func CreateWebRTCConn() {
 	// in a production application you should exchange ICE Candidates via OnICECandidate
 	<-gatherComplete
 
-	// Output the answer in base64 so we can paste it in browser
-	fmt.Println(signalEncode(*peerConnection.LocalDescription()))
+	offerChan <- signalEncode(offer)
 
 	// Block forever
 	select {}

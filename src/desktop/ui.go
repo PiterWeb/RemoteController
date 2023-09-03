@@ -6,16 +6,27 @@ import (
 	"github.com/rodrigocfd/windigo/win/co"
 )
 
+type MainWindow struct {
+	wnd       ui.WindowMain
+	lblName   ui.Static
+	txtName   ui.Edit
+	btnAnswer ui.Button
+	btnOffer  ui.Button
+}
+
 // Creates a new instance of our main window.
-func newWindow() *MyWindow {
+func initWindow() *MainWindow {
 	wnd := ui.NewWindowMain(
 		ui.WindowMainOpts().
 			Title("Remote Controller").
-			ClientArea(win.SIZE{Cx: 500, Cy: 800}).WndStyles(co.WS_CAPTION | co.WS_SYSMENU | co.WS_CLIPCHILDREN | co.WS_VISIBLE | co.WS_MINIMIZEBOX | co.WS_MAXIMIZEBOX | co.WS_SIZEBOX).IconId(101),
+			ClientArea(win.SIZE{Cx: 500, Cy: 800}).
+			WndStyles(co.WS_CAPTION | co.WS_SYSMENU | co.WS_CLIPCHILDREN | co.WS_VISIBLE | co.WS_MINIMIZEBOX | co.WS_MAXIMIZEBOX | co.WS_SIZEBOX).
+			IconId(101),
 	)
 
-	me := &MyWindow{
+	me := &MainWindow{
 		wnd: wnd,
+
 		lblName: ui.NewStatic(wnd,
 			ui.StaticOpts().
 				Text("Connection ID").
@@ -26,17 +37,17 @@ func newWindow() *MyWindow {
 				Position(win.POINT{X: 90, Y: 20}).
 				Size(win.SIZE{Cx: 150}),
 		),
-		btnShow: ui.NewButton(wnd,
+		btnAnswer: ui.NewButton(wnd,
 			ui.ButtonOpts().
 				Text("&Connect").
 				Position(win.POINT{X: 250, Y: 19}),
 		),
+		btnOffer: ui.NewButton(wnd,
+			ui.ButtonOpts().
+				Text("&Create ID").
+				Position(win.POINT{X: 10, Y: 60}),
+		),
 	}
-
-	me.btnShow.On().BnClicked(func() {
-		const msg string = "Connection Stablished"
-		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
-	})
 
 	return me
 }
