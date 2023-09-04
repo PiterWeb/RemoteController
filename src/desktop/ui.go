@@ -7,11 +7,13 @@ import (
 )
 
 type MainWindow struct {
-	wnd       ui.WindowMain
-	lblName   ui.Static
-	txtName   ui.Edit
-	btnAnswer ui.Button
-	btnOffer  ui.Button
+	wnd          ui.WindowMain
+	createHost   ui.Button
+	inputHost    ui.Edit
+	btnHost      ui.Button
+	orTxt        ui.Static
+	inputClient  ui.Edit
+	btnClient    ui.Button
 }
 
 // Creates a new instance of our main window.
@@ -20,32 +22,45 @@ func initWindow() *MainWindow {
 		ui.WindowMainOpts().
 			Title("Remote Controller").
 			ClientArea(win.SIZE{Cx: 500, Cy: 800}).
-			WndStyles(co.WS_CAPTION | co.WS_SYSMENU | co.WS_CLIPCHILDREN | co.WS_VISIBLE | co.WS_MINIMIZEBOX | co.WS_MAXIMIZEBOX | co.WS_SIZEBOX).
+			WndStyles(co.WS_CAPTION | co.WS_SYSMENU | co.WS_CLIPCHILDREN | co.WS_VISIBLE | co.WS_MINIMIZEBOX | co.WS_SIZEBOX).
 			IconId(101),
 	)
 
 	me := &MainWindow{
 		wnd: wnd,
-
-		lblName: ui.NewStatic(wnd,
-			ui.StaticOpts().
-				Text("Connection ID").
-				Position(win.POINT{X: 10, Y: 22}),
+		createHost: ui.NewButton(wnd,
+			ui.ButtonOpts().
+				Text("&Create Host").
+				Position(win.POINT{X: 10, Y: 39}).
+				Size(win.SIZE{Cx: 100}),
 		),
-		txtName: ui.NewEdit(wnd,
+		inputHost: ui.NewEdit(wnd,
 			ui.EditOpts().
-				Position(win.POINT{X: 90, Y: 20}).
+				Position(win.POINT{X: 190, Y: 40}).
 				Size(win.SIZE{Cx: 150}),
 		),
-		btnAnswer: ui.NewButton(wnd,
+		btnHost: ui.NewButton(wnd,
 			ui.ButtonOpts().
-				Text("&Connect").
-				Position(win.POINT{X: 250, Y: 19}),
+				Text("&Connect to Client").
+				Position(win.POINT{X: 350, Y: 39}).
+				Size(win.SIZE{Cx: 100}),
 		),
-		btnOffer: ui.NewButton(wnd,
+		orTxt: ui.NewStatic(wnd,
+			ui.StaticOpts().
+				Text("OR").
+				Position(win.POINT{X: 225, Y: 70}),
+		),
+
+		inputClient: ui.NewEdit(wnd,
+			ui.EditOpts().
+				Position(win.POINT{X: 90, Y: 96}).
+				Size(win.SIZE{Cx: 150}),
+		),
+		btnClient: ui.NewButton(wnd,
 			ui.ButtonOpts().
-				Text("&Create ID").
-				Position(win.POINT{X: 10, Y: 60}),
+				Text("&Connect to Host").
+				Position(win.POINT{X: 250, Y: 95}).
+				Size(win.SIZE{Cx: 100}),
 		),
 	}
 

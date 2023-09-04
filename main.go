@@ -1,38 +1,38 @@
 package main
 
 import (
-	"time"
+	// "time"
 	"github.com/PiterWeb/RemoteController/src/desktop"
-	"github.com/PiterWeb/RemoteController/src/gamepad"
+	// "github.com/PiterWeb/RemoteController/src/gamepad"
 )
 
 func main() {
 
-	go desktop.RunDesktop()
+	desktop.RunDesktop()
 
-	gamepads := gamepad.All{}
+	// gamepads := gamepad.All{}
 
-	virtualDevice, err := gamepad.GenerateVirtualDevice()
+	// virtualDevice, err := gamepad.GenerateVirtualDevice()
 
-	if err != nil {
-		panic(err)
-	}
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	defer gamepad.FreeTargetAndDisconnect(virtualDevice)
+	// defer gamepad.FreeTargetAndDisconnect(virtualDevice)
 
-	virtualState := new(gamepad.ViGEmState)
+	// virtualState := new(gamepad.ViGEmState)
 
-	for range time.Tick(1 * time.Millisecond) {
-		gamepads.Update()
-		for i := range gamepads {
-			pad := &gamepads[i]
+	// for range time.Tick(1 * time.Millisecond) {
+	// 	gamepads.Update()
+	// 	for i := range gamepads {
+	// 		pad := &gamepads[i]
 
-			if !pad.Connected {
-				continue
-			}
+	// 		if !pad.Connected {
+	// 			continue
+	// 		}
 
-			go gamepad.UpdateVirtualDevice(virtualDevice, *pad, virtualState)
+	// 		go gamepad.UpdateVirtualDevice(virtualDevice, *pad, virtualState)
 
-		}
-	}
+	// 	}
+	// }
 }

@@ -1,16 +1,15 @@
 package net
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
+	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/pion/webrtc/v3"
 )
 
-func InitAnswer(offerEncoded string) { // nolint:gocognit
-
-	// Everything below is the Pion WebRTC API! Thanks for using it ❤️.
+func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -50,26 +49,34 @@ func InitAnswer(offerEncoded string) { // nolint:gocognit
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 		fmt.Printf("New DataChannel %s %d\n", d.Label(), d.ID())
 
+		var virtualDevice gamepad.EmulatedDevice
+		defer gamepad.FreeTargetAndDisconnect(virtualDevice)
+		
+		virtualState := new(gamepad.ViGEmState)
+
 		// Register channel opening handling
 		d.OnOpen(func() {
-			fmt.Printf("Data channel '%s'-'%d' open. Random messages will now be sent to any connected DataChannels every 5 seconds\n", d.Label(), d.ID())
 
-			for range time.NewTicker(5 * time.Second).C {
-				message := randSeq(15)
-				fmt.Printf("Sending '%s'\n", message)
+			virtualDevice, err = gamepad.GenerateVirtualDevice()
 
-				// Send the message as text
-				sendTextErr := d.SendText(message)
-				if sendTextErr != nil {
-					panic(sendTextErr)
-				}
+			if err != nil {
+				panic(err)
 			}
+
 		})
 
 		// Register text message handling
 		d.OnMessage(func(msg webrtc.DataChannelMessage) {
 			fmt.Printf("Message from DataChannel '%s': '%s'\n", d.Label(), string(msg.Data))
+
+			var pad gamepad.State
+
+			err = json.Unmarshal(msg.Data, &pad)
+
+			go gamepad.UpdateVirtualDevice(virtualDevice, pad, virtualState)
+
 		})
+
 	})
 
 	offer := webrtc.SessionDescription{}
@@ -97,7 +104,8 @@ func InitAnswer(offerEncoded string) { // nolint:gocognit
 	<-gatherComplete
 
 	// Output the answer in base64 so we can paste it in browser
-	fmt.Println(signalEncode(*peerConnection.LocalDescription()))
+
+	answerResponse <- signalEncode(*peerConnection.LocalDescription())
 
 	// Block forever
 	select {}

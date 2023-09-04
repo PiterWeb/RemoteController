@@ -1,15 +1,16 @@
 package net
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/pion/webrtc/v3"
 	"os"
 	"time"
+
+	"github.com/PiterWeb/RemoteController/src/gamepad"
+	"github.com/pion/webrtc/v3"
 )
 
-func InitOffer(offerChan chan<- string) { //nolint:gocognit
-
-	// Everything below is the Pion WebRTC API! Thanks for using it ❤️.
+func InitOffer(offerChan chan<- string, answerResponse <-chan string) {
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -53,18 +54,33 @@ func InitOffer(offerChan chan<- string) { //nolint:gocognit
 
 	// Register channel opening handling
 	dataChannel.OnOpen(func() {
-		fmt.Printf("Data channel '%s'-'%d' open. Random messages will now be sent to any connected DataChannels every 5 seconds\n", dataChannel.Label(), dataChannel.ID())
 
-		for range time.NewTicker(5 * time.Second).C {
-			message := randSeq(15)
-			fmt.Printf("Sending '%s'\n", message)
+		gamepads := gamepad.All{}
 
-			// Send the message as text
-			sendTextErr := dataChannel.SendText(message)
-			if sendTextErr != nil {
-				panic(sendTextErr)
+		if err != nil {
+			panic(err)
+		}
+
+		for range time.NewTicker(1 * time.Millisecond).C {
+			gamepads.Update()
+			for i := range gamepads {
+				pad := &gamepads[i]
+
+				if !pad.Connected {
+					continue
+				}
+
+				padBytes, _ := json.Marshal(*pad)
+
+				err := dataChannel.Send(padBytes)
+
+				if err != nil {
+					panic(err)
+				}
+
 			}
 		}
+
 	})
 
 	// Register text message handling
@@ -93,6 +109,13 @@ func InitOffer(offerChan chan<- string) { //nolint:gocognit
 
 	offerChan <- signalEncode(offer)
 
+	answer := webrtc.SessionDescription{}
+
+	signalDecode(<-answerResponse, &answer)
+
+	if err = peerConnection.SetRemoteDescription(answer); err != nil {
+		panic(err)
+	}
 	// Block forever
 	select {}
 }

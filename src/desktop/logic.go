@@ -1,42 +1,57 @@
 package desktop
 
 import (
-	"fmt"
-
 	"github.com/PiterWeb/RemoteController/src/net"
 	"github.com/rodrigocfd/windigo/win/co"
 )
 
 func initLogic(me *MainWindow) {
-	btnAnswerOnClick(me)
-	btnOfferOnClick(me)
+
+	btnCreateHostOnClick(me)
+	btnClientConnectOnClick(me)
+
 }
 
-func btnAnswerOnClick(me *MainWindow) {
+func btnClientConnectOnClick(me *MainWindow) {
 
-	me.btnAnswer.On().BnClicked(func() {
+	me.btnClient.On().BnClicked(func() {
 
-		go net.InitAnswer(me.txtName.Text())
+		answerResponse := make(chan string)
 
-		msg := fmt.Sprintf("Connection Stablished to ID %s", me.txtName.Text())
+		go net.InitAnswer(me.inputClient.Text(), answerResponse)
+
+		msg := "ID copied to clipboard"
+
 		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
+		clipboard := me.wnd.Hwnd().OpenClipboard()
+		defer clipboard.CloseClipboard()
+		clipboard.WriteString(<-answerResponse)
+
 	})
 
 }
 
-func btnOfferOnClick(me * MainWindow) {
-	 
-	me.btnOffer.On().BnClicked(func() {
+func btnCreateHostOnClick(me *MainWindow) {
+
+	answerResponse := make(chan string)
+
+	me.createHost.On().BnClicked(func() {
 
 		offer := make(chan string)
 
-		go net.InitOffer(offer)
+		go net.InitOffer(offer, answerResponse)
 
 		msg := "ID copied to clipboard"
 		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
 		clipboard := me.wnd.Hwnd().OpenClipboard()
 		defer clipboard.CloseClipboard()
-		clipboard.WriteString(<- offer)
+		clipboard.WriteString(<-offer)
+
+	})
+
+	me.btnHost.On().BnClicked(func() {
+
+		answerResponse <- me.inputHost.Text()
 
 	})
 
