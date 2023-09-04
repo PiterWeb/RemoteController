@@ -24,8 +24,8 @@ func btnClientConnectOnClick(me *MainWindow) {
 
 		
 		clipboard := me.wnd.Hwnd().OpenClipboard()
-		clipboard.WriteString(<-answerResponse)
 		defer clipboard.CloseClipboard()
+		clipboard.WriteString(<-answerResponse)
 		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
 
 	})
