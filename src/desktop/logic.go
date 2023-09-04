@@ -22,10 +22,11 @@ func btnClientConnectOnClick(me *MainWindow) {
 
 		msg := "ID copied to clipboard"
 
-		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
+		
 		clipboard := me.wnd.Hwnd().OpenClipboard()
-		defer clipboard.CloseClipboard()
 		clipboard.WriteString(<-answerResponse)
+		defer clipboard.CloseClipboard()
+		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
 
 	})
 
