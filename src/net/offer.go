@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/PiterWeb/RemoteController/src/gamepad"
@@ -11,6 +12,9 @@ import (
 )
 
 func InitOffer(offerChan chan<- string, answerResponse <-chan string) {
+
+	var candidatesMux sync.Mutex
+	pendingCandidates := make([]webrtc.ICECandidate, 0)
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -37,6 +41,22 @@ func InitOffer(offerChan chan<- string, answerResponse <-chan string) {
 	if err != nil {
 		panic(err)
 	}
+
+	// When an ICE candidate is available send to the other Pion instance
+	// the other Pion instance will add this candidate by calling AddICECandidate
+	peerConnection.OnICECandidate(func(c *webrtc.ICECandidate) {
+		if c == nil {
+			return
+		}
+
+		candidatesMux.Lock()
+		defer candidatesMux.Unlock()
+
+		desc := peerConnection.RemoteDescription()
+		if desc == nil {
+			pendingCandidates = append(pendingCandidates, *c)
+		}
+	})
 
 	// Set the handler for Peer connection state
 	// This will notify you when the peer has connected/disconnected
@@ -94,20 +114,14 @@ func InitOffer(offerChan chan<- string, answerResponse <-chan string) {
 		panic(err)
 	}
 
-	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
 	// Sets the LocalDescription, and starts our UDP listeners
 	// Note: this will start the gathering of ICE candidates
 	if err = peerConnection.SetLocalDescription(offer); err != nil {
 		panic(err)
 	}
-
-	// Block until ICE Gathering is complete, disabling trickle ICE
-	// we do this because we only can exchange one signaling message
-	// in a production application you should exchange ICE Candidates via OnICECandidate
-	<-gatherComplete
-
-	offerChan <- signalEncode(offer)
+ 
+	offerChan <- signalEncode(offer) + ";-;" + signalEncode(pendingCandidates)
 
 	answer := webrtc.SessionDescription{}
 

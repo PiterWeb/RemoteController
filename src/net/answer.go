@@ -4,12 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
+	"sync"
 
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/pion/webrtc/v3"
 )
 
 func InitAnswer(offerEncoded string, answerResponse chan<- string) {
+
+	var candidatesMux sync.Mutex
+	pendingCandidates := make([]*webrtc.ICECandidate, 0)
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -31,6 +36,23 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 		}
 	}()
 
+	peerConnection.OnICECandidate(func(c *webrtc.ICECandidate) {
+
+		if c == nil {
+			return
+		}
+
+		candidatesMux.Lock()
+		defer candidatesMux.Unlock()
+
+		desc := peerConnection.RemoteDescription()
+
+		if desc == nil {
+			pendingCandidates = append(pendingCandidates, c)
+		}
+
+	})
+
 	// Set the handler for Peer connection state
 	// This will notify you when the peer has connected/disconnected
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
@@ -51,7 +73,7 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 		var virtualDevice gamepad.EmulatedDevice
 		defer gamepad.FreeTargetAndDisconnect(virtualDevice)
-		
+
 		virtualState := new(gamepad.ViGEmState)
 
 		// Register channel opening handling
@@ -79,8 +101,25 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	})
 
+	encoded := strings.Split(offerEncoded, ";-;")
+
+	if len(encoded) != 2 {
+		return
+	}
+
 	offer := webrtc.SessionDescription{}
-	signalDecode(offerEncoded, &offer)
+	signalDecode(encoded[0], &offer)
+
+	receivedLocalCandidates := []webrtc.ICECandidate{}
+	signalDecode(encoded[1], &receivedLocalCandidates)
+
+	for _, candidate := range receivedLocalCandidates {
+		err := peerConnection.AddICECandidate(candidate.ToJSON())
+
+		if err != nil {
+			panic(err)
+		}
+	}
 
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
 		panic(err)
