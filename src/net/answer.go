@@ -11,10 +11,10 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
-func InitAnswer(offerEncoded string, answerResponse chan<- string, localCandidatesChan chan<- string, remoteCandidatesChan <-chan string) {
+func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	var candidatesMux sync.Mutex
-	candidates := make([]string, 0)
+	candidates := []string{}
 
 
 	// Prepare the configuration
@@ -46,12 +46,12 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string, localCandidat
 		candidatesMux.Lock()
 		defer candidatesMux.Unlock()
 
-		// desc := peerConnection.RemoteDescription()
+		desc := peerConnection.RemoteDescription()
 
-		// if desc != nil {
-			// log.Println((*c).ToJSON().Candidate)
+		if desc != nil {
+			log.Println((*c).ToJSON().Candidate)
 			candidates = append(candidates, (*c).ToJSON().Candidate)
-		// }
+		}
 
 	})
 
@@ -129,25 +129,8 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string, localCandidat
 
 	<-gatherComplete
 
-	answerResponse <- signalEncode(*peerConnection.LocalDescription())
+	answerResponse <- signalEncode(*peerConnection.LocalDescription()) + ";" + signalEncode(candidates)
 	
-	// localCandidatesChan <- signalEncode(candidates)
-
-	// remoteCandidates := []string{}
-
-	// signalDecode(<-remoteCandidatesChan, &remoteCandidates)
-
-	// for _, candidate := range remoteCandidates {
-	// 	err := peerConnection.AddICECandidate(webrtc.ICECandidateInit{
-	// 		Candidate: candidate,
-	// 	})
-
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-
-	// }
-
 	// Block forever
 	select {}
 

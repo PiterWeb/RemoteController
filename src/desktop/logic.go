@@ -5,15 +5,11 @@ import (
 	"github.com/rodrigocfd/windigo/win/co"
 )
 
-var localCandidatesChan = make(chan string)
-var remoteCandidatesChan = make(chan string)
 
 func initLogic(me *MainWindow) {
 
-	btnAddRemoteCandidates(me)
 	btnCreateHostOnClick(me)
 	btnClientConnectOnClick(me)
-	copyLocalCandidates(me)
 
 }
 
@@ -23,7 +19,7 @@ func btnClientConnectOnClick(me *MainWindow) {
 
 		answerResponse := make(chan string)
 
-		go net.InitAnswer(me.inputClient.Text(), answerResponse, localCandidatesChan, remoteCandidatesChan)
+		go net.InitAnswer(me.inputClient.Text(), answerResponse)
 
 		msg := "ID copied to clipboard"
 
@@ -44,7 +40,7 @@ func btnCreateHostOnClick(me *MainWindow) {
 
 		offer := make(chan string)
 
-		go net.InitOffer(offer, answerResponse, localCandidatesChan, remoteCandidatesChan)
+		go net.InitOffer(offer, answerResponse)
 
 		msg := "ID copied to clipboard"
 		clipboard := me.wnd.Hwnd().OpenClipboard()
@@ -59,30 +55,5 @@ func btnCreateHostOnClick(me *MainWindow) {
 		answerResponse <- me.inputHost.Text()
 
 	})
-
-}
-
-func copyLocalCandidates(me *MainWindow) {
-
-	// me.candidatesCopy.On().BnClicked(func() {
-
-	// 	msg := "Candidates copied to clipboard"
-	// 	clipboard := me.wnd.Hwnd().OpenClipboard()
-	// 	defer clipboard.CloseClipboard()
-	// 	clipboard.WriteString(<-localCandidatesChan)
-	// 	me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
-
-
-	// })
-
-}
-
-func btnAddRemoteCandidates(me *MainWindow) {
-
-	// me.btnCandidates.On().BnClicked(func() {
-
-	// 	remoteCandidatesChan <- me.inputCandidates.Text()
-
-	// })
 
 }

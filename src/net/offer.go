@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
-func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string, localCandidatesChan chan<- string, remoteCandidatesChan <-chan string) {
+func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 
 	var candidatesMux sync.Mutex
 	candidates := make([]string, 0)
@@ -53,11 +54,11 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string, loc
 		candidatesMux.Lock()
 		defer candidatesMux.Unlock()
 
-		// desc := peerConnection.RemoteDescription()
-		// if desc != nil {
-		// log.Println((*c).ToJSON().Candidate)
-		candidates = append(candidates, (*c).ToJSON().Candidate)
-		// }
+		desc := peerConnection.RemoteDescription()
+		if desc != nil {
+			log.Println((*c).ToJSON().Candidate)
+			candidates = append(candidates, (*c).ToJSON().Candidate)
+		}
 	})
 
 	// Set the handler for Peer connection state
@@ -130,29 +131,33 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string, loc
 
 	log.Println("offer copied")
 
+	answerResponse := strings.Split(<-answerResponseEncoded,";")
+
+	if len(answerResponse) != 2 {
+		panic("No candidate or answer comming")
+	}
+
 	answer := webrtc.SessionDescription{}
 
-	signalDecode(<-answerResponseEncoded, &answer)
+	signalDecode(answerResponse[0], &answer)
 
-	// localCandidatesChan <- signalEncode(candidates)
+	remoteCandidates := []string{}
 
-	// remoteCandidates := []string{}
-
-	// signalDecode(<-remoteCandidatesChan, &remoteCandidates)
-
-	// for _, candidate := range remoteCandidates {
-	// 	err := peerConnection.AddICECandidate(webrtc.ICECandidateInit{
-	// 		Candidate: candidate,
-	// 	})
-
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// }
+	signalDecode(answerResponse[1], &remoteCandidates)
 
 	log.Println("Offer remote description")
 	if err = peerConnection.SetRemoteDescription(answer); err != nil {
 		panic(err)
+	}
+
+	for _, candidate := range remoteCandidates {
+		err := peerConnection.AddICECandidate(webrtc.ICECandidateInit{
+			Candidate: candidate,
+		})
+
+		if err != nil {
+			panic(err)
+		}
 	}
 	// Block forever
 	select {}
