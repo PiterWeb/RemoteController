@@ -7,13 +7,16 @@ import (
 )
 
 type MainWindow struct {
-	wnd          ui.WindowMain
-	createHost   ui.Button
-	inputHost    ui.Edit
-	btnHost      ui.Button
-	orTxt        ui.Static
-	inputClient  ui.Edit
-	btnClient    ui.Button
+	wnd             ui.WindowMain
+	createHost      ui.Button
+	inputHost       ui.Edit
+	btnHost         ui.Button
+	orTxt           ui.Static
+	inputClient     ui.Edit
+	btnClient       ui.Button
+	candidatesCopy   ui.Button
+	inputCandidates ui.Edit
+	btnCandidates   ui.Button
 }
 
 // Creates a new instance of our main window.
@@ -62,6 +65,23 @@ func initWindow() *MainWindow {
 				Position(win.POINT{X: 250, Y: 95}).
 				Size(win.SIZE{Cx: 100}),
 		),
+		// candidatesCopy: ui.NewButton(wnd,
+		// 	ui.ButtonOpts().
+		// 		Text("&Copy Candidates").
+		// 		Position(win.POINT{X: 90, Y: 700}).
+		// 		Size(win.SIZE{Cx: 260}),
+		// ),
+		// inputCandidates: ui.NewEdit(wnd,
+		// 	ui.EditOpts().
+		// 		Position(win.POINT{X: 90, Y: 750}).
+		// 		Size(win.SIZE{Cx: 150}),
+		// ),
+		// btnCandidates: ui.NewButton(wnd,
+		// 	ui.ButtonOpts().
+		// 		Text("&Add Candidates").
+		// 		Position(win.POINT{X: 250, Y: 750}).
+		// 		Size(win.SIZE{Cx: 100}),
+		// ),
 	}
 
 	return me

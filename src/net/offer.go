@@ -3,6 +3,7 @@ package net
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"sync"
 	"time"
@@ -11,10 +12,10 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
-func InitOffer(offerChan chan<- string, answerResponse <-chan string) {
+func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string, localCandidatesChan chan<- string, remoteCandidatesChan <-chan string) {
 
 	var candidatesMux sync.Mutex
-	pendingCandidates := make([]webrtc.ICECandidate, 0)
+	candidates := make([]string, 0)
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -52,10 +53,11 @@ func InitOffer(offerChan chan<- string, answerResponse <-chan string) {
 		candidatesMux.Lock()
 		defer candidatesMux.Unlock()
 
-		desc := peerConnection.RemoteDescription()
-		if desc == nil {
-			pendingCandidates = append(pendingCandidates, *c)
-		}
+		// desc := peerConnection.RemoteDescription()
+		// if desc != nil {
+		// log.Println((*c).ToJSON().Candidate)
+		candidates = append(candidates, (*c).ToJSON().Candidate)
+		// }
 	})
 
 	// Set the handler for Peer connection state
@@ -114,19 +116,41 @@ func InitOffer(offerChan chan<- string, answerResponse <-chan string) {
 		panic(err)
 	}
 
+	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
-	// Sets the LocalDescription, and starts our UDP listeners
-	// Note: this will start the gathering of ICE candidates
+	log.Println("Offer local description")
+
 	if err = peerConnection.SetLocalDescription(offer); err != nil {
 		panic(err)
 	}
- 
-	offerChan <- signalEncode(offer) + ";-;" + signalEncode(pendingCandidates)
+
+	<-gatherComplete
+
+	offerChan <- signalEncode(offer)
+
+	log.Println("offer copied")
 
 	answer := webrtc.SessionDescription{}
 
-	signalDecode(<-answerResponse, &answer)
+	signalDecode(<-answerResponseEncoded, &answer)
 
+	// localCandidatesChan <- signalEncode(candidates)
+
+	// remoteCandidates := []string{}
+
+	// signalDecode(<-remoteCandidatesChan, &remoteCandidates)
+
+	// for _, candidate := range remoteCandidates {
+	// 	err := peerConnection.AddICECandidate(webrtc.ICECandidateInit{
+	// 		Candidate: candidate,
+	// 	})
+
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// }
+
+	log.Println("Offer remote description")
 	if err = peerConnection.SetRemoteDescription(answer); err != nil {
 		panic(err)
 	}

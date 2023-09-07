@@ -3,18 +3,19 @@ package net
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
-	"strings"
 	"sync"
 
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/pion/webrtc/v3"
 )
 
-func InitAnswer(offerEncoded string, answerResponse chan<- string) {
+func InitAnswer(offerEncoded string, answerResponse chan<- string, localCandidatesChan chan<- string, remoteCandidatesChan <-chan string) {
 
 	var candidatesMux sync.Mutex
-	pendingCandidates := make([]*webrtc.ICECandidate, 0)
+	candidates := make([]string, 0)
+
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -45,11 +46,12 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 		candidatesMux.Lock()
 		defer candidatesMux.Unlock()
 
-		desc := peerConnection.RemoteDescription()
+		// desc := peerConnection.RemoteDescription()
 
-		if desc == nil {
-			pendingCandidates = append(pendingCandidates, c)
-		}
+		// if desc != nil {
+			// log.Println((*c).ToJSON().Candidate)
+			candidates = append(candidates, (*c).ToJSON().Candidate)
+		// }
 
 	})
 
@@ -89,7 +91,7 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 		// Register text message handling
 		d.OnMessage(func(msg webrtc.DataChannelMessage) {
-			fmt.Printf("Message from DataChannel '%s': '%s'\n", d.Label(), string(msg.Data))
+			// fmt.Printf("Message from DataChannel '%s': '%s'\n", d.Label(), string(msg.Data))
 
 			var pad gamepad.State
 
@@ -101,39 +103,24 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	})
 
-	encoded := strings.Split(offerEncoded, ";-;")
-
-	if len(encoded) != 2 {
-		return
-	}
-
 	offer := webrtc.SessionDescription{}
-	signalDecode(encoded[0], &offer)
+	signalDecode(offerEncoded, &offer)
 
-	receivedLocalCandidates := []webrtc.ICECandidate{}
-	signalDecode(encoded[1], &receivedLocalCandidates)
-
-	for _, candidate := range receivedLocalCandidates {
-		err := peerConnection.AddICECandidate(candidate.ToJSON())
-
-		if err != nil {
-			panic(err)
-		}
-	}
-
+	log.Println("Answer remote description")
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
 		panic(err)
 	}
 
+	log.Println("Answer created")
 	// Create an answer to send to the other process
 	answer, err := peerConnection.CreateAnswer(nil)
 	if err != nil {
 		panic(err)
 	}
-
-	// Create channel that is blocked until ICE Gathering is complete
+	
 	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
+	log.Println("Answer local description")
 	// Sets the LocalDescription, and starts our UDP listeners
 	err = peerConnection.SetLocalDescription(answer)
 	if err != nil {
@@ -142,9 +129,24 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	<-gatherComplete
 
-	// Output the answer in base64 so we can paste it in browser
-
 	answerResponse <- signalEncode(*peerConnection.LocalDescription())
+	
+	// localCandidatesChan <- signalEncode(candidates)
+
+	// remoteCandidates := []string{}
+
+	// signalDecode(<-remoteCandidatesChan, &remoteCandidates)
+
+	// for _, candidate := range remoteCandidates {
+	// 	err := peerConnection.AddICECandidate(webrtc.ICECandidateInit{
+	// 		Candidate: candidate,
+	// 	})
+
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+
+	// }
 
 	// Block forever
 	select {}
