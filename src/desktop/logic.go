@@ -25,6 +25,7 @@ func btnClientConnectOnClick(me *MainWindow) {
 
 		clipboard := me.wnd.Hwnd().OpenClipboard()
 		defer clipboard.CloseClipboard()
+		clipboard.EmptyClipboard()
 		clipboard.WriteString(<-answerResponse)
 		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
 
@@ -45,6 +46,7 @@ func btnCreateHostOnClick(me *MainWindow) {
 		msg := "ID copied to clipboard"
 		clipboard := me.wnd.Hwnd().OpenClipboard()
 		defer clipboard.CloseClipboard()
+		clipboard.EmptyClipboard()
 		clipboard.WriteString(<-offer)
 		me.wnd.Hwnd().MessageBox(msg, "Success", co.MB_ICONINFORMATION)
 
