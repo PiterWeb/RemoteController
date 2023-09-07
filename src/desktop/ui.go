@@ -14,9 +14,6 @@ type MainWindow struct {
 	orTxt           ui.Static
 	inputClient     ui.Edit
 	btnClient       ui.Button
-	candidatesCopy   ui.Button
-	inputCandidates ui.Edit
-	btnCandidates   ui.Button
 }
 
 // Creates a new instance of our main window.
