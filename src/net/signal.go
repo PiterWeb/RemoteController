@@ -14,7 +14,7 @@ import (
 )
 
 // Allows compressing offer/answer to bypass terminal input limits.
-const compress = false
+const compress = true
 
 // signalEncode encodes the input in base64
 // It can optionally zip the input before encoding
