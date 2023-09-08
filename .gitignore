@@ -2,3 +2,4 @@ build
 ./*.exe
 ./*.dll
 ViGEmBus_1.21.exe
+src/net/ViGEmClient.dll
