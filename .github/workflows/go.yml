@@ -23,7 +23,7 @@ jobs:
         with:
           go-version: '1.21.0'
       - name: Build
-        run: go build -v -ldflags="-H windowsgui -o RemoteController.exe"
+        run: go build -v -ldflags="-H windowsgui -o ./RemoteController.exe"
 
       - name: Test
         run: go test -v ./...
