@@ -3,7 +3,6 @@ package net
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"sync"
@@ -56,7 +55,6 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 
 		desc := peerConnection.RemoteDescription()
 		if desc != nil {
-			log.Println((*c).ToJSON().Candidate)
 			candidates = append(candidates, (*c).ToJSON().Candidate)
 		}
 	})
@@ -119,8 +117,6 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 
 	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
-	log.Println("Offer local description")
-
 	if err = peerConnection.SetLocalDescription(offer); err != nil {
 		panic(err)
 	}
@@ -128,8 +124,6 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 	<-gatherComplete
 
 	offerChan <- signalEncode(offer)
-
-	log.Println("offer copied")
 
 	answerResponse := strings.Split(<-answerResponseEncoded,";")
 
@@ -145,7 +139,6 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 
 	signalDecode(answerResponse[1], &remoteCandidates)
 
-	log.Println("Offer remote description")
 	if err = peerConnection.SetRemoteDescription(answer); err != nil {
 		panic(err)
 	}

@@ -3,7 +3,6 @@ package net
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"sync"
 
@@ -49,7 +48,6 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 		desc := peerConnection.RemoteDescription()
 
 		if desc != nil {
-			log.Println((*c).ToJSON().Candidate)
 			candidates = append(candidates, (*c).ToJSON().Candidate)
 		}
 
@@ -106,12 +104,10 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 	offer := webrtc.SessionDescription{}
 	signalDecode(offerEncoded, &offer)
 
-	log.Println("Answer remote description")
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
 		panic(err)
 	}
 
-	log.Println("Answer created")
 	// Create an answer to send to the other process
 	answer, err := peerConnection.CreateAnswer(nil)
 	if err != nil {
@@ -120,7 +116,6 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 	
 	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
-	log.Println("Answer local description")
 	// Sets the LocalDescription, and starts our UDP listeners
 	err = peerConnection.SetLocalDescription(answer)
 	if err != nil {
