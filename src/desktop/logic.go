@@ -5,7 +5,6 @@ import (
 	"github.com/rodrigocfd/windigo/win/co"
 )
 
-
 func initLogic(me *MainWindow) {
 
 	btnCreateHostOnClick(me)
@@ -37,7 +36,7 @@ func btnCreateHostOnClick(me *MainWindow) {
 
 	answerResponse := make(chan string)
 
-	me.createHost.On().BnClicked(func() {
+	me.createClient.On().BnClicked(func() {
 
 		offer := make(chan string)
 

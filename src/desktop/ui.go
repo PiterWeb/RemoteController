@@ -7,13 +7,13 @@ import (
 )
 
 type MainWindow struct {
-	wnd             ui.WindowMain
-	createHost      ui.Button
-	inputHost       ui.Edit
-	btnHost         ui.Button
-	orTxt           ui.Static
-	inputClient     ui.Edit
-	btnClient       ui.Button
+	wnd          ui.WindowMain
+	createClient ui.Button
+	inputHost    ui.Edit
+	btnHost      ui.Button
+	orTxt        ui.Static
+	inputClient  ui.Edit
+	btnClient    ui.Button
 }
 
 // Creates a new instance of our main window.
@@ -28,9 +28,9 @@ func initWindow() *MainWindow {
 
 	me := &MainWindow{
 		wnd: wnd,
-		createHost: ui.NewButton(wnd,
+		createClient: ui.NewButton(wnd,
 			ui.ButtonOpts().
-				Text("&Create Host").
+				Text("&Create Client").
 				Position(win.POINT{X: 10, Y: 39}).
 				Size(win.SIZE{Cx: 100}),
 		),
@@ -39,9 +39,9 @@ func initWindow() *MainWindow {
 				Position(win.POINT{X: 190, Y: 40}).
 				Size(win.SIZE{Cx: 150}),
 		),
-		btnHost: ui.NewButton(wnd,
+		btnClient: ui.NewButton(wnd,
 			ui.ButtonOpts().
-				Text("&Connect to Client").
+				Text("&Connect to Host").
 				Position(win.POINT{X: 350, Y: 39}).
 				Size(win.SIZE{Cx: 100}),
 		),
@@ -56,29 +56,12 @@ func initWindow() *MainWindow {
 				Position(win.POINT{X: 90, Y: 96}).
 				Size(win.SIZE{Cx: 150}),
 		),
-		btnClient: ui.NewButton(wnd,
+		btnHost: ui.NewButton(wnd,
 			ui.ButtonOpts().
-				Text("&Connect to Host").
+				Text("&Connect to Client").
 				Position(win.POINT{X: 250, Y: 95}).
 				Size(win.SIZE{Cx: 100}),
 		),
-		// candidatesCopy: ui.NewButton(wnd,
-		// 	ui.ButtonOpts().
-		// 		Text("&Copy Candidates").
-		// 		Position(win.POINT{X: 90, Y: 700}).
-		// 		Size(win.SIZE{Cx: 260}),
-		// ),
-		// inputCandidates: ui.NewEdit(wnd,
-		// 	ui.EditOpts().
-		// 		Position(win.POINT{X: 90, Y: 750}).
-		// 		Size(win.SIZE{Cx: 150}),
-		// ),
-		// btnCandidates: ui.NewButton(wnd,
-		// 	ui.ButtonOpts().
-		// 		Text("&Add Candidates").
-		// 		Position(win.POINT{X: 250, Y: 750}).
-		// 		Size(win.SIZE{Cx: 100}),
-		// ),
 	}
 
 	return me
