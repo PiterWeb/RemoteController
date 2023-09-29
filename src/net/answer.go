@@ -1,12 +1,17 @@
 package net
 
 import (
-	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"sync"
+	"time"
+
+	"github.com/pquerna/ffjson/ffjson"
 
 	"github.com/PiterWeb/RemoteController/src/gamepad"
+	"github.com/PiterWeb/RemoteController/src/net/multimedia"
+	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v3"
 )
 
@@ -14,7 +19,6 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	var candidatesMux sync.Mutex
 	candidates := []string{}
-
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -26,7 +30,9 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 	}
 
 	// Create a new RTCPeerConnection
-	peerConnection, err := webrtc.NewPeerConnection(config)
+	webrtcWebm, saver := multimedia.InitWebRTCAnswer()
+
+	peerConnection, err := webrtcWebm.NewPeerConnection(config)
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +82,7 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 		virtualState := new(gamepad.ViGEmState)
 
-		// Register channel opening handling
+		// Create a virtual device
 		d.OnOpen(func() {
 
 			virtualDevice, err = gamepad.GenerateVirtualDevice()
@@ -87,17 +93,48 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 		})
 
-		// Register text message handling
+		// Update the virtual device
 		d.OnMessage(func(msg webrtc.DataChannelMessage) {
-			// fmt.Printf("Message from DataChannel '%s': '%s'\n", d.Label(), string(msg.Data))
 
 			var pad gamepad.State
 
-			err = json.Unmarshal(msg.Data, &pad)
+			err = ffjson.Unmarshal(msg.Data, &pad)
 
 			go gamepad.UpdateVirtualDevice(virtualDevice, pad, virtualState)
 
 		})
+
+	})
+
+	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
+
+		go func() {
+			ticker := time.NewTicker(time.Second * 3)
+			for range ticker.C {
+				errSend := peerConnection.WriteRTCP([]rtcp.Packet{&rtcp.PictureLossIndication{MediaSSRC: uint32(track.SSRC())}})
+				if errSend != nil {
+					fmt.Println(errSend)
+				}
+			}
+		}()
+
+		fmt.Printf("Track has started, of type %d: %s \n", track.PayloadType(), track.Codec().RTPCodecCapability.MimeType)
+		for {
+			// Read RTP packets being sent to Pion
+			rtp, _, readErr := track.ReadRTP()
+			if readErr != nil {
+				if readErr == io.EOF {
+					return
+				}
+				panic(readErr)
+			}
+			switch track.Kind() {
+			case webrtc.RTPCodecTypeAudio:
+				saver.PushOpus(rtp)
+			case webrtc.RTPCodecTypeVideo:
+				saver.PushVP8(rtp)
+			}
+		}
 
 	})
 
@@ -113,7 +150,7 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
 	// Sets the LocalDescription, and starts our UDP listeners
@@ -125,7 +162,7 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 	<-gatherComplete
 
 	answerResponse <- signalEncode(*peerConnection.LocalDescription()) + ";" + signalEncode(candidates)
-	
+
 	// Block forever
 	select {}
 

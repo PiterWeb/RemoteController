@@ -38,6 +38,7 @@ type RawControls struct {
 	ThumbRY      int16
 }
 
+
 func (state State) ToXInput(virtualState *ViGEmState) {
 
 	virtualState.DwPacketNumber = uint32(state.Packet)

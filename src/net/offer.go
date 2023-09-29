@@ -1,14 +1,16 @@
 package net
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/pquerna/ffjson/ffjson"
+
 	"github.com/PiterWeb/RemoteController/src/gamepad"
+	"github.com/PiterWeb/RemoteController/src/net/multimedia"
 	"github.com/pion/webrtc/v3"
 )
 
@@ -27,7 +29,7 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 	}
 
 	// Create a new RTCPeerConnection
-	peerConnection, err := webrtc.NewPeerConnection(config)
+	peerConnection, err := multimedia.InitWebRTCOffer().NewPeerConnection(config)
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +75,7 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 		}
 	})
 
-	// Register channel opening handling
+	// Gamepad update loop
 	dataChannel.OnOpen(func() {
 
 		gamepads := gamepad.All{}
@@ -91,9 +93,9 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 					continue
 				}
 
-				padBytes, _ := json.Marshal(*pad)
+				padRaw, _ := ffjson.Marshal(*pad)
 
-				err := dataChannel.Send(padBytes)
+				err := dataChannel.Send(padRaw)
 
 				if err != nil {
 					panic(err)
@@ -102,11 +104,6 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 			}
 		}
 
-	})
-
-	// Register text message handling
-	dataChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
-		fmt.Printf("Message from DataChannel '%s': '%s'\n", dataChannel.Label(), string(msg.Data))
 	})
 
 	// Create an offer to send to the other process
@@ -125,7 +122,7 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 
 	offerChan <- signalEncode(offer)
 
-	answerResponse := strings.Split(<-answerResponseEncoded,";")
+	answerResponse := strings.Split(<-answerResponseEncoded, ";")
 
 	if len(answerResponse) != 2 {
 		panic("No candidate or answer comming")
@@ -152,6 +149,11 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 			panic(err)
 		}
 	}
+
+	videoM := multimedia.MultimediaVideo{}
+	audioM := multimedia.MultimediaAudio{}
+
+	multimedia.SendVideoAndAudio(peerConnection, videoM, audioM)
 	// Block forever
 	select {}
 }
