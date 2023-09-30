@@ -44,6 +44,26 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 		panic(err)
 	}
 
+	// Set a handler for when a new remote track starts
+	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
+		fmt.Printf("Track has started streamId(%s) id(%s) rid(%s) \n", track.StreamID(), track.ID(), track.RID())
+
+		for {
+			// Read the RTCP packets as they become available for our new remote track
+			rtcpPackets, _, rtcpErr := receiver.ReadRTCP()
+			if rtcpErr != nil {
+				panic(rtcpErr)
+			}
+
+			for _, r := range rtcpPackets {
+				// Print a string description of the packets
+				if stringer, canString := r.(fmt.Stringer); canString {
+					fmt.Printf("Received RTCP Packet: %v", stringer.String())
+				}
+			}
+		}
+	})
+
 	// When an ICE candidate is available send to the other Pion instance
 	// the other Pion instance will add this candidate by calling AddICECandidate
 	peerConnection.OnICECandidate(func(c *webrtc.ICECandidate) {
@@ -57,27 +77,6 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 		desc := peerConnection.RemoteDescription()
 		if desc != nil {
 			candidates = append(candidates, (*c).ToJSON().Candidate)
-		}
-	})
-
-	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
-		fmt.Printf("Track has started, of type %d: %s \n", track.PayloadType(), track.Codec().MimeType)
-		for {
-			// Read RTP packets being sent to Pion
-			rtp, _, readErr := track.ReadRTP()
-			if readErr != nil {
-				panic(readErr)
-			}
-
-			packet := []byte{}
-			err = rtp.Unmarshal(packet)
-
-			if err != nil {
-				panic(err)
-			}
-
-			fmt.Println(packet)
-
 		}
 	})
 

@@ -70,6 +70,9 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 			if _, _, rtcpErr := rtpSender.Read(rtcpBuf); rtcpErr != nil {
 				return
 			}
+
+			fmt.Println("RTCP packet received")
+			fmt.Println(rtcpBuf)
 		}
 	}()
 
