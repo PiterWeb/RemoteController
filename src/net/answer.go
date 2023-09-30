@@ -1,18 +1,15 @@
 package net
 
 import (
+	"errors"
 	"fmt"
 	"io"
-	"os"
+	"net"
 	"sync"
-	"time"
-
-	"github.com/pquerna/ffjson/ffjson"
 
 	"github.com/PiterWeb/RemoteController/src/gamepad"
-	"github.com/PiterWeb/RemoteController/src/net/multimedia"
-	"github.com/pion/rtcp"
 	"github.com/pion/webrtc/v3"
+	"github.com/pquerna/ffjson/ffjson"
 )
 
 func InitAnswer(offerEncoded string, answerResponse chan<- string) {
@@ -29,13 +26,53 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 		},
 	}
 
-	// Create a new RTCPeerConnection
-	webrtcWebm, saver := multimedia.InitWebRTCAnswer()
-
-	peerConnection, err := webrtcWebm.NewPeerConnection(config)
+	peerConnection, err := webrtc.NewAPI().NewPeerConnection(config)
 	if err != nil {
 		panic(err)
 	}
+
+	// Open a UDP Listener for RTP Packets on port 5004
+	listener, err := net.ListenUDP("udp", &net.UDPAddr{IP: net.ParseIP("127.0.0.1"), Port: 5004})
+	if err != nil {
+		panic(err)
+	}
+
+	// Increase the UDP receive buffer size
+	// Default UDP buffer sizes vary on different operating systems
+	bufferSize := 300000 // 300KB
+	err = listener.SetReadBuffer(bufferSize)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err = listener.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	// Create a video track
+	videoTrack, err := webrtc.NewTrackLocalStaticRTP(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeVP8}, "video", "pion")
+	if err != nil {
+		panic(err)
+	}
+	rtpSender, err := peerConnection.AddTrack(videoTrack)
+	if err != nil {
+		panic(err)
+	}
+
+	// Read incoming RTCP packets
+	// Before these packets are returned they are processed by interceptors. For things
+	// like NACK this needs to be called.
+	go func() {
+		rtcpBuf := make([]byte, 1500)
+		for {
+			if _, _, rtcpErr := rtpSender.Read(rtcpBuf); rtcpErr != nil {
+				return
+			}
+		}
+	}()
+
 	defer func() {
 		if err := peerConnection.Close(); err != nil {
 			fmt.Printf("cannot close peerConnection: %v\n", err)
@@ -65,11 +102,9 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
 
 		if s == webrtc.PeerConnectionStateFailed {
-			// Wait until PeerConnection has had no network activity for 30 seconds or another failure. It may be reconnected using an ICE Restart.
-			// Use webrtc.PeerConnectionStateDisconnected if you are interested in detecting faster timeout.
-			// Note that the PeerConnection may come back from PeerConnectionStateDisconnected.
-			fmt.Println("Peer Connection has gone to failed exiting")
-			os.Exit(0)
+			if closeErr := peerConnection.Close(); closeErr != nil {
+				panic(closeErr)
+			}
 		}
 	})
 
@@ -106,38 +141,6 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	})
 
-	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
-
-		go func() {
-			ticker := time.NewTicker(time.Second * 3)
-			for range ticker.C {
-				errSend := peerConnection.WriteRTCP([]rtcp.Packet{&rtcp.PictureLossIndication{MediaSSRC: uint32(track.SSRC())}})
-				if errSend != nil {
-					fmt.Println(errSend)
-				}
-			}
-		}()
-
-		fmt.Printf("Track has started, of type %d: %s \n", track.PayloadType(), track.Codec().RTPCodecCapability.MimeType)
-		for {
-			// Read RTP packets being sent to Pion
-			rtp, _, readErr := track.ReadRTP()
-			if readErr != nil {
-				if readErr == io.EOF {
-					return
-				}
-				panic(readErr)
-			}
-			switch track.Kind() {
-			case webrtc.RTPCodecTypeAudio:
-				saver.PushOpus(rtp)
-			case webrtc.RTPCodecTypeVideo:
-				saver.PushVP8(rtp)
-			}
-		}
-
-	})
-
 	offer := webrtc.SessionDescription{}
 	signalDecode(offerEncoded, &offer)
 
@@ -163,7 +166,24 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	answerResponse <- signalEncode(*peerConnection.LocalDescription()) + ";" + signalEncode(candidates)
 
-	// Block forever
-	select {}
+	inboundRTPPacket := make([]byte, 1600) // UDP MTU
+	for {
+		n, _, err := listener.ReadFrom(inboundRTPPacket)
+		if err != nil {
+			panic(fmt.Sprintf("error during read: %s", err))
+		}
+
+		if _, err = videoTrack.Write(inboundRTPPacket[:n]); err != nil {
+			if errors.Is(err, io.ErrClosedPipe) {
+				// The peerConnection has been closed.
+				return
+			}
+
+			panic(err)
+		}
+	}
+
+	// // Block forever
+	// select {}
 
 }

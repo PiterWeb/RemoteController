@@ -10,7 +10,6 @@ import (
 	"github.com/pquerna/ffjson/ffjson"
 
 	"github.com/PiterWeb/RemoteController/src/gamepad"
-	"github.com/PiterWeb/RemoteController/src/net/multimedia"
 	"github.com/pion/webrtc/v3"
 )
 
@@ -29,7 +28,7 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 	}
 
 	// Create a new RTCPeerConnection
-	peerConnection, err := multimedia.InitWebRTCOffer().NewPeerConnection(config)
+	peerConnection, err := webrtc.NewAPI().NewPeerConnection(config)
 	if err != nil {
 		panic(err)
 	}
@@ -58,6 +57,27 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 		desc := peerConnection.RemoteDescription()
 		if desc != nil {
 			candidates = append(candidates, (*c).ToJSON().Candidate)
+		}
+	})
+
+	peerConnection.OnTrack(func(track *webrtc.TrackRemote, receiver *webrtc.RTPReceiver) {
+		fmt.Printf("Track has started, of type %d: %s \n", track.PayloadType(), track.Codec().MimeType)
+		for {
+			// Read RTP packets being sent to Pion
+			rtp, _, readErr := track.ReadRTP()
+			if readErr != nil {
+				panic(readErr)
+			}
+
+			packet := []byte{}
+			err = rtp.Unmarshal(packet)
+
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Println(packet)
+
 		}
 	})
 
@@ -150,10 +170,6 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 		}
 	}
 
-	videoM := multimedia.MultimediaVideo{}
-	audioM := multimedia.MultimediaAudio{}
-
-	multimedia.SendVideoAndAudio(peerConnection, videoM, audioM)
 	// Block forever
 	select {}
 }

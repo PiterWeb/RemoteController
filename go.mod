@@ -3,17 +3,17 @@ module github.com/PiterWeb/RemoteController
 go 1.21.0
 
 require (
+	github.com/at-wat/ebml-go v0.17.0
 	github.com/pion/webrtc/v3 v3.2.17
 	github.com/rodrigocfd/windigo v0.0.0-20230809154420-8faa606d9f5f
 )
 
 require (
-	github.com/at-wat/ebml-go v0.17.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/pion/datachannel v1.5.5 // indirect
 	github.com/pion/dtls/v2 v2.2.7 // indirect
-	github.com/pion/ice/v2 v2.3.10 // indirect
+	github.com/pion/ice/v2 v2.3.10
 	github.com/pion/interceptor v0.1.17 // indirect
 	github.com/pion/logging v0.2.2 // indirect
 	github.com/pion/mdns v0.0.7 // indirect

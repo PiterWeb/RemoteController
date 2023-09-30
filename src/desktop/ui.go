@@ -39,7 +39,7 @@ func initWindow() *MainWindow {
 				Position(win.POINT{X: 190, Y: 40}).
 				Size(win.SIZE{Cx: 150}),
 		),
-		btnClient: ui.NewButton(wnd,
+		btnHost: ui.NewButton(wnd,
 			ui.ButtonOpts().
 				Text("&Connect to Host").
 				Position(win.POINT{X: 350, Y: 39}).
@@ -56,7 +56,7 @@ func initWindow() *MainWindow {
 				Position(win.POINT{X: 90, Y: 96}).
 				Size(win.SIZE{Cx: 150}),
 		),
-		btnHost: ui.NewButton(wnd,
+		btnClient: ui.NewButton(wnd,
 			ui.ButtonOpts().
 				Text("&Connect to Client").
 				Position(win.POINT{X: 250, Y: 95}).
