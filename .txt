@@ -1,0 +1,12 @@
+//Usar screen capture API
+
+const displayMediaOptions = {
+  video: {
+    displaySurface: "window",
+  },
+  audio: true,
+};
+
+await navigator.mediaDevices.getDisplayMedia(displayMediaOptions)
+
+// Send frames / data throw golang functions
