@@ -1,5 +1,7 @@
 build
+build/bin
 ./*.exe
 ./*.dll
 ViGEmBus_1.21.exe
 src/net/ViGEmClient.dll
+frontend/dist
