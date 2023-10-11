@@ -6,10 +6,24 @@
 	import { page } from '$app/stores';
 
 	import PageTransition from '$lib/PageTransition.svelte';
+	import GamepadSVG from '$lib/assets/gamepad.svg?raw';
+
 </script>
 
-<PageTransition key={$page.url} duration={1000}>
-	<div class="hero min-h-screen bg-base-200">
+<nav class="navbar bg-primary text-primary-content">
+	<div class="flex-1">
+		<h1>
+			<a href="/" class="btn btn-ghost normal-case text-xl items-start content-center">
+				{@html GamepadSVG}
+
+				<div class="hidden md:block">Remote Controller</div>
+			</a>
+		</h1>
+	</div>
+</nav>
+
+<PageTransition key={$page.url} duration={750}>
+	<div class="hero min-h-[calc(100vh-4rem)] bg-base-200">
 		<div class="hero-content flex-col">
 			<slot />
 		</div>
