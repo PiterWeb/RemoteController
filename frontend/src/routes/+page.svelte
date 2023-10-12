@@ -15,7 +15,7 @@
 	<div class="card md:w-96 md:h-52 bg-base-100 shadow-xl">
 		<div class="card-body">
 			<h2 class="card-title">Host</h2>
-			<p>Stream your game to clients</p>
+			<p>Share & stream your game to clients</p>
 			<a href="/mode/host" class="btn btn-primary">Start Host</a>
 		</div>
 	</div>

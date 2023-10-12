@@ -21,15 +21,14 @@ func main() {
 	// Create application with options
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:             "desktop",
+		Title:             "Remote Controller",
 		Width:             1024,
 		Height:            768,
 		DisableResize:     false,
 		Fullscreen:        false,
-		Frameless:         false,
 		StartHidden:       false,
 		HideWindowOnClose: false,
-		BackgroundColour:  &options.RGBA{R: 255, G: 255, B: 255, A: 255},
+		BackgroundColour:  &options.RGBA{R: 75, G: 107, B: 251, A: 255},
 		Assets:            assets,
 		Menu:              nil,
 		Logger:            nil,
@@ -46,7 +45,8 @@ func main() {
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
 			WindowIsTranslucent:  false,
-			DisableWindowIcon:    false,
+			DisableWindowIcon:    true,
+			Theme:                windows.Theme(windows.Acrylic),
 			// DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath: "",
 		},

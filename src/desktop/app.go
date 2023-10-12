@@ -38,13 +38,54 @@ func (a *App) Shutdown(ctx context.Context) {
 }
 
 func (a *App) ConnectToHost(offerEncoded string) string {
-	return connectToHost(offerEncoded)
+
+	var value string
+
+	defer func() {
+
+		if err := recover(); err != nil {
+			value = "ERROR"
+		}
+
+	}()
+
+	value = connectToHost(offerEncoded)
+
+	return value
 }
 
 func (a *App) CreateHost() string {
-	return createHost()
+
+	var value string
+
+	defer func() {
+
+		if err := recover(); err != nil {
+			value = "ERROR"
+		}
+
+	}()
+
+	value = createHost()
+
+	return value
 }
 
-func (a *App) ConnectToClient(response string) {
+func (a *App) ConnectToClient(response string) string {
+
+	var value string
+
+	defer func() {
+
+		if err := recover(); err != nil {
+			value = "ERROR"
+		}
+
+	}()
+
+	value = "OK"
 	connectToClient(response)
+
+	return value
+
 }
