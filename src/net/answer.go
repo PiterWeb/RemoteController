@@ -7,6 +7,9 @@ import (
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/pion/webrtc/v3"
 	"github.com/pquerna/ffjson/ffjson"
+
+	"github.com/PiterWeb/RemoteController/src/customctx"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 func InitAnswer(offerEncoded string, answerResponse chan<- string) {
@@ -33,6 +36,12 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 			fmt.Printf("cannot close peerConnection: %v\n", err)
 		}
 	}()
+
+	// Create a datachannel with label 'controller'
+	streamingChannel, err := peerConnection.CreateDataChannel("streaming", nil)
+	if err != nil {
+		panic(err)
+	}
 
 	peerConnection.OnICECandidate(func(c *webrtc.ICECandidate) {
 
@@ -65,33 +74,43 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	// Register data channel creation handling
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
-		fmt.Printf("New DataChannel %s %d\n", d.Label(), d.ID())
 
-		var virtualDevice gamepad.EmulatedDevice
-		defer gamepad.FreeTargetAndDisconnect(virtualDevice)
+		if d.Label() == "controller" {
 
-		virtualState := new(gamepad.ViGEmState)
+			var virtualDevice gamepad.EmulatedDevice
+			defer gamepad.FreeTargetAndDisconnect(virtualDevice)
 
-		// Create a virtual device
-		d.OnOpen(func() {
+			virtualState := new(gamepad.ViGEmState)
 
-			virtualDevice, err = gamepad.GenerateVirtualDevice()
+			// Create a virtual device
+			d.OnOpen(func() {
 
-			if err != nil {
-				panic(err)
-			}
+				virtualDevice, err = gamepad.GenerateVirtualDevice()
 
-		})
+				if err != nil {
+					panic(err)
+				}
 
-		// Update the virtual device
-		d.OnMessage(func(msg webrtc.DataChannelMessage) {
+			})
 
-			var pad gamepad.State
+			// Update the virtual device
+			d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-			ffjson.Unmarshal(msg.Data, &pad)
+				var pad gamepad.State
 
-			go gamepad.UpdateVirtualDevice(virtualDevice, pad, virtualState)
+				ffjson.Unmarshal(msg.Data, &pad)
 
+				go gamepad.UpdateVirtualDevice(virtualDevice, pad, virtualState)
+
+			})
+		}
+
+	})
+
+	streamingChannel.OnOpen(func() {
+
+		runtime.EventsOn(customctx.DomReadyCtx, "streaming", func(optionalData ...interface{}) {
+			streamingChannel.SendText(optionalData[0].(string))
 		})
 
 	})

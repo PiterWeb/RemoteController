@@ -1,5 +1,5 @@
 <script>
-	import { ConnectToHost } from '$lib/webrtc';
+	import { ConnectToHost } from '$lib/hooks/webrtc';
 
 	import { showToast } from '$lib/hooks/toast';
 

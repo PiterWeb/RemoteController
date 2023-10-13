@@ -3,7 +3,7 @@
 </script>
 
 {#if $toast.show}
-	<div class={`toast toast-end`}>
+	<div class="toast toast-end">
 		<div class={`shadow-lg px-6 py-3 bg-${$toast.type} font-bold`}>
 			<span>{$toast.message}</span>
 		</div>

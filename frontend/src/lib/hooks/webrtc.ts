@@ -2,7 +2,7 @@ import {
 	ConnectToClient as connectToClientFn,
 	ConnectToHost as connectToHostFn,
 	CreateHost as createHostFn
-} from './wailsjs/go/desktop/App';
+} from '$lib/wailsjs/go/desktop/App';
 
 import { showToast } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
@@ -33,6 +33,7 @@ export async function ConnectToHost(host: string) {
 		navigator.clipboard.writeText(clientCode);
 
 		showToast('Client code copied to clipboard', 'success');
+		goto('/mode/client/connection');
 	} catch (e) {
 		showToast('Error connecting to host', 'error');
 	}
@@ -48,7 +49,7 @@ export async function ConnectToClient(client: string) {
 
 		showToast('Connection stablished successfully', 'success');
 
-		goto('/host/connection');
+		goto('/mode/host/connection');
 	} catch (e) {
 		showToast('Error connecting to client', 'error');
 	}

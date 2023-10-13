@@ -2,6 +2,8 @@ package desktop
 
 import (
 	"context"
+
+	"github.com/PiterWeb/RemoteController/src/customctx"
 )
 
 // App struct
@@ -22,7 +24,7 @@ func (a *App) Startup(ctx context.Context) {
 
 // DomReady is called after front-end resources have been loaded
 func (a App) DomReady(ctx context.Context) {
-	// Add your action here
+	customctx.DomReadyCtx = ctx
 }
 
 // BeforeClose is called when the application is about to quit,

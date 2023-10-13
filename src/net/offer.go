@@ -10,6 +10,9 @@ import (
 
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/pion/webrtc/v3"
+
+	"github.com/PiterWeb/RemoteController/src/customctx"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
@@ -37,8 +40,8 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 		}
 	}()
 
-	// Create a datachannel with label 'data'
-	dataChannel, err := peerConnection.CreateDataChannel("data", nil)
+	// Create a datachannel with label 'controller'
+	controllerChannel, err := peerConnection.CreateDataChannel("controller", nil)
 	if err != nil {
 		panic(err)
 	}
@@ -73,8 +76,20 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 		}
 	})
 
+	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
+
+		if d.Label() == "streaming" {
+
+			d.OnMessage(func(msg webrtc.DataChannelMessage) {
+				runtime.EventsEmit(customctx.DomReadyCtx, "streaming", string(msg.Data))
+			})
+
+		}
+
+	})
+
 	// Gamepad update loop
-	dataChannel.OnOpen(func() {
+	controllerChannel.OnOpen(func() {
 
 		gamepads := gamepad.All{}
 
@@ -93,7 +108,7 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 
 				padRaw, _ := ffjson.Marshal(*pad)
 
-				err := dataChannel.Send(padRaw)
+				err := controllerChannel.Send(padRaw)
 
 				if err != nil {
 					panic(err)
