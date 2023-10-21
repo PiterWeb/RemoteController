@@ -1,5 +1,5 @@
 <script>
-	import { ConnectToHost } from '$lib/hooks/webrtc';
+	import { CreateClient, ConnectToHost } from '$lib/hooks/webrtc';
 
 	import { showToast } from '$lib/hooks/toast';
 
@@ -13,6 +13,7 @@
 
 		ConnectToHost(code);
 	}
+
 </script>
 
 <h2 class="text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
@@ -25,6 +26,11 @@
 <div class="mt-12 card bg-base-100 shadow-xl">
 	<div class="card-body">
 		<div class="card-actions gap-4 justify-end items-center flex-col w-full">
+			<div class="divider">First Step</div>
+			<button on:click={CreateClient} class="btn btn-primary">Create Client</button>
+
+			<div class="divider">Second Step</div>
+
 			<div class="join">
 				<input
 					type="text"

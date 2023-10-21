@@ -1,6 +1,7 @@
 package net
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
@@ -8,11 +9,10 @@ import (
 	"github.com/pion/webrtc/v3"
 	"github.com/pquerna/ffjson/ffjson"
 
-	"github.com/PiterWeb/RemoteController/src/customctx"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func InitAnswer(offerEncoded string, answerResponse chan<- string) {
+func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
 
 	var candidatesMux sync.Mutex
 	candidates := []string{}
@@ -109,8 +109,16 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	streamingChannel.OnOpen(func() {
 
-		runtime.EventsOn(customctx.DomReadyCtx, "streaming", func(optionalData ...interface{}) {
-			streamingChannel.SendText(optionalData[0].(string))
+		fmt.Println("Streaming channel openned")
+
+		runtime.EventsOn(ctx, "send-streaming", func(optionalData ...interface{}) {
+			fmt.Println("sending streaming")
+
+			err := streamingChannel.SendText(optionalData[0].(string))
+
+			if err != nil {
+				fmt.Println(err)
+			}
 		})
 
 	})
@@ -140,7 +148,7 @@ func InitAnswer(offerEncoded string, answerResponse chan<- string) {
 
 	answerResponse <- signalEncode(*peerConnection.LocalDescription()) + ";" + signalEncode(candidates)
 
-	// Block forever
-	select {}
+	// Block until cancel by user
+	<-triggerEnd
 
 }

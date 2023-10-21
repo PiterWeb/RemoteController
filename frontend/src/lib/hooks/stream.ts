@@ -16,6 +16,7 @@ export async function startStreaming(audio: boolean) {
 
 		mediaRecorder.ondataavailable = (e) => {
 			if (e.data.size > 0) {
+				console.log(e.data);
 				sendChunk(e.data);
 			}
 		};
@@ -28,44 +29,64 @@ export async function startStreaming(audio: boolean) {
 
 async function sendChunk(chunk: Blob) {
 	// Enviar el chunk a través de la conexión
-	console.log(chunk);
-	EventsEmit('streaming', await chunk.text());
+	// console.log(chunk);
+	EventsEmit('send-streaming', await chunk.text());
 }
 
-export async function consumeStreaming(video: HTMLVideoElement) {
+export function consumeStreaming(video: HTMLVideoElement) {
+	const mediaSource = new MediaSource();
+	const queue: ArrayBuffer[] = [];
+
 	try {
-		const mediaSource = new MediaSource();
-
-		const buffer_queue: ArrayBuffer[] = []
-
 		video.src = URL.createObjectURL(mediaSource);
 
-		mediaSource.addEventListener('sourceopen', () => {
-			video.play()
-			const sourceBuffer = mediaSource.addSourceBuffer(MIME_TYPE);
+		mediaSource.addEventListener(
+			'sourceopen',
+			() => {
+				
 
-			sourceBuffer.addEventListener("update", () => {
-				if (buffer_queue.length > 0 && !sourceBuffer.updating) sourceBuffer.appendBuffer(buffer_queue.shift()!)
-			})
+				const sourceBuffer = mediaSource.addSourceBuffer(MIME_TYPE);
 
-			mediaSource.addEventListener('error', function(e) { console.log('error: ' + mediaSource.readyState); });
+				sourceBuffer.addEventListener('error', (e) => {
+					console.error(e);
+				});
 
-			receiveChunk(async (chunk) => {
-				if (sourceBuffer.updating || buffer_queue.length > 0) buffer_queue.push(await chunk.arrayBuffer())
-				else sourceBuffer.appendBuffer(await chunk.arrayBuffer());
-			});
-		}, false);
+				sourceBuffer.addEventListener('update', () => {
+					if (queue.length > 0 && !sourceBuffer.updating) {
+						sourceBuffer.appendBuffer(queue.shift()!);
+					}
+				});
+
+				receiveChunk(async (buffer) => {
+
+					if (sourceBuffer.updating) {
+						queue.push(buffer);
+						return;
+					}
+
+					sourceBuffer.appendBuffer(buffer);
+
+					if (video.paused) {
+						video.play();
+					}
+				});
+			},
+			false
+		);
+
+		return mediaSource;
 	} catch (e) {
 		showToast('Error consuming streaming', 'error');
+		return null;
 	}
 }
 
-async function receiveChunk(cllbk: (chunk: Blob) => void) {
+function receiveChunk(cllbk: (buff: ArrayBuffer) => void) {
 	// Recibir el chunk a través de la conexión
 
-	EventsOn('streaming', (chunkStr: string) => {
+	EventsOn('receive-streaming', async (chunkStr: string) => {
 		const chunk = new Blob([chunkStr], { type: MIME_TYPE });
 
-		cllbk(chunk);
+		cllbk(await chunk.arrayBuffer());
 	});
 }

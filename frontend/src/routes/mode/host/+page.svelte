@@ -1,13 +1,8 @@
 <script>
-	import { CreateHost, ConnectToClient } from '$lib/hooks/webrtc';
-
+	import { CreateHost } from '$lib/hooks/webrtc';
 	import { showToast } from '$lib/hooks/toast';
 
 	let code = '';
-
-	function handleCreateHost() {
-		CreateHost();
-	}
 
 	function handleConnectToClient() {
 		if (code.length < 1) {
@@ -15,7 +10,7 @@
 			return;
 		}
 
-		ConnectToClient(code);
+		CreateHost(code);
 	}
 </script>
 
@@ -29,11 +24,6 @@
 <div class="mt-12 card bg-base-100 shadow-xl">
 	<div class="card-body">
 		<div class="card-actions gap-4 justify-end items-center flex-col w-full">
-			<div class="divider">First Step</div>
-			<button on:click={handleCreateHost} class="btn btn-primary">Create Host</button>
-
-			<div class="divider">Second Step</div>
-
 			<div class="join">
 				<input
 					type="text"

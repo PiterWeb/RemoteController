@@ -9,4 +9,6 @@
 	});
 </script>
 
-<video bind:this={videoElement} />
+<video controls controlslist="nodownload" bind:this={videoElement}>
+	<track kind="captions" />
+</video>

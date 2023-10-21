@@ -1,6 +1,7 @@
 package net
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -11,11 +12,10 @@ import (
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/pion/webrtc/v3"
 
-	"github.com/PiterWeb/RemoteController/src/customctx"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
+func InitClient(ctx context.Context, offerChan chan<- string, answerResponseEncoded <-chan string, triggerEnd <-chan struct{}) {
 
 	var candidatesMux sync.Mutex
 	candidates := make([]string, 0)
@@ -65,6 +65,11 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 	// Set the handler for Peer connection state
 	// This will notify you when the peer has connected/disconnected
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
+
+		defer func() {
+
+		}()
+
 		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
 
 		if s == webrtc.PeerConnectionStateFailed {
@@ -78,10 +83,17 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 
+		fmt.Println(d.Label())
+
 		if d.Label() == "streaming" {
 
+			d.OnOpen(func() {
+				fmt.Println("Streaming Started: client")
+			})
+
 			d.OnMessage(func(msg webrtc.DataChannelMessage) {
-				runtime.EventsEmit(customctx.DomReadyCtx, "streaming", string(msg.Data))
+				fmt.Println("Packet Emited to Frontend")
+				runtime.EventsEmit(ctx, "receive-streaming", string(msg.Data))
 			})
 
 		}
@@ -93,9 +105,13 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 
 		gamepads := gamepad.All{}
 
-		if err != nil {
-			panic(err)
-		}
+		defer func() {
+
+			if err := recover(); err != nil {
+				fmt.Println(err)
+			}
+
+		}()
 
 		for range time.NewTicker(1 * time.Millisecond).C {
 			gamepads.Update()
@@ -163,6 +179,6 @@ func InitOffer(offerChan chan<- string, answerResponseEncoded <-chan string) {
 		}
 	}
 
-	// Block forever
-	select {}
+	// Block until cancel by user
+	<-triggerEnd
 }

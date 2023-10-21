@@ -2,9 +2,10 @@ package desktop
 
 import (
 	"context"
-
-	"github.com/PiterWeb/RemoteController/src/customctx"
 )
+
+var triggerEnd chan struct{} = make(chan struct{})
+var processActive bool = false
 
 // App struct
 type App struct {
@@ -22,11 +23,6 @@ func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// DomReady is called after front-end resources have been loaded
-func (a App) DomReady(ctx context.Context) {
-	customctx.DomReadyCtx = ctx
-}
-
 // BeforeClose is called when the application is about to quit,
 // either by clicking the window close button or calling runtime.Quit.
 // Returning true will cause the application to continue, false will continue shutdown as normal.
@@ -39,7 +35,13 @@ func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
 }
 
-func (a *App) ConnectToHost(offerEncoded string) string {
+func (a *App) CreateClient() string {
+
+	if processActive {
+		triggerEnd <- struct{}{}
+	}
+
+	processActive = true
 
 	var value string
 
@@ -47,16 +49,23 @@ func (a *App) ConnectToHost(offerEncoded string) string {
 
 		if err := recover(); err != nil {
 			value = "ERROR"
+			processActive = false
 		}
 
 	}()
 
-	value = connectToHost(offerEncoded)
+	value = createClient(a.ctx, triggerEnd)
 
 	return value
 }
 
-func (a *App) CreateHost() string {
+func (a *App) CreateHost(offerEncoded string) string {
+
+	if processActive {
+		triggerEnd <- struct{}{}
+	}
+
+	processActive = true
 
 	var value string
 
@@ -64,16 +73,17 @@ func (a *App) CreateHost() string {
 
 		if err := recover(); err != nil {
 			value = "ERROR"
+			processActive = false
 		}
 
 	}()
 
-	value = createHost()
+	value = createHost(a.ctx, offerEncoded, triggerEnd)
 
 	return value
 }
 
-func (a *App) ConnectToClient(response string) string {
+func (a *App) ConnectToHost(response string) string {
 
 	var value string
 
@@ -81,13 +91,28 @@ func (a *App) ConnectToClient(response string) string {
 
 		if err := recover(); err != nil {
 			value = "ERROR"
+			processActive = false
 		}
 
 	}()
 
 	value = "OK"
-	connectToClient(response)
+	connectToHost(response)
 
 	return value
+
+}
+
+func (a *App) CloseConnection() bool {
+
+	if processActive {
+		triggerEnd <- struct{}{}
+	} else {
+		return false
+	}
+
+	processActive = false
+
+	return true
 
 }
