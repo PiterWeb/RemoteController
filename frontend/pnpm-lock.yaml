@@ -8,6 +8,9 @@ dependencies:
   '@sveltejs/adapter-static':
     specifier: ^2.0.3
     version: 2.0.3(@sveltejs/kit@1.20.4)
+  pako:
+    specifier: ^2.1.0
+    version: 2.1.0
 
 devDependencies:
   '@sveltejs/adapter-auto':
@@ -16,6 +19,9 @@ devDependencies:
   '@sveltejs/kit':
     specifier: ^1.20.4
     version: 1.20.4(svelte@4.0.5)(vite@4.4.2)
+  '@types/pako':
+    specifier: ^2.0.2
+    version: 2.0.2
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.0.0
     version: 6.0.0(@typescript-eslint/parser@6.0.0)(eslint@8.28.0)(typescript@5.0.2)
@@ -446,6 +452,10 @@ packages:
 
   /@types/json-schema@7.0.13:
     resolution: {integrity: sha512-RbSSoHliUbnXj3ny0CNFOoxrIDV6SUGyStHsvDqosw6CkdPV8TtWGlfecuK4ToyMEAql6pzNxgCFKanovUzlgQ==}
+    dev: true
+
+  /@types/pako@2.0.2:
+    resolution: {integrity: sha512-AtTbzIwhvLMTEUPudP3hxUwNK50DoX3amfVJmmL7WQH5iF3Kfqs8pG1tStsewHqmh75ULmjjldKn/B70D6DNcQ==}
     dev: true
 
   /@types/pug@2.0.7:
@@ -1560,6 +1570,10 @@ packages:
     dependencies:
       p-limit: 3.1.0
     dev: true
+
+  /pako@2.1.0:
+    resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
+    dev: false
 
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}

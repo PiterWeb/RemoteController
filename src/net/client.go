@@ -71,7 +71,7 @@ func InitClient(ctx context.Context, offerChan chan<- string, answerResponseEnco
 
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 
-		fmt.Println(d.Label())
+		// fmt.Println(d.Label())
 
 		if d.Label() == "streaming" {
 

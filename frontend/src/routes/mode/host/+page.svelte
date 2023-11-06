@@ -1,5 +1,5 @@
 <script>
-	import { CreateHost } from '$lib/hooks/webrtc';
+	import { CreateHost } from '$lib/hooks/host_webrtc';
 	import { showToast, ToastType } from '$lib/hooks/toast';
 
 	let code = '';

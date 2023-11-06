@@ -1,6 +1,5 @@
 import { showToast, ToastType } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
-// import { gzip, ungzip } from 'pako';
 
 enum DataChannelLabel {
 	Streaming = 'streaming',
@@ -33,7 +32,31 @@ export function ClientWebrtc() {
 	};
 }
 
-async function CreateClientWeb(streamingPipe: (data: unknown) => void) {
+function handleStreamingChannel(streamingChannel:RTCDataChannel,streamingPipe: (data: string) => void) {
+	streamingChannel.onmessage = (event) => {
+		// pipe the data to the media source
+
+		const data = event.data as ArrayBuffer;
+
+		const dec = new TextDecoder();
+
+		streamingPipe(dec.decode(data));
+	};
+
+	streamingChannel.onopen = () => {
+		console.log('data channel opened');
+	};
+
+	streamingChannel.onclose = () => {
+		console.log('data channel closed');
+	};
+
+	streamingChannel.onerror = () => {
+		showToast('Error during streaming', ToastType.ERROR);
+	};
+}
+
+async function CreateClientWeb(streamingPipe: (data: string) => void) {
 	// create a new webrtc peer
 	initPeerConnection();
 
@@ -42,28 +65,19 @@ async function CreateClientWeb(streamingPipe: (data: unknown) => void) {
 		return;
 	}
 
+
 	peerConnection.ondatachannel = (event) => {
 		const dataChannel = event.channel;
 
-		if (dataChannel.label !== DataChannelLabel.Streaming) return;
+		console.log(dataChannel.label);
 
-		dataChannel.onmessage = (event) => {
-			console.log(event.data);
-			// pipe the data to the media source
-			streamingPipe(event.data);
-		};
-
-		dataChannel.onopen = () => {
-			console.log('data channel opened');
-		};
-
-		dataChannel.onclose = () => {
-			console.log('data channel closed');
-		};
-
-		dataChannel.onerror = () => {
-			showToast('Error during streaming', ToastType.ERROR);
-		};
+		switch (dataChannel.label) {
+			case DataChannelLabel.Streaming:
+				handleStreamingChannel(dataChannel,streamingPipe)
+				break;
+			default:
+				break;
+		}
 	};
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
@@ -131,9 +145,7 @@ function ConnectToHostWeb(hostCode: string) {
 	}
 }
 
-
 function signalEncode<T>(signal: T) {
-
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	//@ts-ignore
 	return window.signalEncode(JSON.stringify(signal));

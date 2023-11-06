@@ -2,6 +2,7 @@ package net
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"sync"
 
@@ -111,15 +112,19 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 
 		fmt.Println("Streaming channel openned")
 
-		runtime.EventsOn(ctx, "send-streaming", func(optionalData ...interface{}) {
-			fmt.Println("sending streaming")
-			fmt.Println(len(optionalData), "Length of packet")
-			fmt.Println(optionalData[0])
-			// err := streamingChannel.Send(optionalData[0].([]byte))
+		runtime.EventsOn(ctx, "send-streaming", func(streamPartString ...interface{}) {
 
-			// if err != nil {
-			// 	fmt.Println(err)
-			// }
+			rawStreamPart, err := json.Marshal(streamPartString[0].(string))
+
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			err = streamingChannel.Send(rawStreamPart)
+
+			if err != nil {
+				fmt.Println(err)
+			}
 		})
 
 	})
