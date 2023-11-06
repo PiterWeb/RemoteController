@@ -1,36 +1,46 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 
 interface Toast {
-    show: boolean;
-    message: string;
-    type: 'info' | 'success' | 'error';
+	show: boolean;
+	message: string;
+	type: ToastType;
+}
+
+export enum ToastType {
+	INFO = 'info',
+	SUCCESS = 'success',
+	ERROR = 'error'
 }
 
 const toastWritable = writable<Toast>({
-  show: false,
-  message: "",
-  type: "success",
+	show: false,
+	message: '',
+	type: ToastType.SUCCESS
 });
 
-export function showToast(message: string, type: Toast["type"]) {
-  toastWritable.set({
-    show: true,
-    message,
-    type,
-  });
+let timer: number | undefined;
 
-  setTimeout(() => {
-    hideToast();
-  }, 2000);
+export function showToast(message: string, type: Toast['type']) {
+	toastWritable.set({
+		show: true,
+		message,
+		type,
+	});
+
+	if (timer) clearTimeout(timer);
+
+	timer = setTimeout(() => {
+		hideToast();
+		timer = undefined;
+	}, 2000);
 }
 
 export function hideToast() {
-  toastWritable.set({
-    show: false,
-    message: "",
-    type: "success",
-  });
+	toastWritable.set({
+		show: false,
+		message: '',
+		type: ToastType.SUCCESS
+	});
 }
-
 
 export default toastWritable;

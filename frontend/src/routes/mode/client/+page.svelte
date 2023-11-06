@@ -1,17 +1,25 @@
 <script>
-	import { CreateClient, ConnectToHost } from '$lib/hooks/webrtc';
+	import { ClientWebrtc } from '$lib/hooks/client_webrtc';
 
-	import { showToast } from '$lib/hooks/toast';
+	import { showToast, ToastType } from '$lib/hooks/toast';
 
 	let code = '';
 
+	const {CreateClientWeb, ConnectToHostWeb} = ClientWebrtc();
+
 	function handleConnectToHost() {
 		if (code.length < 1) {
-			showToast('Code is empty', 'error');
+			showToast('Code is empty', ToastType.ERROR);
 			return;
 		}
 
-		ConnectToHost(code);
+		ConnectToHostWeb(code);
+	}
+
+	function handleCreateClient() {
+		CreateClientWeb((data) => {
+			console.log(data);
+		});
 	}
 
 </script>
@@ -27,7 +35,7 @@
 	<div class="card-body">
 		<div class="card-actions gap-4 justify-end items-center flex-col w-full">
 			<div class="divider">First Step</div>
-			<button on:click={CreateClient} class="btn btn-primary">Create Client</button>
+			<button on:click={handleCreateClient} class="btn btn-primary">Create Client</button>
 
 			<div class="divider">Second Step</div>
 

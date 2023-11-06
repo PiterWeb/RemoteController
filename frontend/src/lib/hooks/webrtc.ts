@@ -5,8 +5,9 @@ import {
 	CloseConnection as closeConnectionFn
 } from '$lib/wailsjs/go/desktop/App';
 
-import { showToast } from '$lib/hooks/toast';
+import { showToast, ToastType } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
+
 
 export async function CreateHost(client: string) {
 	try {
@@ -17,10 +18,10 @@ export async function CreateHost(client: string) {
 		}
 
 		navigator.clipboard.writeText(hostCode);
-		showToast('Host code copied to clipboard', 'success');
+		showToast('Host code copied to clipboard', ToastType.SUCCESS);
 		goto('/mode/host/connection');
 	} catch (e) {
-		showToast('Error creating host', 'error');
+		showToast('Error creating host', ToastType.ERROR);
 	}
 }
 
@@ -34,10 +35,10 @@ export async function CreateClient() {
 
 		navigator.clipboard.writeText(clientCode);
 
-		showToast('Client code copied to clipboard', 'success');
+		showToast('Client code copied to clipboard', ToastType.SUCCESS);
 	} catch (e) {
 		console.error(e);
-		showToast('Error connecting to host', 'error');
+		showToast('Error connecting to host', ToastType.ERROR);
 	}
 }
 
@@ -49,10 +50,10 @@ export async function ConnectToHost(client: string) {
 			throw new Error(response);
 		}
 
-		showToast('Connection stablished successfully', 'success');
+		showToast('Connection stablished successfully', ToastType.SUCCESS);
 		goto('/mode/client/connection');
 	} catch (e) {
-		showToast('Error connecting to client', 'error');
+		showToast('Error connecting to client', ToastType.ERROR);
 	}
 }
 
@@ -64,3 +65,5 @@ export function CancelConnection(fn?: () => void) {
 	if (fn) fn();
 	closeConnectionFn();
 }
+
+

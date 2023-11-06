@@ -2,13 +2,11 @@
 	import { consumeStreaming } from '$lib/hooks/stream';
 	import { onMount } from 'svelte';
 
-	let videoElement: HTMLVideoElement;
-
 	onMount(() => {
-		consumeStreaming(videoElement);
+		consumeStreaming();
 	});
 </script>
 
-<video controls controlslist="nodownload" bind:this={videoElement}>
+<video id="stream-video" controls controlslist="nodownload">
 	<track kind="captions" />
 </video>

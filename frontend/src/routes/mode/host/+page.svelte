@@ -1,12 +1,12 @@
 <script>
 	import { CreateHost } from '$lib/hooks/webrtc';
-	import { showToast } from '$lib/hooks/toast';
+	import { showToast, ToastType } from '$lib/hooks/toast';
 
 	let code = '';
 
 	function handleConnectToClient() {
 		if (code.length < 1) {
-			showToast('Code is empty', 'error');
+			showToast('Code is empty', ToastType.ERROR);
 			return;
 		}
 

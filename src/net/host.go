@@ -113,12 +113,13 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 
 		runtime.EventsOn(ctx, "send-streaming", func(optionalData ...interface{}) {
 			fmt.Println("sending streaming")
+			fmt.Println(len(optionalData), "Length of packet")
+			fmt.Println(optionalData[0])
+			// err := streamingChannel.Send(optionalData[0].([]byte))
 
-			err := streamingChannel.SendText(optionalData[0].(string))
-
-			if err != nil {
-				fmt.Println(err)
-			}
+			// if err != nil {
+			// 	fmt.Println(err)
+			// }
 		})
 
 	})

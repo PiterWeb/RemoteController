@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/pquerna/ffjson/ffjson"
@@ -16,9 +15,6 @@ import (
 )
 
 func InitClient(ctx context.Context, offerChan chan<- string, answerResponseEncoded <-chan string, triggerEnd <-chan struct{}) {
-
-	var candidatesMux sync.Mutex
-	candidates := make([]string, 0)
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -51,14 +47,6 @@ func InitClient(ctx context.Context, offerChan chan<- string, answerResponseEnco
 	peerConnection.OnICECandidate(func(c *webrtc.ICECandidate) {
 		if c == nil {
 			return
-		}
-
-		candidatesMux.Lock()
-		defer candidatesMux.Unlock()
-
-		desc := peerConnection.RemoteDescription()
-		if desc != nil {
-			candidates = append(candidates, (*c).ToJSON().Candidate)
 		}
 	})
 
@@ -93,7 +81,7 @@ func InitClient(ctx context.Context, offerChan chan<- string, answerResponseEnco
 
 			d.OnMessage(func(msg webrtc.DataChannelMessage) {
 				fmt.Println("Packet Emited to Frontend")
-				runtime.EventsEmit(ctx, "receive-streaming", string(msg.Data))
+				runtime.EventsEmit(ctx, "receive-streaming", msg.Data)
 			})
 
 		}
