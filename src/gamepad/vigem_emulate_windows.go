@@ -6,8 +6,6 @@ import (
 	"unsafe"
 )
 
-
-
 type clientVirtualGamepad uintptr
 
 type EmulatedDevice struct {
@@ -44,9 +42,12 @@ func initializeEmulatedDevice() (clientVirtualGamepad, error) {
 	return clientVirtualGamepad(client), nil
 }
 
-func UpdateVirtualDevice(device EmulatedDevice, realState State, virtualState *ViGEmState) {
+func UpdateVirtualDevice(device EmulatedDevice, rg receivedGamepad, virtualState *ViGEmState) {
 
 	// Get Real Input and convert to Virtual
+
+	realState := receivedGamepadToXInput(rg)
+
 	realState.ToXInput(virtualState)
 
 	// Update the virtual gamepad

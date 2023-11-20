@@ -1,5 +1,6 @@
 import { showToast, ToastType } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
+import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 
 enum DataChannelLabel {
 	Streaming = 'streaming',
@@ -32,31 +33,7 @@ export function ClientWebrtc() {
 	};
 }
 
-function handleStreamingChannel(streamingChannel:RTCDataChannel,streamingPipe: (data: string) => void) {
-	streamingChannel.onmessage = (event) => {
-		// pipe the data to the media source
-
-		const data = event.data as ArrayBuffer;
-
-		const dec = new TextDecoder();
-
-		streamingPipe(dec.decode(data));
-	};
-
-	streamingChannel.onopen = () => {
-		console.log('data channel opened');
-	};
-
-	streamingChannel.onclose = () => {
-		console.log('data channel closed');
-	};
-
-	streamingChannel.onerror = () => {
-		showToast('Error during streaming', ToastType.ERROR);
-	};
-}
-
-async function CreateClientWeb(streamingPipe: (data: string) => void) {
+async function CreateClientWeb() {
 	// create a new webrtc peer
 	initPeerConnection();
 
@@ -65,35 +42,43 @@ async function CreateClientWeb(streamingPipe: (data: string) => void) {
 		return;
 	}
 
-
-	peerConnection.ondatachannel = (event) => {
-		const dataChannel = event.channel;
-
-		console.log(dataChannel.label);
-
-		switch (dataChannel.label) {
-			case DataChannelLabel.Streaming:
-				handleStreamingChannel(dataChannel,streamingPipe)
-				break;
-			default:
-				break;
-		}
+	peerConnection.ontrack = (event) => {
+		event.streams[0].getTracks().forEach((track) => {
+			console.log(track);
+		});
 	};
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 
 	controllerChannel.onopen = () => {
-		const gamepads = navigator.getGamepads();
+		// Function to send gamepad data through the RTCPeerConnection
 
-		const numberOfGamepads = gamepads.length;
+		const sendGamepadData = () => {
+			const gamepadData = navigator.getGamepads();
 
-		if (numberOfGamepads == 0) return;
+			gamepadData.forEach((gamepad) => {
+				if (!gamepad) return;
 
-		// const gamepadsWorker = new Worker('$lib/workers/gamepads.ts');
+				const serializedData = JSON.stringify(cloneGamepad(gamepad)); // Example: Convert to JSON
+				console.log(serializedData);
+				controllerChannel.send(serializedData);
+			});
 
-		// gamepadsWorker.onmessage = (event) => {
-		// 	controllerChannel.send(JSON.stringify(event.data));
-		// };
+			if (gamepadData) {
+				// Convert the data to a string or ArrayBuffer as needed
+			}
+		};
+
+		// Game loop using requestAnimationFrame
+		const gameLoop = () => {
+			sendGamepadData(); // Send gamepad data
+
+			// Continue the loop
+			requestAnimationFrame(gameLoop);
+		};
+
+		// Start the game loop
+		gameLoop();
 	};
 
 	try {
@@ -123,8 +108,6 @@ function ConnectToHostWeb(hostCode: string) {
 		if (answerResponse.length !== 2) {
 			throw new Error('Invalid answer response');
 		}
-
-		console.log(remoteCandidates);
 
 		peerConnection.setRemoteDescription(answer);
 		showToast('Connection stablished successfully', ToastType.SUCCESS);

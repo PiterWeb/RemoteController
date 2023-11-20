@@ -8,7 +8,7 @@ import (
 
 type ID byte
 
-type All [ControllerCount]State
+type All [ControllerCount]XInputState
 
 func (all *All) Update() (firsterr error) {
 	for i := range all {
@@ -21,7 +21,7 @@ func (all *All) Update() (firsterr error) {
 	return
 }
 
-type State struct {
+type XInputState struct {
 	ID        ID
 	Connected bool
 	Packet    uint32
@@ -38,20 +38,19 @@ type RawControls struct {
 	ThumbRY      int16
 }
 
-
-func (state State) ToXInput(virtualState *ViGEmState) {
+func (state XInputState) ToXInput(virtualState *ViGEmState) {
 
 	virtualState.DwPacketNumber = uint32(state.Packet)
 	virtualState.Gamepad.UpdateFromRawState(state.Raw)
 }
 
-func (state *State) Pressed(button Button) bool { return state.Raw.Buttons&button != 0 }
+func (state *XInputState) Pressed(button Button) bool { return state.Raw.Buttons&button != 0 }
 
-func (state *State) Update() error { return Get(state.ID, state) }
+func (state *XInputState) Update() error { return Get(state.ID, state) }
 
 type Thumb struct{ X, Y, Magnitude float32 }
 
-func (state *State) RectDPad() (thumb Thumb) {
+func (state *XInputState) RectDPad() (thumb Thumb) {
 	if state.Pressed(DPadUp) {
 		thumb.Y += 1
 	}
@@ -70,7 +69,7 @@ func (state *State) RectDPad() (thumb Thumb) {
 	return
 }
 
-func (state *State) RoundDPad() (thumb Thumb) {
+func (state *XInputState) RoundDPad() (thumb Thumb) {
 	thumb = state.RectDPad()
 	if thumb.X != 0 && thumb.Y != 0 {
 		thumb.X *= isqrt2
@@ -102,11 +101,11 @@ func round16(rx, ry, deadzone int16) (thumb Thumb) {
 	return
 }
 
-func (state *State) RoundLeft() Thumb {
+func (state *XInputState) RoundLeft() Thumb {
 	return round16(state.Raw.ThumbLX, state.Raw.ThumbLY, LeftThumbDeadZone)
 }
 
-func (state *State) RoundRight() Thumb {
+func (state *XInputState) RoundRight() Thumb {
 	return round16(state.Raw.ThumbRX, state.Raw.ThumbRY, RightThumbDeadZone)
 }
 
@@ -129,15 +128,15 @@ func rect16(rx, ry, deadzone int16) (thumb Thumb) {
 	return
 }
 
-func (state *State) RectLeft() Thumb {
+func (state *XInputState) RectLeft() Thumb {
 	return rect16(state.Raw.ThumbLX, state.Raw.ThumbLY, LeftThumbDeadZone)
 }
 
-func (state *State) RectRight() Thumb {
+func (state *XInputState) RectRight() Thumb {
 	return rect16(state.Raw.ThumbRX, state.Raw.ThumbRY, RightThumbDeadZone)
 }
 
-func (state *State) Vibrate(left, right uint16) {
+func (state *XInputState) Vibrate(left, right uint16) {
 	if !state.Connected {
 		return
 	}
@@ -183,7 +182,7 @@ const (
 )
 
 // Get retrieves the latest state of the controller.
-func Get(id ID, state *State) error {
+func Get(id ID, state *XInputState) error {
 	r, _, _ := procGetState.Call(uintptr(id), uintptr(unsafe.Pointer(&state.Packet)))
 	state.ID = id
 	state.Connected = r == 0

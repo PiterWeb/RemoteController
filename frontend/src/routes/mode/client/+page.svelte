@@ -1,6 +1,5 @@
 <script>
-	import { ClientWebrtc } from '$lib/hooks/client_webrtc';
-	import { receiveStreamChunk } from '$lib/hooks/client_stream';
+	import { ClientWebrtc } from '$lib/webrtc/client_webrtc_hook';
 
 	import { showToast, ToastType } from '$lib/hooks/toast';
 
@@ -18,7 +17,7 @@
 	}
 
 	function handleCreateClient() {
-		CreateClientWeb((data) => receiveStreamChunk(data));
+		CreateClientWeb();
 	}
 
 </script>

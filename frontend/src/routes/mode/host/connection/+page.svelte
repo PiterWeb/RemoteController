@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { startStreaming } from '$lib/hooks/host_stream';
+	import { startStreaming } from '$lib/stream/host_stream_hook';
 
 	interface User {
 		name: string;

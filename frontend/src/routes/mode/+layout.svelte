@@ -1,7 +1,7 @@
 <script>
 	import BackwardButton from '$lib/components/BackwardButton.svelte';
 
-	import { CancelConnection } from '$lib/hooks/host_webrtc';
+	import { CancelConnection } from '$lib/webrtc/host_webrtc_hook';
 
 	function handleGoBack() {
 		CancelConnection();
