@@ -34,7 +34,6 @@ export function ClientWebrtc() {
 }
 
 async function CreateClientWeb() {
-	// create a new webrtc peer
 	initPeerConnection();
 
 	if (!peerConnection) {
@@ -51,7 +50,6 @@ async function CreateClientWeb() {
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 
 	controllerChannel.onopen = () => {
-		// Function to send gamepad data through the RTCPeerConnection
 
 		const sendGamepadData = () => {
 			const gamepadData = navigator.getGamepads();
@@ -59,19 +57,14 @@ async function CreateClientWeb() {
 			gamepadData.forEach((gamepad) => {
 				if (!gamepad) return;
 
-				const serializedData = JSON.stringify(cloneGamepad(gamepad)); // Example: Convert to JSON
-				console.log(serializedData);
+				const serializedData = JSON.stringify(cloneGamepad(gamepad));
 				controllerChannel.send(serializedData);
 			});
-
-			if (gamepadData) {
-				// Convert the data to a string or ArrayBuffer as needed
-			}
 		};
 
 		// Game loop using requestAnimationFrame
 		const gameLoop = () => {
-			sendGamepadData(); // Send gamepad data
+			sendGamepadData();
 
 			// Continue the loop
 			requestAnimationFrame(gameLoop);
@@ -128,12 +121,14 @@ function ConnectToHostWeb(hostCode: string) {
 	}
 }
 
+// Function WASM (GOLANG)
 function signalEncode<T>(signal: T) {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	//@ts-ignore
 	return window.signalEncode(JSON.stringify(signal));
 }
 
+// Function WASM (GOLANG)
 function signalDecode<T>(signal: string) {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	//@ts-ignore

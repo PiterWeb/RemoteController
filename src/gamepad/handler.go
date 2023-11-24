@@ -1,8 +1,8 @@
 package gamepad
 
-type receivedGamepad struct {
-	Axes      []float64
-	Buttons   []gamepadButton
+type GamepadAPIState struct {
+	Axes      [4]float64
+	Buttons   [16]gamepadButton
 	Connected bool
 	ID        string
 	Index     int

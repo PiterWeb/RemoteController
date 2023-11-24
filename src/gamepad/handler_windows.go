@@ -1,9 +1,35 @@
 package gamepad
 
 import (
+	// "time"
+	"log"
+	"time"
+
 	"github.com/pion/webrtc/v3"
 	"github.com/pquerna/ffjson/ffjson"
 )
+
+var (
+	prevThumbLY float64
+	prevThumbRY float64
+)
+
+var buttonValueToHexMap = map[int]uint16{
+	0:  0x1000,
+	1:  0x2000,
+	2:  0x4000,
+	3:  0x8000,
+	4:  0x0100,
+	5:  0x0200,
+	8:  0x0020,
+	9:  0x0010,
+	10: 0x0040,
+	11: 0x0080,
+	12: 0x0001,
+	13: 0x0002,
+	14: 0x0004,
+	15: 0x0008,
+}
 
 func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
@@ -31,7 +57,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-		var pad receivedGamepad
+		var pad GamepadAPIState
 
 		ffjson.Unmarshal(msg.Data, &pad)
 
@@ -41,51 +67,50 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 }
 
-func receivedGamepadToXInput(rp receivedGamepad) XInputState {
+func gamepadAPIToXInput(gms GamepadAPIState) XInputState {
 
-	if len(rp.Axes) != 6 {
-		return XInputState{
-			ID:        ID(rp.Index), // You may need to adjust this based on your requirements
-			Connected: rp.Connected,
-			Packet:    uint32(rp.Index), // You may need to set a proper value for Packet
-			Raw: RawControls{
-				Buttons:      convertGamepadButtons(rp.Buttons),
-				LeftTrigger:  convertFloatToUint8(0),
-				RightTrigger: convertFloatToUint8(0),
-				ThumbLX:      convertFloatToInt16(0),
-				ThumbLY:      convertFloatToInt16(0),
-				ThumbRX:      convertFloatToInt16(0),
-				ThumbRY:      convertFloatToInt16(0),
-			},
-		}
-	}
+	tNow := time.Now()
 
-	xinputState := XInputState{
-		ID:        ID(rp.Index), // You may need to adjust this based on your requirements
-		Connected: rp.Connected,
-		Packet:    0, // You may need to set a proper value for Packet
+	log.Println(gms.Axes[1])
+
+	return XInputState{
+		ID:        ID(gms.Index), // You may need to adjust this based on your requirements
+		Connected: gms.Connected,
+		Packet:    uint32(tNow.Nanosecond()), // You may need to set a proper value for Packet
 		Raw: RawControls{
-			Buttons:      convertGamepadButtons(rp.Buttons),
-			LeftTrigger:  convertFloatToUint8(rp.Axes[4]),
-			RightTrigger: convertFloatToUint8(rp.Axes[5]),
-			ThumbLX:      convertFloatToInt16(rp.Axes[0]),
-			ThumbLY:      convertFloatToInt16(rp.Axes[1]),
-			ThumbRX:      convertFloatToInt16(rp.Axes[2]),
-			ThumbRY:      convertFloatToInt16(rp.Axes[3]),
+			Buttons:      convertGamepadButtons(gms.Buttons),
+			LeftTrigger:  convertFloatToUint8(gms.Buttons[6].Value),
+			RightTrigger: convertFloatToUint8(gms.Buttons[7].Value),
+			ThumbLX:      convertFloatToInt16(gms.Axes[0]),
+			ThumbLY:      convertFloatToInt16(applyFilterLY(gms.Axes[1])),
+			ThumbRX:      convertFloatToInt16(gms.Axes[2]),
+			ThumbRY:      convertFloatToInt16(applyFilterRY(gms.Axes[3])),
 		},
 	}
-	return xinputState
 
 }
 
-func convertGamepadButtons(buttons []gamepadButton) Button {
+func convertGamepadButtons(buttons [16]gamepadButton) Button {
 	var result Button
+
 	for i, button := range buttons {
 		if button.Pressed {
-			result |= 1 << i
+			result += Button(buttonValueToHexMap[i])
 		}
 	}
 	return result
+}
+
+func applyFilterLY(value float64) float64 {
+
+	return value
+
+}
+
+func applyFilterRY(value float64) float64 {
+
+	return value
+
 }
 
 func convertFloatToUint8(value float64) uint8 {
@@ -93,5 +118,5 @@ func convertFloatToUint8(value float64) uint8 {
 }
 
 func convertFloatToInt16(value float64) int16 {
-	return int16(value * 32767)
+	return int16(value * 32767.0)
 }

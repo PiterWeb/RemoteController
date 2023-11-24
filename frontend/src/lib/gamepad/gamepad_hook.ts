@@ -11,7 +11,9 @@ type GamepadButton = {
 	value: number;
 };
 
+
 export function cloneGamepad(gamepad: Gamepad): ClonedGamepad {
+
 	return {
 		axes: [...gamepad.axes],
 		buttons: gamepad.buttons.map((button) => {

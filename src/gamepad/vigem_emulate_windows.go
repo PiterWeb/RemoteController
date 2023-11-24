@@ -42,11 +42,11 @@ func initializeEmulatedDevice() (clientVirtualGamepad, error) {
 	return clientVirtualGamepad(client), nil
 }
 
-func UpdateVirtualDevice(device EmulatedDevice, rg receivedGamepad, virtualState *ViGEmState) {
+func UpdateVirtualDevice(device EmulatedDevice, rg GamepadAPIState, virtualState *ViGEmState) {
 
 	// Get Real Input and convert to Virtual
 
-	realState := receivedGamepadToXInput(rg)
+	realState := gamepadAPIToXInput(rg)
 
 	realState.ToXInput(virtualState)
 
