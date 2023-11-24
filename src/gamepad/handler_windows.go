@@ -1,12 +1,15 @@
 package gamepad
 
 import (
-	// "time"
-	"log"
+	"math"
 	"time"
 
 	"github.com/pion/webrtc/v3"
 	"github.com/pquerna/ffjson/ffjson"
+)
+
+const (
+	threshold float64 = 1e-9
 )
 
 var (
@@ -71,8 +74,6 @@ func gamepadAPIToXInput(gms GamepadAPIState) XInputState {
 
 	tNow := time.Now()
 
-	log.Println(gms.Axes[1])
-
 	return XInputState{
 		ID:        ID(gms.Index), // You may need to adjust this based on your requirements
 		Connected: gms.Connected,
@@ -82,9 +83,9 @@ func gamepadAPIToXInput(gms GamepadAPIState) XInputState {
 			LeftTrigger:  convertFloatToUint8(gms.Buttons[6].Value),
 			RightTrigger: convertFloatToUint8(gms.Buttons[7].Value),
 			ThumbLX:      convertFloatToInt16(gms.Axes[0]),
-			ThumbLY:      convertFloatToInt16(applyFilterLY(gms.Axes[1])),
+			ThumbLY:      convertFloatToInt16(fixLYAxis(gms.Axes[1])),
 			ThumbRX:      convertFloatToInt16(gms.Axes[2]),
-			ThumbRY:      convertFloatToInt16(applyFilterRY(gms.Axes[3])),
+			ThumbRY:      convertFloatToInt16(fixRYAxis(gms.Axes[3])),
 		},
 	}
 
@@ -101,15 +102,25 @@ func convertGamepadButtons(buttons [16]gamepadButton) Button {
 	return result
 }
 
-func applyFilterLY(value float64) float64 {
+func fixLYAxis(value float64) float64 {
 
-	return value
+	if math.Abs(value-prevThumbLY) <= threshold {
+		return prevThumbLY
+	}
+
+	prevThumbLY = -value
+	return -value
 
 }
 
-func applyFilterRY(value float64) float64 {
+func fixRYAxis(value float64) float64 {
 
-	return value
+	if math.Abs(value-prevThumbRY) <= threshold {
+		return prevThumbRY
+	}
+
+	prevThumbRY = -value
+	return -value
 
 }
 
@@ -118,5 +129,5 @@ func convertFloatToUint8(value float64) uint8 {
 }
 
 func convertFloatToInt16(value float64) int16 {
-	return int16(value * 32767.0)
+	return int16(value * 32767)
 }

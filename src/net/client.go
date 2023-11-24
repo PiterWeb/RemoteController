@@ -54,10 +54,6 @@ func InitClient(ctx context.Context, offerChan chan<- string, answerResponseEnco
 	// This will notify you when the peer has connected/disconnected
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
 
-		defer func() {
-
-		}()
-
 		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
 
 		if s == webrtc.PeerConnectionStateFailed {

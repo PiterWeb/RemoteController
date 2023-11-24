@@ -41,6 +41,8 @@ async function CreateClientWeb() {
 		return;
 	}
 
+	peerConnection.onicecandidate = (ev) => {}
+
 	peerConnection.ontrack = (event) => {
 		event.streams[0].getTracks().forEach((track) => {
 			console.log(track);
@@ -74,17 +76,23 @@ async function CreateClientWeb() {
 		gameLoop();
 	};
 
-	try {
-		const offer = await peerConnection.createOffer();
+		peerConnection.onnegotiationneeded = async () => {
+			
+			if (!peerConnection) return;
+			
+			try {
 
-		await peerConnection.setLocalDescription(offer);
+				const offer = await peerConnection.createOffer();
+				
+				await peerConnection.setLocalDescription(offer);
+				
+			navigator.clipboard.writeText(signalEncode(offer));
 
-		navigator.clipboard.writeText(signalEncode(offer));
-
-		showToast('Client code copied to clipboard', ToastType.SUCCESS);
-	} catch (error) {
-		showToast('Error creating client', ToastType.ERROR);
-	}
+			showToast('Client code copied to clipboard', ToastType.SUCCESS);
+		} catch (error) {
+			showToast('Error creating client', ToastType.ERROR);
+		}
+	};
 }
 
 function ConnectToHostWeb(hostCode: string) {
@@ -103,6 +111,17 @@ function ConnectToHostWeb(hostCode: string) {
 		}
 
 		peerConnection.setRemoteDescription(answer);
+
+		for (const candidate of remoteCandidates) {
+			peerConnection.addIceCandidate(
+				new RTCIceCandidate({
+					candidate,
+					sdpMid: '',
+					sdpMLineIndex: 0
+				})
+			);
+		}
+
 		showToast('Connection stablished successfully', ToastType.SUCCESS);
 		goto('/mode/client/connection');
 	} catch (e) {
@@ -110,15 +129,7 @@ function ConnectToHostWeb(hostCode: string) {
 		showToast('Error connecting to host', ToastType.ERROR);
 	}
 
-	for (const candidate of remoteCandidates) {
-		peerConnection.addIceCandidate(
-			new RTCIceCandidate({
-				candidate,
-				sdpMid: '',
-				sdpMLineIndex: 0
-			})
-		);
-	}
+	
 }
 
 // Function WASM (GOLANG)

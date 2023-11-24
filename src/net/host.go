@@ -88,11 +88,11 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
 		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
 
-		if s == webrtc.PeerConnectionStateFailed {
-			if closeErr := peerConnection.Close(); closeErr != nil {
-				panic(closeErr)
-			}
-		}
+		// if s == webrtc.PeerConnectionStateFailed {
+		// 	if closeErr := peerConnection.Close(); closeErr != nil {
+		// 		panic(closeErr)
+		// 	}
+		// }
 	})
 
 	// Register data channel creation handling
