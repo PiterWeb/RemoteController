@@ -41,7 +41,19 @@ async function CreateClientWeb() {
 		return;
 	}
 
-	peerConnection.onicecandidate = (ev) => {}
+	const candidateList: string[] = [];
+
+	peerConnection.onicecandidate = (ev) => {
+		if (ev.candidate == null) {
+			return;
+		}
+
+		const desc = peerConnection?.localDescription;
+
+		if (!desc) return;
+
+		candidateList.push(ev.candidate.candidate);
+	};
 
 	peerConnection.ontrack = (event) => {
 		event.streams[0].getTracks().forEach((track) => {
@@ -52,7 +64,6 @@ async function CreateClientWeb() {
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 
 	controllerChannel.onopen = () => {
-
 		const sendGamepadData = () => {
 			const gamepadData = navigator.getGamepads();
 
@@ -76,17 +87,15 @@ async function CreateClientWeb() {
 		gameLoop();
 	};
 
-		peerConnection.onnegotiationneeded = async () => {
-			
-			if (!peerConnection) return;
-			
-			try {
+	peerConnection.onnegotiationneeded = async () => {
+		if (!peerConnection) return;
 
-				const offer = await peerConnection.createOffer();
-				
-				await peerConnection.setLocalDescription(offer);
-				
-			navigator.clipboard.writeText(signalEncode(offer));
+		try {
+			const offer = await peerConnection.createOffer();
+
+			await peerConnection.setLocalDescription(offer);
+
+			navigator.clipboard.writeText(signalEncode(offer) + ';' + signalEncode(candidateList));
 
 			showToast('Client code copied to clipboard', ToastType.SUCCESS);
 		} catch (error) {
@@ -128,8 +137,6 @@ function ConnectToHostWeb(hostCode: string) {
 		console.error(e);
 		showToast('Error connecting to host', ToastType.ERROR);
 	}
-
-	
 }
 
 // Function WASM (GOLANG)

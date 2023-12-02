@@ -2,6 +2,8 @@ package net
 
 import (
 	"context"
+	"strings"
+
 	// "errors"
 	// "io"
 
@@ -88,11 +90,9 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
 		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
 
-		// if s == webrtc.PeerConnectionStateFailed {
-		// 	if closeErr := peerConnection.Close(); closeErr != nil {
-		// 		panic(closeErr)
-		// 	}
-		// }
+		if s == webrtc.PeerConnectionStateFailed {
+			peerConnection.Close()
+		}
 	})
 
 	// Register data channel creation handling
@@ -102,8 +102,23 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 
 	})
 
+	offerAndCandidatesEncoded := strings.Split(offerEncoded, ";")
+
+	if len(offerAndCandidatesEncoded) != 2 {
+		return
+	}
+
 	offer := webrtc.SessionDescription{}
-	signalDecode(offerEncoded, &offer)
+	signalDecode(offerAndCandidatesEncoded[0], &offer)
+
+	receivedCandidates := []string{}
+	signalDecode(offerAndCandidatesEncoded[1], &receivedCandidates)
+
+	for _, candidate := range receivedCandidates {
+		peerConnection.AddICECandidate(webrtc.ICECandidateInit{
+			Candidate: candidate,
+		})
+	}
 
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
 		panic(err)
@@ -134,6 +149,8 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 	// Block until cancel by user
 	<-triggerEnd
 	stopStreaming <- struct{}{}
+
+	peerConnection.Close()
 
 }
 

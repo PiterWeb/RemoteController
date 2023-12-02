@@ -3,8 +3,4 @@
 
 export function CloseConnection():Promise<boolean>;
 
-export function ConnectToHost(arg1:string):Promise<string>;
-
-export function CreateClient():Promise<string>;
-
 export function CreateHost(arg1:string):Promise<string>;

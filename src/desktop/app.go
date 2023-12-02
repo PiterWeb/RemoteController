@@ -5,7 +5,7 @@ import (
 )
 
 var triggerEnd chan struct{} = make(chan struct{})
-var processActive bool = false
+var openPeer bool = false
 
 // App struct
 type App struct {
@@ -27,45 +27,25 @@ func (a *App) Startup(ctx context.Context) {
 // either by clicking the window close button or calling runtime.Quit.
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
+
 	return false
 }
 
 // Shutdown is called at application termination
 func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
+	a.CloseConnection()
+
 }
 
-func (a *App) CreateClient() string {
-
-	if processActive {
-		triggerEnd <- struct{}{}
-	}
-
-	processActive = true
-
-	var value string
-
-	defer func() {
-
-		if err := recover(); err != nil {
-			value = "ERROR"
-			processActive = false
-		}
-
-	}()
-
-	value = createClient(a.ctx, triggerEnd)
-
-	return value
-}
-
+// Create a Host Peer, it receives the offer encoded and returns the encoded answer response
 func (a *App) CreateHost(offerEncoded string) string {
 
-	if processActive {
+	if openPeer {
 		triggerEnd <- struct{}{}
 	}
 
-	processActive = true
+	openPeer = true
 
 	var value string
 
@@ -73,7 +53,7 @@ func (a *App) CreateHost(offerEncoded string) string {
 
 		if err := recover(); err != nil {
 			value = "ERROR"
-			processActive = false
+			openPeer = false
 		}
 
 	}()
@@ -83,35 +63,16 @@ func (a *App) CreateHost(offerEncoded string) string {
 	return value
 }
 
-func (a *App) ConnectToHost(response string) string {
-
-	var value string
-
-	defer func() {
-
-		if err := recover(); err != nil {
-			value = "ERROR"
-			processActive = false
-		}
-
-	}()
-
-	value = "OK"
-	connectToHost(response)
-
-	return value
-
-}
-
+// Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
 func (a *App) CloseConnection() bool {
 
-	if processActive {
-		triggerEnd <- struct{}{}
-	} else {
+	if !openPeer {
 		return false
 	}
 
-	processActive = false
+	triggerEnd <- struct{}{}
+
+	openPeer = false
 
 	return true
 

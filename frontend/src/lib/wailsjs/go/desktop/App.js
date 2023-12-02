@@ -6,14 +6,6 @@ export function CloseConnection() {
   return window['go']['desktop']['App']['CloseConnection']();
 }
 
-export function ConnectToHost(arg1) {
-  return window['go']['desktop']['App']['ConnectToHost'](arg1);
-}
-
-export function CreateClient() {
-  return window['go']['desktop']['App']['CreateClient']();
-}
-
 export function CreateHost(arg1) {
   return window['go']['desktop']['App']['CreateHost'](arg1);
 }
