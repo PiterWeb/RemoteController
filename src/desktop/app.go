@@ -2,6 +2,8 @@ package desktop
 
 import (
 	"context"
+	"runtime"
+	"strings"
 )
 
 var triggerEnd chan struct{} = make(chan struct{})
@@ -34,12 +36,12 @@ func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 // Shutdown is called at application termination
 func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
-	a.CloseConnection()
+	a.TryClosePeerConnection()
 
 }
 
 // Create a Host Peer, it receives the offer encoded and returns the encoded answer response
-func (a *App) CreateHost(offerEncoded string) string {
+func (a *App) TryCreateHost(offerEncoded string) (value string) {
 
 	if openPeer {
 		triggerEnd <- struct{}{}
@@ -47,24 +49,22 @@ func (a *App) CreateHost(offerEncoded string) string {
 
 	openPeer = true
 
-	var value string
-
 	defer func() {
 
 		if err := recover(); err != nil {
-			value = "ERROR"
 			openPeer = false
+			value = "ERROR"
 		}
 
 	}()
 
-	value = createHost(a.ctx, offerEncoded, triggerEnd)
+	value = createHost(offerEncoded, triggerEnd)
 
 	return value
 }
 
 // Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
-func (a *App) CloseConnection() bool {
+func (a *App) TryClosePeerConnection() bool {
 
 	if !openPeer {
 		return false
@@ -76,4 +76,8 @@ func (a *App) CloseConnection() bool {
 
 	return true
 
+}
+
+func (a *App) GetCurrentOS() string {
+	return strings.ToUpper(runtime.GOOS)
 }

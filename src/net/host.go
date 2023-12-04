@@ -1,7 +1,6 @@
 package net
 
 import (
-	"context"
 	"strings"
 
 	// "errors"
@@ -17,7 +16,7 @@ import (
 
 var videoTrack *webrtc.TrackLocalStaticRTP
 
-func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
+func InitHost(offerEncoded string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
 
 	var candidatesMux sync.Mutex
 	candidates := []string{}
@@ -42,31 +41,31 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 		}
 	}()
 
-	videoTrack, err = webrtc.NewTrackLocalStaticRTP(webrtc.RTPCodecCapability{
-		MimeType: webrtc.MimeTypeVP9,
-	}, "video", "pion")
+	// videoTrack, err = webrtc.NewTrackLocalStaticRTP(webrtc.RTPCodecCapability{
+	// 	MimeType: webrtc.MimeTypeVP9,
+	// }, "video", "pion")
 
-	if err != nil {
-		panic(err)
-	}
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	rtpSender, err := peerConnection.AddTrack(videoTrack)
+	// rtpSender, err := peerConnection.AddTrack(videoTrack)
 
-	if err != nil {
-		panic(err)
-	}
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	// Read incoming RTCP packets
-	// Before these packets are returned they are processed by interceptors. For things
-	// like NACK this needs to be called.
-	go func() {
-		rtcpBuf := make([]byte, 1500)
-		for {
-			if _, _, rtcpErr := rtpSender.Read(rtcpBuf); rtcpErr != nil {
-				return
-			}
-		}
-	}()
+	// // Read incoming RTCP packets
+	// // Before these packets are returned they are processed by interceptors. For things
+	// // like NACK this needs to be called.
+	// go func() {
+	// 	rtcpBuf := make([]byte, 1500)
+	// 	for {
+	// 		if _, _, rtcpErr := rtpSender.Read(rtcpBuf); rtcpErr != nil {
+	// 			return
+	// 		}
+	// 	}
+	// }()
 
 	peerConnection.OnICECandidate(func(c *webrtc.ICECandidate) {
 
@@ -91,7 +90,9 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
 
 		if s == webrtc.PeerConnectionStateFailed {
-			peerConnection.Close()
+			if err := peerConnection.Close(); err != nil {
+				panic(err)
+			}
 		}
 	})
 
@@ -142,15 +143,14 @@ func InitHost(ctx context.Context, offerEncoded string, answerResponse chan<- st
 
 	answerResponse <- signalEncode(*peerConnection.LocalDescription()) + ";" + signalEncode(candidates)
 
-	stopStreaming := make(chan struct{})
-
 	// startStreamingPeer(stopStreaming)
 
 	// Block until cancel by user
 	<-triggerEnd
-	stopStreaming <- struct{}{}
 
-	peerConnection.Close()
+	if err := peerConnection.Close(); err != nil {
+		panic(err)
+	}
 
 }
 

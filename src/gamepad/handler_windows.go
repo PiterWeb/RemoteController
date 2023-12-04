@@ -34,13 +34,14 @@ var buttonValueToHexMap = map[int]uint16{
 	15: 0x0008,
 }
 
+var virtualDevice EmulatedDevice
+
 func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 	if gamepadChannel.Label() != "controller" {
 		return
 	}
 
-	var virtualDevice EmulatedDevice
 	defer FreeTargetAndDisconnect(virtualDevice)
 
 	virtualState := new(ViGEmState)
@@ -60,7 +61,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-		var pad GamepadAPIState
+		var pad GamepadAPIXState
 
 		ffjson.Unmarshal(msg.Data, &pad)
 
@@ -70,14 +71,12 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 }
 
-func gamepadAPIToXInput(gms GamepadAPIState) XInputState {
-
-	tNow := time.Now()
+func gamepadAPIXToXInput(gms GamepadAPIXState) XInputState {
 
 	return XInputState{
-		ID:        ID(gms.Index), // You may need to adjust this based on your requirements
+		ID:        ID(gms.Index),
 		Connected: gms.Connected,
-		Packet:    uint32(tNow.Nanosecond()), // You may need to set a proper value for Packet
+		Packet:    uint32(time.Now().Nanosecond()), // Different values trigger update
 		Raw: RawControls{
 			Buttons:      convertGamepadButtons(gms.Buttons),
 			LeftTrigger:  convertFloatToUint8(gms.Buttons[6].Value),
