@@ -1,6 +1,6 @@
 import {
-	CreateHost as createHostFn,
-	CloseConnection as closeConnectionFn
+	TryCreateHost as createHostFn,
+	TryClosePeerConnection as closeConnectionFn
 } from '$lib/wailsjs/go/desktop/App';
 
 import { showToast, ToastType } from '$lib/hooks/toast';
