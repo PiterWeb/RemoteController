@@ -1,7 +1,9 @@
-# ![Gamepad](https://github.com/PiterWeb/RemoteController/blob/e1d7f45a407cf8ba3d4fedf6f7bb99faf7ee3f88/frontend/src/lib/assets/gamepad.svg) Remote Controller 
+# ![Gamepad](./frontend/src/lib/assets/gamepad.svg) Remote Controller 
 Remote gamepads without difficulties
 
 ### Website (On construction 🚧): https://remote-controller.vercel.app/ 
+
+![Example Image from the Desktop APP](./assets/example.jpg)
 
 ### Installation 📦
 
