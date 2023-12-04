@@ -31,7 +31,10 @@ type (
 type VIGEM_ERROR uintptr
 
 const (
-	VIGEM_ERROR_NONE VIGEM_ERROR = 0x20000000
+	VIGEM_ERROR_NONE                   VIGEM_ERROR = 0x20000000
+	ViGEm_DLL_FILE_NAME                string      = "ViGEmClient.dll"
+	ViGEm_EXE_FILE_NAME                string      = "ViGEmBus.exe"
+	ViGEm_INSTALATION_SUCESS_FILE_NAME string      = ".vigemsetup"
 )
 
 var (
@@ -49,13 +52,19 @@ var (
 
 func init() {
 
+	if _, err := os.ReadFile("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME); err == nil {
+		return
+	}
+
 	path, err := os.Getwd()
 
 	if err != nil {
 		panic(err)
 	}
 
-	dllFile, err := os.Create("./ViGEmClient.dll")
+	OpenViGEmWizard()
+
+	dllFile, err := os.Create("./" + ViGEm_DLL_FILE_NAME)
 
 	if err != nil {
 		panic(err)
@@ -75,9 +84,9 @@ func init() {
 		panic(err)
 	}
 
-	exec.Command("regsvr32", path+"/ViGEmClient.dll")
+	exec.Command("regsvr32", path+"/"+ViGEm_DLL_FILE_NAME)
 
-	vigemDLL = syscall.NewLazyDLL("ViGEmClient.dll")
+	vigemDLL = syscall.NewLazyDLL(ViGEm_DLL_FILE_NAME)
 	vigem_disconect_proc = vigemDLL.NewProc("vigem_disconnect")
 	vigem_free_proc = vigemDLL.NewProc("vigem_free")
 	vigem_alloc_proc = vigemDLL.NewProc("vigem_alloc")
@@ -87,6 +96,38 @@ func init() {
 	vigem_target_remove_proc = vigemDLL.NewProc("vigem_target_remove")
 	vigem_target_free_proc = vigemDLL.NewProc("vigem_target_free")
 	vigem_target_x360_update_proc = vigemDLL.NewProc("vigem_target_x360_update")
+
+	if _, err = os.Create("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME); err != nil {
+		panic(err)
+	}
+
+}
+
+func OpenViGEmWizard() error {
+
+	exeFile, err := os.Create("./" + ViGEm_EXE_FILE_NAME)
+
+	if err != nil {
+		return err
+	}
+
+	defer os.Remove("./" + ViGEm_EXE_FILE_NAME)
+
+	if _, err = exeFile.Write(bin.ViGEmBus_exe); err != nil {
+		return err
+	}
+
+	if err = exeFile.Close(); err != nil {
+		return err
+	}
+
+	exeCmd := exec.Command("./" + ViGEm_EXE_FILE_NAME)
+
+	if err = exeCmd.Start(); err != nil {
+		return err
+	}
+
+	return exeCmd.Wait()
 }
 
 func VIGEM_SUCCESS(val uintptr) bool {

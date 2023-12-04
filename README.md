@@ -29,3 +29,6 @@ Remote gamepads for Windows (Tested on Windows 10/11)
 This desktop APP is based on the WebRTC 🎞 standard and it uses the power of Go to communicate 🗣 with the Windows APIs (XInput & Windows) and the ViGEm DLL
 
 It uses Wails(Go) & Sveltekit(TS) bringing a powerfull connection between Low-Level Logic and UI
+
+### Thanks to the ViGEm project ♥
+ViGEm is making this project a reallity. We embed ViGEm Installation Wizard and ViGEm Client DLLS within the executable for Windows

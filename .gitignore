@@ -1,6 +1,5 @@
-build
-build/bin
+build/
 ./*.exe
 ./*.dll
-src/net/ViGEmClient.dll
-frontend/dist
+frontend/dist/
+.vigemsetup
