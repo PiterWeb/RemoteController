@@ -14,12 +14,12 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
-var videoTrack *webrtc.TrackLocalStaticRTP
+// var videoTrack *webrtc.TrackLocalStaticRTP
 
 func InitHost(offerEncoded string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
 
 	var candidatesMux sync.Mutex
-	candidates := []string{}
+	candidates := []webrtc.ICECandidateInit{}
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -79,7 +79,7 @@ func InitHost(offerEncoded string, answerResponse chan<- string, triggerEnd <-ch
 		desc := peerConnection.RemoteDescription()
 
 		if desc != nil {
-			candidates = append(candidates, (*c).ToJSON().Candidate)
+			candidates = append(candidates, (*c).ToJSON())
 		}
 
 	})
@@ -103,6 +103,8 @@ func InitHost(offerEncoded string, answerResponse chan<- string, triggerEnd <-ch
 
 	})
 
+	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
+
 	offerAndCandidatesEncoded := strings.Split(offerEncoded, ";")
 
 	if len(offerAndCandidatesEncoded) != 2 {
@@ -115,23 +117,21 @@ func InitHost(offerEncoded string, answerResponse chan<- string, triggerEnd <-ch
 	receivedCandidates := []string{}
 	signalDecode(offerAndCandidatesEncoded[1], &receivedCandidates)
 
+	if err := peerConnection.SetRemoteDescription(offer); err != nil {
+		panic(err)
+	}
+
 	for _, candidate := range receivedCandidates {
 		peerConnection.AddICECandidate(webrtc.ICECandidateInit{
 			Candidate: candidate,
 		})
 	}
 
-	if err := peerConnection.SetRemoteDescription(offer); err != nil {
-		panic(err)
-	}
-
 	// Create an answer to send to the other process
-	answer, err := peerConnection.CreateAnswer(nil)
+	answer, err := peerConnection.CreateAnswer(&webrtc.AnswerOptions{})
 	if err != nil {
 		panic(err)
 	}
-
-	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
 	// Sets the LocalDescription, and starts our UDP listeners
 	err = peerConnection.SetLocalDescription(answer)

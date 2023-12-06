@@ -108,7 +108,7 @@ function ConnectToHostWeb(hostCode: string) {
 	const answerResponse = hostCode.split(';');
 	const answer: RTCSessionDescription = signalDecode(answerResponse[0]);
 
-	const remoteCandidates: string[] = signalDecode(answerResponse[1]);
+	const remoteCandidates: RTCIceCandidateInit[] = signalDecode(answerResponse[1]);
 
 	if (!peerConnection) {
 		throw new Error('Peer connection not initialized');
@@ -122,13 +122,7 @@ function ConnectToHostWeb(hostCode: string) {
 		peerConnection.setRemoteDescription(answer);
 
 		for (const candidate of remoteCandidates) {
-			peerConnection.addIceCandidate(
-				new RTCIceCandidate({
-					candidate,
-					sdpMid: '',
-					sdpMLineIndex: 0
-				})
-			);
+			peerConnection.addIceCandidate(candidate);
 		}
 
 		showToast('Connection stablished successfully', ToastType.SUCCESS);
