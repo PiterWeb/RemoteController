@@ -9,6 +9,7 @@
 	import Toast from '$lib/components/Toast.svelte';
 	
 	import GamepadSVG from '$lib/assets/gamepad.svg?raw';
+	import Loading from '$lib/components/Loading.svelte';
 
 </script>
 
@@ -33,3 +34,5 @@
 </PageTransition>
 
 <Toast />
+
+<Loading />

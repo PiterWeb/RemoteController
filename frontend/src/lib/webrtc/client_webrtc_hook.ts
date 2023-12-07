@@ -1,6 +1,7 @@
 import { showToast, ToastType } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
 import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
+import { toogleLoading } from '$lib/hooks/loading';
 
 enum DataChannelLabel {
 	Streaming = 'streaming',
@@ -10,6 +11,10 @@ enum DataChannelLabel {
 let peerConnection: RTCPeerConnection | undefined;
 
 function initPeerConnection() {
+	if (peerConnection) {
+		peerConnection.close();
+	}
+
 	peerConnection = new RTCPeerConnection({
 		iceServers: [
 			{
@@ -41,25 +46,7 @@ async function CreateClientWeb() {
 		return;
 	}
 
-	const candidateList: string[] = [];
-
-	peerConnection.onicecandidate = (ev) => {
-		if (ev.candidate == null) {
-			return;
-		}
-
-		const desc = peerConnection?.localDescription;
-
-		if (!desc) return;
-
-		candidateList.push(ev.candidate.candidate);
-	};
-
-	peerConnection.ontrack = (event) => {
-		event.streams[0].getTracks().forEach((track) => {
-			console.log(track);
-		});
-	};
+	peerConnection.onconnectionstatechange = handleConnectionState;
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 
@@ -75,7 +62,6 @@ async function CreateClientWeb() {
 			});
 		};
 
-		// Game loop using requestAnimationFrame
 		const gameLoop = () => {
 			sendGamepadData();
 
@@ -87,61 +73,95 @@ async function CreateClientWeb() {
 		gameLoop();
 	};
 
-	peerConnection.onnegotiationneeded = async () => {
-		if (!peerConnection) return;
+	// peerConnection.ontrack = (event) => {
+	// 	event.streams[0].getTracks().forEach((track) => {
+	// 		console.log(track);
+	// 	});
+	// };
 
-		try {
-			const offer = await peerConnection.createOffer();
+	try {
+		const offer = await peerConnection.createOffer();
 
-			await peerConnection.setLocalDescription(offer);
+		await peerConnection.setLocalDescription(offer);
 
-			navigator.clipboard.writeText(signalEncode(offer) + ';' + signalEncode(candidateList));
+		// Show spinner while waiting for connection
+		toogleLoading();
 
-			showToast('Client code copied to clipboard', ToastType.SUCCESS);
-		} catch (error) {
-			showToast('Error creating client', ToastType.ERROR);
-		}
-	};
+		peerConnection.onicecandidate = (ev) => {
+			if (ev.candidate === null) {
+				// Disable spinner
+				toogleLoading();
+				navigator.clipboard.writeText(signalEncode(offer));
+				showToast('Client code copied to clipboard', ToastType.SUCCESS);
+			}
+		};
+	} catch (error) {
+		showToast('Error creating client', ToastType.ERROR);
+	}
 }
 
-function ConnectToHostWeb(hostCode: string) {
-	const answerResponse = hostCode.split(';');
-	const answer: RTCSessionDescription = signalDecode(answerResponse[0]);
-
-	const remoteCandidates: RTCIceCandidateInit[] = signalDecode(answerResponse[1]);
+async function ConnectToHostWeb(hostCode: string) {
+	const answer: RTCSessionDescription = signalDecode(hostCode);
 
 	if (!peerConnection) {
 		throw new Error('Peer connection not initialized');
 	}
 
 	try {
-		if (answerResponse.length !== 2) {
-			throw new Error('Invalid answer response');
-		}
-
-		peerConnection.setRemoteDescription(answer);
-
-		for (const candidate of remoteCandidates) {
-			peerConnection.addIceCandidate(candidate);
-		}
-
-		showToast('Connection stablished successfully', ToastType.SUCCESS);
-		goto('/mode/client/connection');
+		await peerConnection.setRemoteDescription(answer);
 	} catch (e) {
 		console.error(e);
 		showToast('Error connecting to host', ToastType.ERROR);
 	}
 }
 
+function handleConnectionState() {
+	if (!peerConnection) return;
+
+	const connectionState = peerConnection.connectionState;
+
+	if (connectionState === 'disconnected') {
+		showToast('Connection lost', ToastType.ERROR);
+		ClosePeerConnection();
+		goto('/');
+		return;
+	}
+
+	if (connectionState === 'failed') {
+		showToast('Connection failed', ToastType.ERROR);
+		ClosePeerConnection();
+		goto('/');
+		return;
+	}
+
+	if (connectionState === 'closed') {
+		showToast('Connection closed', ToastType.ERROR);
+		ClosePeerConnection();
+		goto('/');
+		return;
+	}
+
+	if (connectionState === 'connected') {
+		showToast('Connection stablished successfully', ToastType.SUCCESS);
+		goto('/mode/client/connection');
+		return;
+	}
+
+	if (connectionState === 'connecting') {
+		showToast('Connecting...', ToastType.INFO);
+		return;
+	}
+}
+
 // Function WASM (GOLANG)
-function signalEncode<T>(signal: T) {
+function signalEncode<T>(signal: T): string {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	//@ts-ignore
 	return window.signalEncode(JSON.stringify(signal));
 }
 
 // Function WASM (GOLANG)
-function signalDecode<T>(signal: string) {
+function signalDecode<T>(signal: string): T {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	//@ts-ignore
 	return JSON.parse(window.signalDecode(signal)) as T;

@@ -52,17 +52,15 @@ var (
 
 func init() {
 
-	if _, err := os.ReadFile("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME); err == nil {
-		return
-	}
-
 	path, err := os.Getwd()
 
 	if err != nil {
 		panic(err)
 	}
 
-	OpenViGEmWizard()
+	if _, err := os.ReadFile("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME); err != nil {
+		OpenViGEmWizard()
+	}
 
 	dllFile, err := os.Create("./" + ViGEm_DLL_FILE_NAME)
 

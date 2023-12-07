@@ -18,6 +18,10 @@ export async function CreateHost(client: string) {
 
 		navigator.clipboard.writeText(hostCode);
 		showToast('Host code copied to clipboard', ToastType.SUCCESS);
+
+		// TODO
+		// Listen for connection state changes and handle them (Wails events) to redirect to the correct page
+
 		goto('/mode/host/connection');
 		host = true;
 	} catch (e) {

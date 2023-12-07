@@ -1,7 +1,7 @@
 package net
 
 import (
-	"strings"
+	// "strings"
 
 	// "errors"
 	// "io"
@@ -103,35 +103,24 @@ func InitHost(offerEncoded string, answerResponse chan<- string, triggerEnd <-ch
 
 	})
 
-	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
-
-	offerAndCandidatesEncoded := strings.Split(offerEncoded, ";")
-
-	if len(offerAndCandidatesEncoded) != 2 {
-		return
-	}
-
 	offer := webrtc.SessionDescription{}
-	signalDecode(offerAndCandidatesEncoded[0], &offer)
-
-	receivedCandidates := []string{}
-	signalDecode(offerAndCandidatesEncoded[1], &receivedCandidates)
+	signalDecode(offerEncoded, &offer)
 
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
 		panic(err)
 	}
 
-	for _, candidate := range receivedCandidates {
-		peerConnection.AddICECandidate(webrtc.ICECandidateInit{
-			Candidate: candidate,
-		})
-	}
+	// for _, candidate := range receivedCandidates {
+	// 	peerConnection.AddICECandidate(candidate)
+	// }
 
 	// Create an answer to send to the other process
-	answer, err := peerConnection.CreateAnswer(&webrtc.AnswerOptions{})
+	answer, err := peerConnection.CreateAnswer(nil)
 	if err != nil {
 		panic(err)
 	}
+
+	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
 
 	// Sets the LocalDescription, and starts our UDP listeners
 	err = peerConnection.SetLocalDescription(answer)
@@ -141,7 +130,7 @@ func InitHost(offerEncoded string, answerResponse chan<- string, triggerEnd <-ch
 
 	<-gatherComplete
 
-	answerResponse <- signalEncode(*peerConnection.LocalDescription()) + ";" + signalEncode(candidates)
+	answerResponse <- signalEncode(*peerConnection.LocalDescription())
 
 	// startStreamingPeer(stopStreaming)
 
