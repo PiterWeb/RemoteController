@@ -1,7 +1,7 @@
 # ![Gamepad](./frontend/src/lib/assets/gamepad.svg) Remote Controller 
 Remote gamepads without difficulties
 
-> [!Warning]
+> [!Note]
 > Website (On construction 🚧): 
 > https://remote-controller.vercel.app/ 
 
