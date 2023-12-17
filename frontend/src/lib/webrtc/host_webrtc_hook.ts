@@ -3,10 +3,18 @@ import {
 	TryClosePeerConnection as closeConnectionFn
 } from '$lib/wailsjs/go/desktop/App';
 
+import { EventsOnce } from '$lib/wailsjs/runtime/runtime';
+
 import { showToast, ToastType } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
+import { toogleLoading, setLoadingMessage, setLoadingTitle } from '$lib/hooks/loading';
 
 let host: boolean = false;
+
+enum ConnectionState {
+	Connected = 'CONNECTED',
+	Failed = 'FAILED'
+}
 
 export async function CreateHost(client: string) {
 	try {
@@ -22,8 +30,29 @@ export async function CreateHost(client: string) {
 		// TODO
 		// Listen for connection state changes and handle them (Wails events) to redirect to the correct page
 
-		goto('/mode/host/connection');
-		host = true;
+		toogleLoading();
+		setLoadingMessage('Waiting for client to connect');
+		setLoadingTitle('¡Make sure to pass the code to the client!');
+
+		EventsOnce('connection_state', (state: ConnectionState) => {
+			toogleLoading();
+
+			switch (state) {
+				case ConnectionState.Connected:
+					showToast('Connected', ToastType.SUCCESS);
+					host = true;
+					goto('/mode/host/connected');
+					break;
+				case ConnectionState.Failed:
+					showToast('Connection failed', ToastType.ERROR);
+					goto('/');
+					break;
+				default:
+					showToast('Unknown connection state', ToastType.ERROR);
+			}
+		});
+
+		
 	} catch (e) {
 		showToast('Error creating host', ToastType.ERROR);
 	}

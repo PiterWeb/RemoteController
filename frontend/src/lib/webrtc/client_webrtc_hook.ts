@@ -18,7 +18,7 @@ function initPeerConnection() {
 	peerConnection = new RTCPeerConnection({
 		iceServers: [
 			{
-				urls: 'stun:stun.l.google.com:19302'
+				urls: ['stun:stun.l.google.com:19302', 'stun:stun.ipfire.org:3478', "stun:stun.l.google.com:19305"]
 			}
 		]
 	});
@@ -73,12 +73,6 @@ async function CreateClientWeb() {
 		gameLoop();
 	};
 
-	// peerConnection.ontrack = (event) => {
-	// 	event.streams[0].getTracks().forEach((track) => {
-	// 		console.log(track);
-	// 	});
-	// };
-
 	try {
 		const offer = await peerConnection.createOffer();
 
@@ -87,27 +81,42 @@ async function CreateClientWeb() {
 		// Show spinner while waiting for connection
 		toogleLoading();
 
+		const candidates: RTCIceCandidateInit[] = [];
+
 		peerConnection.onicecandidate = (ev) => {
 			if (ev.candidate === null) {
 				// Disable spinner
 				toogleLoading();
-				navigator.clipboard.writeText(signalEncode(offer));
+				navigator.clipboard.writeText(signalEncode(offer) + ';' + signalEncode(candidates));
 				showToast('Client code copied to clipboard', ToastType.SUCCESS);
+				return;
 			}
+
+			candidates.push(ev.candidate.toJSON());
 		};
 	} catch (error) {
+		console.error(error);
 		showToast('Error creating client', ToastType.ERROR);
 	}
 }
 
-async function ConnectToHostWeb(hostCode: string) {
-	const answer: RTCSessionDescription = signalDecode(hostCode);
-
-	if (!peerConnection) {
-		throw new Error('Peer connection not initialized');
-	}
-
+async function ConnectToHostWeb(hostAndCandidatesCode: string) {
 	try {
+		const [hostCode, candidatesCode] = hostAndCandidatesCode.split(';');
+
+		const answer: RTCSessionDescription = signalDecode(hostCode);
+
+		const candidates: RTCIceCandidateInit[] = signalDecode(candidatesCode);
+
+		if (!peerConnection) {
+			throw new Error('Peer connection not initialized');
+		}
+
+		candidates.forEach(async (candidate) => {
+			if (!peerConnection) return;
+			await peerConnection.addIceCandidate(candidate);
+		});
+
 		await peerConnection.setRemoteDescription(answer);
 	} catch (e) {
 		console.error(e);
@@ -120,37 +129,33 @@ function handleConnectionState() {
 
 	const connectionState = peerConnection.connectionState;
 
-	if (connectionState === 'disconnected') {
-		showToast('Connection lost', ToastType.ERROR);
-		ClosePeerConnection();
-		goto('/');
-		return;
+	switch (connectionState) {
+		case 'connected':
+			showToast('Connection stablished successfully', ToastType.SUCCESS);
+			goto('/mode/client/connection');
+			break;
+		case 'disconnected':
+			showToast('Connection lost', ToastType.ERROR);
+			ClosePeerConnection();
+			goto('/');
+			break;
+		case 'failed':
+			showToast('Connection failed', ToastType.ERROR);
+			ClosePeerConnection();
+			goto('/');
+			break;
+		case 'closed':
+			showToast('Connection closed', ToastType.ERROR);
+			ClosePeerConnection();
+			goto('/');
+			break;
+		case 'connecting':
+			showToast('Connecting...', ToastType.INFO);
+			break;
+		default:
+			showToast('Unknown connection state', ToastType.ERROR);
 	}
 
-	if (connectionState === 'failed') {
-		showToast('Connection failed', ToastType.ERROR);
-		ClosePeerConnection();
-		goto('/');
-		return;
-	}
-
-	if (connectionState === 'closed') {
-		showToast('Connection closed', ToastType.ERROR);
-		ClosePeerConnection();
-		goto('/');
-		return;
-	}
-
-	if (connectionState === 'connected') {
-		showToast('Connection stablished successfully', ToastType.SUCCESS);
-		goto('/mode/client/connection');
-		return;
-	}
-
-	if (connectionState === 'connecting') {
-		showToast('Connecting...', ToastType.INFO);
-		return;
-	}
 }
 
 // Function WASM (GOLANG)
