@@ -112,12 +112,13 @@ async function ConnectToHostWeb(hostAndCandidatesCode: string) {
 			throw new Error('Peer connection not initialized');
 		}
 
+		await peerConnection.setRemoteDescription(answer);
+		
 		candidates.forEach(async (candidate) => {
 			if (!peerConnection) return;
 			await peerConnection.addIceCandidate(candidate);
 		});
 
-		await peerConnection.setRemoteDescription(answer);
 	} catch (e) {
 		console.error(e);
 		showToast('Error connecting to host', ToastType.ERROR);
