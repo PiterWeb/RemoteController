@@ -42,6 +42,7 @@ func InitHost(offerEncodedWithCandidates string, answerResponse chan<- string, t
 	peerConnection.OnICECandidate(func(c *webrtc.ICECandidate) {
 
 		if c == nil {
+			answerResponse <- signalEncode(*peerConnection.LocalDescription()) + ";" + signalEncode(candidates)
 			return
 		}
 
@@ -84,17 +85,11 @@ func InitHost(offerEncodedWithCandidates string, answerResponse chan<- string, t
 		panic(err)
 	}
 
-	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
-
 	// Sets the LocalDescription, and starts our UDP listeners
 	err = peerConnection.SetLocalDescription(answer)
 	if err != nil {
 		panic(err)
 	}
-
-	<-gatherComplete
-
-	answerResponse <- signalEncode(*peerConnection.LocalDescription()) + ";" + signalEncode(candidates)
 
 	// Block until cancel by user
 	<-triggerEnd
