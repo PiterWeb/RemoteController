@@ -9,7 +9,7 @@ Remote gamepads without difficulties
 
 ### Installation 📦
 
-- Coming soon
+- https://remote-controller.vercel.app/download/
 
 ### Use cases ✨
 
