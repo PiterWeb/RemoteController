@@ -71,12 +71,14 @@ func InitHost(offerEncodedWithCandidates string, answerResponse chan<- string, t
 
 	signalDecode(offerEncodedWithCandidatesSplited[1], &receivedCandidates)
 
-	for _, candidate := range receivedCandidates {
-		peerConnection.AddICECandidate(candidate)
-	}
-
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
 		panic(err)
+	}
+
+	for _, candidate := range receivedCandidates {
+		if err := peerConnection.AddICECandidate(candidate); err != nil {
+			panic(err)
+		}
 	}
 
 	// Create an answer to send to the other process

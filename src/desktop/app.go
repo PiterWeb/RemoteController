@@ -2,6 +2,7 @@ package desktop
 
 import (
 	"context"
+	"fmt"
 	"runtime"
 	"strings"
 )
@@ -52,6 +53,9 @@ func (a *App) TryCreateHost(offerEncoded string) (value string) {
 	defer func() {
 
 		if err := recover(); err != nil {
+
+			fmt.Println(err)
+
 			openPeer = false
 			value = "ERROR"
 		}

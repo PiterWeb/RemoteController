@@ -87,7 +87,7 @@ async function CreateClientWeb() {
 			if (ev.candidate === null) {
 				// Disable spinner
 				toogleLoading();
-				navigator.clipboard.writeText(signalEncode(offer) + ';' + signalEncode(candidates));
+				navigator.clipboard.writeText(signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates));
 				showToast('Client code copied to clipboard', ToastType.SUCCESS);
 				return;
 			}
@@ -113,7 +113,7 @@ async function ConnectToHostWeb(hostAndCandidatesCode: string) {
 		}
 
 		await peerConnection.setRemoteDescription(answer);
-		
+
 		candidates.forEach(async (candidate) => {
 			if (!peerConnection) return;
 			await peerConnection.addIceCandidate(candidate);
