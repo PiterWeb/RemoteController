@@ -2,7 +2,7 @@
 Remote gamepads without difficulties
 
 > [!Note]
-> Website (On construction 🚧): 
+> Website: 
 > https://remote-controller.vercel.app/ 
 
 ![Example Image from the Desktop APP](./assets/example.jpg)
