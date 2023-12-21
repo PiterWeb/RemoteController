@@ -1,14 +1,17 @@
 package net
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"github.com/PiterWeb/RemoteController/src/gamepad"
+	"github.com/PiterWeb/RemoteController/src/streaming_signal"
 	"github.com/pion/webrtc/v3"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func InitHost(offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
+func InitHost(ctx context.Context, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
 
 	candidates := []webrtc.ICECandidateInit{}
 
@@ -36,6 +39,7 @@ func InitHost(offerEncodedWithCandidates string, answerResponse chan<- string, t
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 
 		gamepad.HandleGamepad(d)
+		streaming_signal.HandleStreamingSignal(d)
 
 	})
 
@@ -55,10 +59,12 @@ func InitHost(offerEncodedWithCandidates string, answerResponse chan<- string, t
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
 		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
 
+		runtime.EventsEmit(ctx, "connection_state", s.String())
+
 		if s == webrtc.PeerConnectionStateFailed {
-			if err := peerConnection.Close(); err != nil {
-				panic(err)
-			}
+
+			peerConnection.Close()
+
 		}
 	})
 

@@ -1,11 +1,10 @@
 <script>
-	import { ClientWebrtc } from '$lib/webrtc/client_webrtc_hook';
+	import { CreateClientWeb, ConnectToHostWeb } from '$lib/webrtc/client_webrtc_hook';
 
 	import { showToast, ToastType } from '$lib/hooks/toast';
 
 	let code = '';
-
-	const {CreateClientWeb, ConnectToHostWeb} = ClientWebrtc();
+	let clientCreated = false;
 
 	function handleConnectToHost() {
 		if (code.length < 1) {
@@ -16,8 +15,9 @@
 		ConnectToHostWeb(code);
 	}
 
-	function handleCreateClient() {
-		CreateClientWeb();
+	async function handleCreateClient() {
+		await CreateClientWeb();
+		clientCreated = true;
 	}
 
 </script>
@@ -33,7 +33,7 @@
 	<div class="card-body">
 		<div class="card-actions gap-4 justify-end items-center flex-col w-full">
 			<div class="divider">First Step</div>
-			<button on:click={handleCreateClient} class="btn btn-primary">Create Client</button>
+			<button on:click={handleCreateClient} class="btn btn-primary" disabled={clientCreated}>Create Client</button>
 
 			<div class="divider">Second Step</div>
 

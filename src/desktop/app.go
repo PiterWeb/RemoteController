@@ -62,7 +62,7 @@ func (a *App) TryCreateHost(offerEncoded string) (value string) {
 
 	}()
 
-	value = createHost(offerEncoded, triggerEnd)
+	value = createHost(a.ctx, offerEncoded, triggerEnd)
 
 	return value
 }

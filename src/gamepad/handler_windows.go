@@ -42,7 +42,11 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		return
 	}
 
-	defer FreeTargetAndDisconnect(virtualDevice)
+	defer func() {
+		if err := recover(); err != nil {
+			FreeTargetAndDisconnect(virtualDevice)
+		}
+	}()
 
 	virtualState := new(ViGEmState)
 
@@ -55,6 +59,12 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		if err != nil {
 			panic(err)
 		}
+
+	})
+
+	gamepadChannel.OnClose(func() {
+
+		FreeTargetAndDisconnect(virtualDevice)
 
 	})
 

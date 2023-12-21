@@ -1,14 +1,16 @@
 package desktop
 
 import (
+	"context"
+
 	"github.com/PiterWeb/RemoteController/src/net"
 )
 
-func createHost(offerEncoded string, triggerEnd <-chan struct{}) string {
+func createHost(ctx context.Context, offerEncoded string, triggerEnd <-chan struct{}) string {
 
 	answerResponse := make(chan string)
 
-	go net.InitHost(offerEncoded, answerResponse, triggerEnd)
+	go net.InitHost(ctx, offerEncoded, answerResponse, triggerEnd)
 
 	return <-answerResponse
 

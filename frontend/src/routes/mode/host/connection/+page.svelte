@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { startStreaming } from '$lib/stream/host_stream_hook';
+	import { startStreaming } from '$lib/webrtc/stream/host_stream_hook';
+	import { ListenForConnectionChanges } from '$lib/webrtc/host_webrtc_hook';
+
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		ListenForConnectionChanges();
+	});
 
 	interface User {
 		name: string;

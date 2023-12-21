@@ -3,7 +3,7 @@ import {
 	TryClosePeerConnection as closeConnectionFn
 } from '$lib/wailsjs/go/desktop/App';
 
-import { EventsOnce } from '$lib/wailsjs/runtime/runtime';
+import { EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
 
 import { showToast, ToastType } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
@@ -13,7 +13,8 @@ let host: boolean = false;
 
 enum ConnectionState {
 	Connected = 'CONNECTED',
-	Failed = 'FAILED'
+	Failed = 'FAILED',
+	Disconnected = 'DISCONNECTED'
 }
 
 export async function CreateHost(client: string) {
@@ -37,11 +38,11 @@ export async function CreateHost(client: string) {
 		EventsOnce('connection_state', (state: ConnectionState) => {
 			toogleLoading();
 
-			switch (state) {
+			switch (state.toUpperCase()) {
 				case ConnectionState.Connected:
 					showToast('Connected', ToastType.SUCCESS);
 					host = true;
-					goto('/mode/host/connected');
+					goto('/mode/host/connection');
 					break;
 				case ConnectionState.Failed:
 					showToast('Connection failed', ToastType.ERROR);
@@ -51,8 +52,6 @@ export async function CreateHost(client: string) {
 					showToast('Unknown connection state', ToastType.ERROR);
 			}
 		});
-
-		
 	} catch (e) {
 		showToast('Error creating host', ToastType.ERROR);
 	}
@@ -63,7 +62,33 @@ function isError(err: string) {
 }
 
 export function CancelConnection(fn?: () => void) {
+	if (!host) return;
+	closeConnectionFn();
 	if (fn) fn();
-	if (host) closeConnectionFn();
 	host = false;
+}
+
+export function ListenForConnectionChanges() {
+	const connectionStateCancelEventListener = EventsOn(
+		'connection_state',
+		(state: ConnectionState) => {
+			switch (state.toUpperCase()) {
+				case ConnectionState.Connected:
+					showToast('Connected', ToastType.SUCCESS);
+					host = true;
+					goto('/mode/host/connection');
+					break;
+				case ConnectionState.Failed:
+					showToast('Connection failed', ToastType.ERROR);
+					goto('/');
+					break;
+				case ConnectionState.Disconnected:
+					showToast('Connection lost', ToastType.ERROR);
+					host = false;
+					goto('/');
+					connectionStateCancelEventListener();
+					break;
+			}
+		}
+	);
 }

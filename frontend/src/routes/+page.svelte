@@ -1,5 +1,19 @@
 <script>
 	import onwebsite from '$lib/hooks/onwebsite';
+	import { showToast, ToastType } from '$lib/hooks/toast';
+
+	import { ClosePeerConnection } from '$lib/webrtc/client_webrtc_hook';
+	import { CancelConnection } from '$lib/webrtc/host_webrtc_hook';
+	import { onMount } from 'svelte';
+
+	function handleToast() {
+		showToast('You are now disconnected', ToastType.INFO);
+	}
+
+	onMount(() => {
+		ClosePeerConnection(handleToast);
+		CancelConnection(handleToast);
+	});
 </script>
 
 <h2 class="text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">

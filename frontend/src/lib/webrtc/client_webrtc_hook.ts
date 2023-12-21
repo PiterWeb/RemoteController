@@ -2,9 +2,11 @@ import { showToast, ToastType } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
 import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 import { toogleLoading } from '$lib/hooks/loading';
+import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
+import iceServers from "$lib/webrtc/ice_servers";
 
 enum DataChannelLabel {
-	Streaming = 'streaming',
+	StreamingSignal = 'streaming-signal',
 	Controller = 'controller'
 }
 
@@ -18,24 +20,17 @@ function initPeerConnection() {
 	peerConnection = new RTCPeerConnection({
 		iceServers: [
 			{
-				urls: ['stun:stun.l.google.com:19302', 'stun:stun.ipfire.org:3478', "stun:stun.l.google.com:19305"]
+				urls: iceServers
 			}
 		]
 	});
 }
 
-function ClosePeerConnection() {
+function ClosePeerConnection(fn?: () => void) {
 	if (!peerConnection) return;
+	if (fn) fn();
 	peerConnection.close();
 	peerConnection = undefined;
-}
-
-export function ClientWebrtc() {
-	return {
-		CreateClientWeb,
-		ConnectToHostWeb,
-		ClosePeerConnection
-	};
 }
 
 async function CreateClientWeb() {
@@ -49,6 +44,7 @@ async function CreateClientWeb() {
 	peerConnection.onconnectionstatechange = handleConnectionState;
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
+	const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
 
 	controllerChannel.onopen = () => {
 		const sendGamepadData = () => {
@@ -73,6 +69,12 @@ async function CreateClientWeb() {
 		gameLoop();
 	};
 
+	streamingSignalChannel.onopen = () => {
+
+		CreateClientStream(streamingSignalChannel);
+
+	};
+
 	try {
 		const offer = await peerConnection.createOffer();
 
@@ -87,7 +89,9 @@ async function CreateClientWeb() {
 			if (ev.candidate === null) {
 				// Disable spinner
 				toogleLoading();
-				navigator.clipboard.writeText(signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates));
+				navigator.clipboard.writeText(
+					signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates)
+				);
 				showToast('Client code copied to clipboard', ToastType.SUCCESS);
 				return;
 			}
@@ -118,7 +122,6 @@ async function ConnectToHostWeb(hostAndCandidatesCode: string) {
 			if (!peerConnection) return;
 			await peerConnection.addIceCandidate(candidate);
 		});
-
 	} catch (e) {
 		console.error(e);
 		showToast('Error connecting to host', ToastType.ERROR);
@@ -150,13 +153,7 @@ function handleConnectionState() {
 			ClosePeerConnection();
 			goto('/');
 			break;
-		case 'connecting':
-			showToast('Connecting...', ToastType.INFO);
-			break;
-		default:
-			showToast('Unknown connection state', ToastType.ERROR);
 	}
-
 }
 
 // Function WASM (GOLANG)
@@ -172,3 +169,5 @@ function signalDecode<T>(signal: string): T {
 	//@ts-ignore
 	return JSON.parse(window.signalDecode(signal)) as T;
 }
+
+export { CreateClientWeb, ConnectToHostWeb, ClosePeerConnection };
