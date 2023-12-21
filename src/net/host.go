@@ -39,7 +39,7 @@ func InitHost(ctx context.Context, offerEncodedWithCandidates string, answerResp
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 
 		gamepad.HandleGamepad(d)
-		streaming_signal.HandleStreamingSignal(d)
+		streaming_signal.HandleStreamingSignal(ctx, d)
 
 	})
 
