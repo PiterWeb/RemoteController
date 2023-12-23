@@ -8,6 +8,7 @@ import { EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
 import { showToast, ToastType } from '$lib/hooks/toast';
 import { goto } from '$app/navigation';
 import { toogleLoading, setLoadingMessage, setLoadingTitle } from '$lib/hooks/loading';
+import { StopStreaming } from '$lib/webrtc/stream/host_stream_hook';
 
 let host: boolean = false;
 
@@ -66,6 +67,7 @@ export function CancelConnection(fn?: () => void) {
 	closeConnectionFn();
 	if (fn) fn();
 	host = false;
+	StopStreaming();
 }
 
 export function ListenForConnectionChanges() {

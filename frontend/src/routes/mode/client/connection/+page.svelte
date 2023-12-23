@@ -1,17 +1,18 @@
 <script lang="ts">
-	let consuming = false;
+	import { streamingConsuming } from "$lib/webrtc/stream/stream_signal_hook";
+
+	let streaming = false;
 
 	function connectToStream() {
-		consuming = true;
+		streamingConsuming.set(document.getElementById("stream-video")! as HTMLVideoElement);
+		streaming = true;
 	}
 </script>
 
-<button class="btn btn-primary" disabled={consuming} on:click={connectToStream}>
+<button class="btn btn-primary" disabled={streaming} on:click={connectToStream}>
 	Connect to stream</button
 >
 
-{#if consuming}
-	<video id="stream-video" controls controlslist="nodownload">
+<video id="stream-video" class="aspect-video" controls controlslist="nodownload">
 		<track kind="captions" />
-	</video>
-{/if}
+</video>

@@ -4,6 +4,7 @@ import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 import { toogleLoading } from '$lib/hooks/loading';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
 import iceServers from "$lib/webrtc/ice_servers";
+import { streamingConsuming } from './stream/stream_signal_hook';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -71,7 +72,11 @@ async function CreateClientWeb() {
 
 	streamingSignalChannel.onopen = () => {
 
-		CreateClientStream(streamingSignalChannel);
+		const unlistener = streamingConsuming.subscribe((videoElement) => {
+			if (!videoElement) return;
+			CreateClientStream(streamingSignalChannel, videoElement);
+			unlistener();
+		})
 
 	};
 

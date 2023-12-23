@@ -1,5 +1,7 @@
 import { showToast, ToastType } from '$lib/hooks/toast';
-import iceServers from "$lib/webrtc/ice_servers";
+import { EventsEmit, EventsOn } from '$lib/wailsjs/runtime/runtime';
+import iceServers from '$lib/webrtc/ice_servers';
+import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
 
 let peerConnection: RTCPeerConnection | undefined;
 
@@ -17,7 +19,7 @@ function initStreamingPeerConnection() {
 	});
 }
 
-const MIME_TYPE = 'video/webm;codecs=vp9,opus';
+// const MIME_TYPE = 'video/webm;codecs=vp9,opus';
 
 export async function startStreaming() {
 	try {
@@ -26,46 +28,85 @@ export async function startStreaming() {
 			audio: true
 		});
 
-		const mediaRecorder = new MediaRecorder(mediastream, {
-			mimeType: MIME_TYPE,
-		});
-
-		mediaRecorder.ondataavailable = (e) => {
-			if (e.data && e.data.size > 0) {
-				console.log(e.data);
-				sendChunk(e.data);
-			}
-		};
-
-		mediaRecorder.start(500);
+		return mediastream;
 	} catch (e) {
 		showToast('Error starting streaming', ToastType.ERROR);
+		return undefined;
 	}
 }
 
-function sendChunk(chunk: Blob) {
-	console.log('Sending chunk', chunk);
+export function StopStreaming() {
+	try {
+		if (!peerConnection) return;
+
+		peerConnection.close();
+		peerConnection = undefined;
+
+		showToast('Streaming stopped', ToastType.SUCCESS);
+	} catch (e) {
+		showToast('Error stopping streaming', ToastType.ERROR);
+	}
 }
 
-
-export async function CreateHostStream() {
+export function CreateHostStream() {
 	initStreamingPeerConnection();
 
 	if (!peerConnection) {
-		showToast('Error creating host', ToastType.ERROR);
-		return;
+		throw new Error('Error creating stream');
 	}
 
 	peerConnection.onicecandidate = (event) => {
 		if (event.candidate) {
-			console.log('Sending ice candidate', event.candidate);
+			const data: SignalingData = {
+				type: 'candidate',
+				candidate: event.candidate.toJSON(),
+				role: 'host'
+			};
+			EventsEmit('streaming-signal-server', JSON.stringify(data));
+			return;
 		}
-	}
 
-	
-	const offer = await peerConnection.createOffer();
+		console.log('ICE gathering complete');
 
-	await peerConnection.setLocalDescription(offer);
+		const answer = peerConnection?.localDescription?.toJSON();
+		const data: SignalingData = {
+			type: 'answer',
+			answer,
+			role: 'host'
+		};
+		EventsEmit('streaming-signal-server', JSON.stringify(data));
+	};
 
-	console.log('Sending offer', offer);
+	EventsOn('streaming-signal-client', async (data: string) => {
+		console.log('Message received', data);
+		const { type, offer, candidate, role } = JSON.parse(data) as SignalingData;
+
+		if (!peerConnection) return;
+
+		if (role !== 'client') return;
+
+		switch (type) {
+			case 'candidate':
+				peerConnection.addIceCandidate(candidate);
+				break;
+			case 'offer':
+				if (!offer) return;
+				await peerConnection.setRemoteDescription(offer);
+				// eslint-disable-next-line no-case-declarations
+				const mediastream = await startStreaming();
+				if (!mediastream) return;
+				mediastream.getTracks().forEach((track) => peerConnection?.addTrack(track));
+				await peerConnection.setLocalDescription(await peerConnection.createAnswer());
+				break;
+		}
+	});
+
+	peerConnection.onconnectionstatechange = async () => {
+		if (!peerConnection) return;
+
+		if (peerConnection.connectionState === 'connected') {
+			showToast('Connected', ToastType.SUCCESS);
+			return;
+		}
+	};
 }

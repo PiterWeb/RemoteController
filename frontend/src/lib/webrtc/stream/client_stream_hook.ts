@@ -1,7 +1,8 @@
-import { ToastType, showToast } from '$lib/hooks/toast';
 import iceServers from '$lib/webrtc/ice_servers';
+import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
 
 let peerConnection: RTCPeerConnection | undefined;
+let inboundStream: MediaStream | null = null;
 
 function initStreamingPeerConnection() {
 	if (peerConnection) {
@@ -17,38 +18,72 @@ function initStreamingPeerConnection() {
 	});
 }
 
-async function CreateClientStream(signalingChannel: RTCDataChannel) {
+async function CreateClientStream(
+	signalingChannel: RTCDataChannel,
+	videoElement:HTMLVideoElement
+) {
 	initStreamingPeerConnection();
 
-	if (!peerConnection) {
-		showToast('Error creating client', ToastType.ERROR);
-		return;
-	}
+	if (!videoElement || !peerConnection) throw new Error('Error creating stream');
 
 	peerConnection.onicecandidate = (e) => {
 		if (!e.candidate) return;
-		signalingChannel.send(JSON.stringify({ type: 'candidate', candidate: e.candidate }));
+
+		const data: SignalingData = {
+			type: 'candidate',
+			candidate: e.candidate.toJSON(),
+			role: 'client'
+		};
+
+		signalingChannel.send(JSON.stringify(data));
 	};
 
-	peerConnection.ontrack = (e) => {
-		console.log('Track received', e);
+
+	peerConnection.ontrack = (ev) => {
+		if (ev.streams && ev.streams[0]) {
+			videoElement.srcObject = ev.streams[0];
+			videoElement.play();
+		} else {
+			if (!inboundStream) {
+				inboundStream = new MediaStream();
+				videoElement.srcObject = inboundStream;
+				videoElement.play();
+			}
+			inboundStream.addTrack(ev.track);
+		}
 	};
 
-	const offer = await peerConnection.createOffer();
+	const offer = await peerConnection.createOffer({
+		offerToReceiveAudio: true,
+		offerToReceiveVideo: true
+	});
 
 	await peerConnection.setLocalDescription(offer);
 
-	signalingChannel.send(JSON.stringify({ type: ' offer', offer }));
+	const data: SignalingData = {
+		type: 'offer',
+		offer: offer,
+		role: 'client'
+
+	}
+
+	signalingChannel.send(JSON.stringify(data));
 
 	signalingChannel.onmessage = async (e) => {
-		const { type, answer, candidate } = JSON.parse(e.data);
+		console.log('Message received', e.data);
+		const { type, answer, candidate, role } = JSON.parse(e.data) as SignalingData;
 
 		if (!peerConnection) {
 			return;
 		}
 
+		if (role !== 'host') {
+			return;
+		}
+
 		switch (type) {
 			case 'answer':
+				if (!answer) return;
 				await peerConnection.setRemoteDescription(answer);
 				break;
 			case 'candidate':
@@ -60,7 +95,6 @@ async function CreateClientStream(signalingChannel: RTCDataChannel) {
 	peerConnection.onconnectionstatechange = () => {
 		console.log('Connection state changed', peerConnection?.connectionState);
 	};
-
 }
 
 function ClosePeerConnection() {
