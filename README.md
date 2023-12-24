@@ -26,13 +26,13 @@ Remote gamepads without difficulties
 - [ ] Support for PlayStation 3/4/5 Gamepads
 - [x] Windows Support
 - [ ] Linux Support 
-- [ ] Remote Streaming
+- [x] Remote Streaming
 - [x] Browser Client
 
 ### How it works 👷‍♂️
 
-This desktop APP is based on the WebRTC 🎞 standard and it uses the power of Go to communicate 🗣 with the OS API's.
-In Windows uses XInput API and the ViGEm Bus Driver with the ViGEm Client DLL
+This desktop APP is based on the WebRTC 🎞 standard and it uses the power of Go to communicate 🗣 with the Gamepad emulation libraries.
+In Windows uses the ViGEm Bus Driver with the ViGEm Client DLL
 
 For the low level actions uses Go.
 On the other hand the UI works with Web technologies (WASM, Sveltekit, Tailwind, DaisyUI & Typescript)
