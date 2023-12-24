@@ -26,7 +26,7 @@ Remote gamepads without difficulties
 - [ ] Support for PlayStation 3/4/5 Gamepads
 - [x] Windows Support
 - [ ] Linux Support 
-- [ ] Remote Streaming
+- [x] Remote Streaming
 - [x] Browser Client
 
 ### How it works 👷‍♂️
