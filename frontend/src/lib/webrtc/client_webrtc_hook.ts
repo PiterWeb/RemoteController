@@ -1,10 +1,11 @@
-import { showToast, ToastType } from '$lib/hooks/toast';
+import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
 import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
-import { toogleLoading } from '$lib/hooks/loading';
+import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
-import iceServers from "$lib/webrtc/ice_servers";
+import stunServers from '$lib/webrtc/stun_servers';
 import { streamingConsuming } from './stream/stream_signal_hook';
+import { get } from 'svelte/store';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -21,7 +22,7 @@ function initPeerConnection() {
 	peerConnection = new RTCPeerConnection({
 		iceServers: [
 			{
-				urls: iceServers
+				urls: get(stunServers)
 			}
 		]
 	});
@@ -71,14 +72,14 @@ async function CreateClientWeb() {
 	};
 
 	streamingSignalChannel.onopen = () => {
-
 		const unlistener = streamingConsuming.subscribe((videoElement) => {
 			if (!videoElement) return;
 			CreateClientStream(streamingSignalChannel, videoElement);
 			unlistener();
-		})
-
+		});
 	};
+
+	let copiedCode: string = '';
 
 	try {
 		const offer = await peerConnection.createOffer();
@@ -94,9 +95,11 @@ async function CreateClientWeb() {
 			if (ev.candidate === null) {
 				// Disable spinner
 				toogleLoading();
-				navigator.clipboard.writeText(
-					signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates)
-				);
+
+				copiedCode =
+					signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
+
+				navigator.clipboard.writeText(copiedCode);
 				showToast('Client code copied to clipboard', ToastType.SUCCESS);
 				return;
 			}
@@ -106,7 +109,10 @@ async function CreateClientWeb() {
 	} catch (error) {
 		console.error(error);
 		showToast('Error creating client', ToastType.ERROR);
-	}
+	} 
+	
+	return copiedCode;
+	
 }
 
 async function ConnectToHostWeb(hostAndCandidatesCode: string) {

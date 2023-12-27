@@ -1,5 +1,5 @@
 <script>
-	import toast from '$lib/hooks/toast';
+	import toast from '$lib/toast/toast_hook';
 </script>
 
 {#if $toast.show}

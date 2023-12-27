@@ -1,5 +1,5 @@
 <script lang="ts">
-	import loadingWritable from '$lib/hooks/loading';
+	import loadingWritable from '$lib/loading/loading_hook';
 
 	let loadingModal: HTMLDialogElement;
 	let title: string = '';

@@ -1,6 +1,7 @@
-import { showToast, ToastType } from '$lib/hooks/toast';
+import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { EventsEmit, EventsOn } from '$lib/wailsjs/runtime/runtime';
-import iceServers from '$lib/webrtc/ice_servers';
+import stunServers from '$lib/webrtc/stun_servers';
+import { get } from 'svelte/store';
 import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -13,7 +14,7 @@ function initStreamingPeerConnection() {
 	peerConnection = new RTCPeerConnection({
 		iceServers: [
 			{
-				urls: iceServers
+				urls: get(stunServers)
 			}
 		]
 	});

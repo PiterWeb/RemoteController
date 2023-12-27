@@ -29,7 +29,7 @@ export function showToast(message: string, type: Toast['type']) {
 
 	if (timer) clearTimeout(timer);
 
-	timer = setTimeout(() => {
+	timer = window.setTimeout(() => {
 		hideToast();
 		timer = undefined;
 	}, 2000);

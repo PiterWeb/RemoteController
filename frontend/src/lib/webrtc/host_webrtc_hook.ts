@@ -5,9 +5,9 @@ import {
 
 import { EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
 
-import { showToast, ToastType } from '$lib/hooks/toast';
+import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
-import { toogleLoading, setLoadingMessage, setLoadingTitle } from '$lib/hooks/loading';
+import { toogleLoading, setLoadingMessage, setLoadingTitle } from '$lib/loading/loading_hook';
 import { StopStreaming } from '$lib/webrtc/stream/host_stream_hook';
 
 let host: boolean = false;

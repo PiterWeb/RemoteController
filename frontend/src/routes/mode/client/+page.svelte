@@ -1,7 +1,7 @@
 <script>
 	import { CreateClientWeb, ConnectToHostWeb } from '$lib/webrtc/client_webrtc_hook';
 
-	import { showToast, ToastType } from '$lib/hooks/toast';
+	import { showToast, ToastType } from '$lib/toast/toast_hook';
 
 	let code = '';
 	let clientCreated = false;
@@ -29,23 +29,78 @@
 	</span>
 </h2>
 
-<div class="mt-12 card bg-base-100 shadow-xl">
+<div
+	class="mt-12 card bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+>
 	<div class="card-body">
-		<div class="card-actions gap-4 justify-end items-center flex-col w-full">
-			<div class="divider">First Step</div>
-			<button on:click={handleCreateClient} class="btn btn-primary" disabled={clientCreated}>Create Client</button>
+		<ol class="relative border-s border-gray-200 dark:border-gray-700">
+			<li class="mb-10 ms-4">
+				{#if !clientCreated}
+					<div
+						class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"
+					/>
+				{:else}
+					<span
+						class="absolute flex items-center justify-center rounded-full mt-1.5 w-3 h-3 -start-1.5 border border-white dark:border-gray-900"
+					>
+						<svg
+							class="w-2.5 h-2.5 text-green-500 dark:text-green-400 flex-shrink-0"
+							aria-hidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="currentColor"
+							viewBox="0 0 20 20"
+						>
+							<path
+								d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
+							/>
+						</svg>
+					</span>
+				{/if}
 
-			<div class="divider">Second Step</div>
+				<label
+					for="create-client"
+					class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
+					>First Step</label
+				>
+				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+					Share the code with your host
+				</h3>
+				{#if clientCreated}
+					<p class="text-gray-400 dark:text-gray-500 mb-4">
+						If your code is missing from your clipboard, you must restart the process.
+					</p>
+				{/if}
 
-			<div class="join">
-				<input
-					type="text"
-					placeholder="Paste here code"
-					class="input input-bordered w-full max-w-xs"
-					bind:value={code}
+				{#if !clientCreated}
+					<button id="create-client" on:click={handleCreateClient} class="btn btn-primary"
+						>Create Client</button
+					>
+				{/if}
+			</li>
+			<li class="mb-10 ms-4">
+				<div
+					class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"
 				/>
-				<button on:click={handleConnectToHost} class="btn btn-primary">Connect to Host</button>
-			</div>
-		</div>
+				<label
+					for="connect-to-host"
+					class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
+					>Second Step</label
+				>
+				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+					Get the code from your host
+				</h3>
+				<div class="join">
+					<input
+						type="text"
+						placeholder="Paste here code"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={code}
+					/>
+					<button id="connect-to-host" on:click={handleConnectToHost} class="btn btn-primary"
+						>Connect to Host</button
+					>
+				</div>
+			</li>
+		</ol>
 	</div>
 </div>

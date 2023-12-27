@@ -1,6 +1,6 @@
 <script>
 	import { CreateHost } from '$lib/webrtc/host_webrtc_hook';
-	import { showToast, ToastType } from '$lib/hooks/toast';
+	import { showToast, ToastType } from '$lib/toast/toast_hook';
 
 	let code = '';
 
@@ -21,14 +21,19 @@
 	</span>
 </h2>
 
-<div class="mt-12 card bg-base-100 shadow-xl">
+<div
+	class="mt-12 card bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+>
 	<div class="card-body">
+		<p class="text-gray-400">Get your host code</p>
 		<div class="card-actions gap-4 justify-end items-center flex-col w-full">
 			<div class="join">
 				<input
 					type="text"
+					id="first_name"
+					class="max-w-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 					placeholder="Paste here code"
-					class="input input-bordered w-full max-w-xs"
+					required
 					bind:value={code}
 				/>
 				<button on:click={handleConnectToClient} class="btn btn-primary">Connect to Client</button>
