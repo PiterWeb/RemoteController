@@ -4,7 +4,6 @@
 	import stunServersStore from '$lib/webrtc/stun_servers';
 	import IsWindows from '$lib/detection/IsWindows.svelte';
 	import ViGEmDownload from './ViGEmDownload.svelte';
-	import { onMount } from 'svelte';
 
 	function removeStunServer(index: number) {
 		stunServersStore.update((servers) => {
@@ -22,7 +21,7 @@
 
 		if (stunServer.length === 0) return;
 
-		stunServersStore.update((servers) => [...servers, stunServer]);
+		stunServersStore.update((servers) => [...servers, "stun:"+stunServer]);
 
 		form.reset();
 	}
@@ -41,6 +40,7 @@
 			>
 			<a
 				href="https://raw.githubusercontent.com/pradt2/always-online-stun/master/valid_hosts.txt"
+				target="_blank"
 				class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Server List</a
 			>
 
@@ -51,7 +51,7 @@
 					name="stun-server"
 					aria-describedby="helper-text-explanation"
 					class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-					placeholder="stun:stun.l.google.com:19302"
+					placeholder="stun.l.google.com:19302"
 				/>
 				<button
 					type="submit"
