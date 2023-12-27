@@ -98,10 +98,10 @@ async function CreateClientStream(
 	};
 }
 
-function ClosePeerConnection() {
+function CloseStreamPeerConnection() {
 	if (!peerConnection) return;
 	peerConnection.close();
 	peerConnection = undefined;
 }
 
-export { CreateClientStream, ClosePeerConnection };
+export { CreateClientStream, CloseStreamPeerConnection };

@@ -4,8 +4,9 @@ import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
 import stunServers from '$lib/webrtc/stun_servers';
-import { streamingConsuming } from './stream/stream_signal_hook';
+import { streamingConsumingVideoElement } from './stream/stream_signal_hook';
 import { get } from 'svelte/store';
+import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -72,7 +73,7 @@ async function CreateClientWeb() {
 	};
 
 	streamingSignalChannel.onopen = () => {
-		const unlistener = streamingConsuming.subscribe((videoElement) => {
+		const unlistener = streamingConsumingVideoElement.subscribe((videoElement) => {
 			if (!videoElement) return;
 			CreateClientStream(streamingSignalChannel, videoElement);
 			unlistener();
@@ -152,16 +153,19 @@ function handleConnectionState() {
 		case 'disconnected':
 			showToast('Connection lost', ToastType.ERROR);
 			ClosePeerConnection();
+			CloseStreamPeerConnection();
 			goto('/');
 			break;
 		case 'failed':
 			showToast('Connection failed', ToastType.ERROR);
 			ClosePeerConnection();
+			CloseStreamPeerConnection();
 			goto('/');
 			break;
 		case 'closed':
 			showToast('Connection closed', ToastType.ERROR);
 			ClosePeerConnection();
+			CloseStreamPeerConnection();
 			goto('/');
 			break;
 	}

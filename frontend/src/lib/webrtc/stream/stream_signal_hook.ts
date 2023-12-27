@@ -8,4 +8,4 @@ export interface SignalingData {
 	role: 'host' | 'client';
 }
 
-export const streamingConsuming = writable<HTMLVideoElement>(undefined);
+export const streamingConsumingVideoElement = writable<HTMLVideoElement>(undefined);

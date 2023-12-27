@@ -29,7 +29,11 @@ export async function startStreaming() {
 			audio: true
 		});
 
-		return mediastream;
+		const recorder = new MediaRecorder(mediastream, {
+			mimeType: 'video/webm;codecs=vp9,opus'
+		});
+
+		return recorder;
 	} catch (e) {
 		showToast('Error starting streaming', ToastType.ERROR);
 		return undefined;
@@ -94,9 +98,9 @@ export function CreateHostStream() {
 				if (!offer) return;
 				await peerConnection.setRemoteDescription(offer);
 				// eslint-disable-next-line no-case-declarations
-				const mediastream = await startStreaming();
-				if (!mediastream) return;
-				mediastream.getTracks().forEach((track) => peerConnection?.addTrack(track));
+				const mediarecorder = await startStreaming();
+				if (!mediarecorder) return;
+				mediarecorder.stream.getTracks().forEach((track) => peerConnection?.addTrack(track));
 				await peerConnection.setLocalDescription(await peerConnection.createAnswer());
 				break;
 		}
