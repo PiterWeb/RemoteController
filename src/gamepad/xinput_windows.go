@@ -2,24 +2,22 @@ package gamepad
 
 import (
 	"math"
-	"syscall"
-	"unsafe"
 )
 
 type ID byte
 
 type All [ControllerCount]XInputState
 
-func (all *All) Update() (firsterr error) {
-	for i := range all {
-		all[i].ID = ID(i)
-		err := all[i].Update()
-		if err != nil && firsterr == nil {
-			firsterr = err
-		}
-	}
-	return
-}
+// func (all *All) Update() (firsterr error) {
+// 	for i := range all {
+// 		all[i].ID = ID(i)
+// 		err := all[i].Update()
+// 		if err != nil && firsterr == nil {
+// 			firsterr = err
+// 		}
+// 	}
+// 	return
+// }
 
 type XInputState struct {
 	ID        ID
@@ -46,7 +44,7 @@ func (state XInputState) ToXInput(virtualState *ViGEmState) {
 
 func (state *XInputState) Pressed(button Button) bool { return state.Raw.Buttons&button != 0 }
 
-func (state *XInputState) Update() error { return Get(state.ID, state) }
+// func (state *XInputState) Update() error { return Get(state.ID, state) }
 
 type Thumb struct{ X, Y, Magnitude float32 }
 
@@ -136,12 +134,12 @@ func (state *XInputState) RectRight() Thumb {
 	return rect16(state.Raw.ThumbRX, state.Raw.ThumbRY, RightThumbDeadZone)
 }
 
-func (state *XInputState) Vibrate(left, right uint16) {
-	if !state.Connected {
-		return
-	}
-	Vibrate(state.ID, &Vibration{left, right})
-}
+// func (state *XInputState) Vibrate(left, right uint16) {
+// 	if !state.Connected {
+// 		return
+// 	}
+// 	Vibrate(state.ID, &Vibration{left, right})
+// }
 
 type Vibration struct {
 	LeftMotor  uint16
@@ -181,45 +179,45 @@ const (
 	ButtonY Button = 0x8000
 )
 
-// Get retrieves the latest state of the controller.
-func Get(id ID, state *XInputState) error {
-	r, _, _ := procGetState.Call(uintptr(id), uintptr(unsafe.Pointer(&state.Packet)))
-	state.ID = id
-	state.Connected = r == 0
-	if r == 0 {
-		return nil
-	}
-	return syscall.Errno(r)
-}
+// // Get retrieves the latest state of the controller.
+// func Get(id ID, state *XInputState) error {
+// 	r, _, _ := procGetState.Call(uintptr(id), uintptr(unsafe.Pointer(&state.Packet)))
+// 	state.ID = id
+// 	state.Connected = r == 0
+// 	if r == 0 {
+// 		return nil
+// 	}
+// 	return syscall.Errno(r)
+// }
 
-func Vibrate(id ID, vibration *Vibration) error {
-	r, _, _ := procSetState.Call(uintptr(id), uintptr(unsafe.Pointer(vibration)))
-	if r == 0 {
-		return nil
-	}
-	return syscall.Errno(r)
-}
+// func Vibrate(id ID, vibration *Vibration) error {
+// 	r, _, _ := procSetState.Call(uintptr(id), uintptr(unsafe.Pointer(vibration)))
+// 	if r == 0 {
+// 		return nil
+// 	}
+// 	return syscall.Errno(r)
+// }
 
-var (
-	procGetState *syscall.Proc
-	procSetState *syscall.Proc
-)
+// var (
+// 	procGetState *syscall.Proc
+// 	procSetState *syscall.Proc
+// )
 
-func init() {
-	dll, err := syscall.LoadDLL("xinput1_4.dll")
-	defer func() {
-		if err != nil {
-			panic(err)
-		}
-	}()
+// func init() {
+// 	dll, err := syscall.LoadDLL("xinput1_4.dll")
+// 	defer func() {
+// 		if err != nil {
+// 			panic(err)
+// 		}
+// 	}()
 
-	if err != nil {
-		dll, err = syscall.LoadDLL("xinput1_3.dll")
-		if err != nil {
-			dll, err = syscall.LoadDLL("xinput9_1_0.dll")
-		}
-	}
+// 	if err != nil {
+// 		dll, err = syscall.LoadDLL("xinput1_3.dll")
+// 		if err != nil {
+// 			dll, err = syscall.LoadDLL("xinput9_1_0.dll")
+// 		}
+// 	}
 
-	procGetState = dll.MustFindProc("XInputGetState")
-	procSetState = dll.MustFindProc("XInputSetState")
-}
+// 	procGetState = dll.MustFindProc("XInputGetState")
+// 	procSetState = dll.MustFindProc("XInputSetState")
+// }
