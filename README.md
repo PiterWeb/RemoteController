@@ -37,5 +37,9 @@ In Windows uses the ViGEm Bus Driver with the ViGEm Client DLL
 For the low level actions uses Go.
 On the other hand the UI works with Web technologies (WASM, Sveltekit, Tailwind, DaisyUI & Typescript)
 
+### Contributting 🤝
+
+If you are intested to contribute to this project you can follow this [guide](./CONTRIBUTING.md)
+
 ### Thanks to the ViGEm project ♥
 ViGEm is making this project a reallity. We embed ViGEm Installation Wizard and ViGEm Client DLLS within the executable for Windows
