@@ -7,15 +7,20 @@ Remote gamepads without difficulties
 
 ![Example Image from the Desktop APP](./assets/example.jpg)
 
-### Installation 📦
-
-- https://remote-controller.vercel.app/download/
-
 ### Use cases ✨
 
 - Play with friends online
 - Controll your games from other machines with a gamepad
 - Create a professional gaming cloud platform (it would require modifications to interact with through the shell)
+
+### Installation 📦
+
+- https://remote-controller.vercel.app/download/
+
+### Guides 📘
+
+- [Instalation guide](https://remote-controller.vercel.app/info/guides/installation/)
+- [How to use](https://remote-controller.vercel.app/info/guides/how-to-use/)
 
 ### Features 🧩
 
@@ -28,6 +33,12 @@ Remote gamepads without difficulties
 - [ ] Linux Support 
 - [x] Remote Streaming
 - [x] Browser Client
+
+### OS Support 💻
+
+| Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
+|---------	|-------	|-------	|---------	|
+| ✔       	| ❌     	| ❌     	| ✔       	|
 
 ### How it works 👷‍♂️
 
