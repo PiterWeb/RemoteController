@@ -33,6 +33,7 @@ Remote gamepads without difficulties
 - [ ] Linux Support 
 - [x] Remote Streaming
 - [x] Browser Client
+- [ ] Support for keyboard/mouse
 
 ### OS Support 💻
 
