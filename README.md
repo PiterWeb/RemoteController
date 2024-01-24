@@ -1,6 +1,5 @@
 # ![Gamepad](./frontend/src/lib/assets/gamepad.svg) Remote Controller
-### An open source & decentralized alternative to Steam remote play
-
+### An open source & decentralized alternative to Steam remote play (No need to self host)
 
 > [!Note]
 > Website: 
@@ -13,8 +12,6 @@
 ### The limit is in your imagination ... 
 
 ![Example Image from the Desktop APP](./assets/example.jpg)
-
-
 
 ## Installation 📦
 
@@ -30,17 +27,17 @@
 - [x] Portable
 - [x] Simple & Modern UI
 - [x] P2P "Decentralized" (WebRTC)
-- [x] Windows Support
-- [ ] Linux Support 
 - [x] Remote Streaming
 - [x] Browser Client
 - [ ] Support for keyboard/mouse
+- [x] ViGEmBus Setup (Windows)
+- [ ] Localization (translation to multiple languages)
 
 ### OS Support 💻
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ❌     	| ❌     	| ✔       	|
+| ✔       	| ❌     	| ❌     	| ✔ (Known Issues with Safari)       	|
 
 ### Gamepad Support 🎮
 
