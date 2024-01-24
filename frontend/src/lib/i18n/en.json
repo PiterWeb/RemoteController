@@ -1,0 +1,11 @@
+{
+  "main_title_choose": "Choose",
+  "main_title_your": "your",
+  "main_title_role": "role",
+  "host_card_title": "Host",
+  "host_card_description": "Share & stream your game to clients",
+  "host_card_cta": "Start Host",
+  "client_card_title": "Client",
+  "client_card_description": "Plug your gamepad and play through streaming",
+  "client_card_cta": "Create Client"
+}
