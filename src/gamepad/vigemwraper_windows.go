@@ -40,7 +40,7 @@ const (
 var (
 	vigemDLL                      *syscall.LazyDLL
 	vigem_free_proc               *syscall.LazyProc
-	vigem_disconect_proc          *syscall.LazyProc
+	vigem_disconnect_proc         *syscall.LazyProc
 	vigem_alloc_proc              *syscall.LazyProc
 	vigem_connect_proc            *syscall.LazyProc
 	vigem_target_x360_alloc_proc  *syscall.LazyProc
@@ -85,7 +85,7 @@ func init() {
 	exec.Command("regsvr32", path+"/"+ViGEm_DLL_FILE_NAME)
 
 	vigemDLL = syscall.NewLazyDLL(ViGEm_DLL_FILE_NAME)
-	vigem_disconect_proc = vigemDLL.NewProc("vigem_disconnect")
+	vigem_disconnect_proc = vigemDLL.NewProc("vigem_disconnect")
 	vigem_free_proc = vigemDLL.NewProc("vigem_free")
 	vigem_alloc_proc = vigemDLL.NewProc("vigem_alloc")
 	vigem_connect_proc = vigemDLL.NewProc("vigem_connect")
@@ -139,32 +139,5 @@ func handleVigemError(err error) error {
 	}
 
 	return nil
-
-}
-
-type ViGEmState struct {
-	DwPacketNumber DWORD
-	Gamepad        _ViGEm_GAMEPAD
-}
-
-type _ViGEm_GAMEPAD struct {
-	wButtons      WORD
-	bLeftTrigger  BYTE
-	bRightTrigger BYTE
-	sThumbLX      SHORT
-	sThumbLY      SHORT
-	sThumbRX      SHORT
-	sThumbRY      SHORT
-}
-
-func (gamepad *_ViGEm_GAMEPAD) UpdateFromRawState(state RawControls) {
-
-	gamepad.wButtons = WORD(state.Buttons)
-	gamepad.bLeftTrigger = BYTE(state.LeftTrigger)
-	gamepad.bRightTrigger = BYTE(state.RightTrigger)
-	gamepad.sThumbLX = SHORT(state.ThumbLX)
-	gamepad.sThumbLY = SHORT(state.ThumbLY)
-	gamepad.sThumbRX = SHORT(state.ThumbRX)
-	gamepad.sThumbRY = SHORT(state.ThumbRY)
 
 }

@@ -13,6 +13,21 @@ type EmulatedDevice struct {
 	pad    uintptr
 }
 
+type ViGEmState struct {
+	DwPacketNumber DWORD
+	Gamepad        _ViGEm_GAMEPAD
+}
+
+type _ViGEm_GAMEPAD struct {
+	wButtons      WORD
+	bLeftTrigger  BYTE
+	bRightTrigger BYTE
+	sThumbLX      SHORT
+	sThumbLY      SHORT
+	sThumbRX      SHORT
+	sThumbRY      SHORT
+}
+
 func initializeEmulatedDevice() (clientVirtualGamepad, error) {
 
 	client, _, err := vigem_alloc_proc.Call()
@@ -97,7 +112,19 @@ func FreeTargetAndDisconnect(device EmulatedDevice) {
 	vigem_target_remove_proc.Call(uintptr(device.client), device.pad)
 	vigem_target_free_proc.Call(device.pad)
 
-	vigem_disconect_proc.Call(uintptr(device.client))
+	vigem_disconnect_proc.Call(uintptr(device.client))
 	vigem_free_proc.Call(uintptr(device.client))
+
+}
+
+func (gamepad *_ViGEm_GAMEPAD) UpdateFromRawState(state RawControls) {
+
+	gamepad.wButtons = WORD(state.Buttons)
+	gamepad.bLeftTrigger = BYTE(state.LeftTrigger)
+	gamepad.bRightTrigger = BYTE(state.RightTrigger)
+	gamepad.sThumbLX = SHORT(state.ThumbLX)
+	gamepad.sThumbLY = SHORT(state.ThumbLY)
+	gamepad.sThumbRX = SHORT(state.ThumbRX)
+	gamepad.sThumbRY = SHORT(state.ThumbRY)
 
 }
