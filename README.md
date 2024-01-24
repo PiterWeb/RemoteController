@@ -1,5 +1,5 @@
 # ![Gamepad](./frontend/src/lib/assets/gamepad.svg) Remote Controller
-### An open source alternative to Steam remote play
+### An open source & decentralized alternative to Steam remote play
 
 
 > [!Note]
