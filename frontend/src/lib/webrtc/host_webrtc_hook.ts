@@ -5,6 +5,8 @@ import {
 
 import { EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
 
+import { _ } from 'svelte-i18n'
+import { get } from 'svelte/store';
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
 import { toogleLoading, setLoadingMessage, setLoadingTitle } from '$lib/loading/loading_hook';
@@ -27,34 +29,34 @@ export async function CreateHost(client: string) {
 		}
 
 		navigator.clipboard.writeText(hostCode);
-		showToast('Host code copied to clipboard', ToastType.SUCCESS);
+		showToast(get(_)('host-code-copied-to-clipboard'), ToastType.SUCCESS);
 
 		// TODO
 		// Listen for connection state changes and handle them (Wails events) to redirect to the correct page
 
 		toogleLoading();
-		setLoadingMessage('Waiting for client to connect');
-		setLoadingTitle('¡Make sure to pass the code to the client!');
+		setLoadingMessage(get(_)('waiting-for-client-to-connect'));
+		setLoadingTitle(get(_)('make-sure-to-pass-the-code-to-the-client'));
 
 		EventsOnce('connection_state', (state: ConnectionState) => {
 			toogleLoading();
 
 			switch (state.toUpperCase()) {
 				case ConnectionState.Connected:
-					showToast('Connected', ToastType.SUCCESS);
+					showToast(get(_)('connected'), ToastType.SUCCESS);
 					host = true;
 					goto('/mode/host/connection');
 					break;
 				case ConnectionState.Failed:
-					showToast('Connection failed', ToastType.ERROR);
+					showToast(get(_)('connection-failed'), ToastType.ERROR);
 					goto('/');
 					break;
 				default:
-					showToast('Unknown connection state', ToastType.ERROR);
+					showToast(get(_)('unknown-connection-state'), ToastType.ERROR);
 			}
 		});
 	} catch (e) {
-		showToast('Error creating host', ToastType.ERROR);
+		showToast(get(_)('error-creating-host'), ToastType.ERROR);
 	}
 }
 
@@ -76,16 +78,16 @@ export function ListenForConnectionChanges() {
 		(state: ConnectionState) => {
 			switch (state.toUpperCase()) {
 				case ConnectionState.Connected:
-					showToast('Connected', ToastType.SUCCESS);
+					showToast(get(_)('connected'), ToastType.SUCCESS);
 					host = true;
 					goto('/mode/host/connection');
 					break;
 				case ConnectionState.Failed:
-					showToast('Connection failed', ToastType.ERROR);
+					showToast(get(_)('connection-failed'), ToastType.ERROR);
 					goto('/');
 					break;
 				case ConnectionState.Disconnected:
-					showToast('Connection lost', ToastType.ERROR);
+					showToast(get(_)('connection-lost'), ToastType.ERROR);
 					host = false;
 					goto('/');
 					connectionStateCancelEventListener();

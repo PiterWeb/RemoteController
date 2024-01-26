@@ -2,13 +2,15 @@
 	import { CreateClientWeb, ConnectToHostWeb } from '$lib/webrtc/client_webrtc_hook';
 
 	import { showToast, ToastType } from '$lib/toast/toast_hook';
+	import { _ } from 'svelte-i18n'
+
 
 	let code = '';
 	let clientCreated = false;
 
 	function handleConnectToHost() {
 		if (code.length < 1) {
-			showToast('Code is empty', ToastType.ERROR);
+			showToast($_('code-is-empty'), ToastType.ERROR);
 			return;
 		}
 
@@ -25,7 +27,7 @@
 <h2 class="text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
 	<span
 		class="[&amp;::selection]:text-base-content text-transparent relative col-start-1 row-start-1 bg-clip-text bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900"
-		>Client
+		>{$_('client_card_title')}
 	</span>
 </h2>
 
@@ -60,20 +62,20 @@
 				<label
 					for="create-client"
 					class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
-					>First Step</label
+					>{$_('first-step')}</label
 				>
 				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-					Share the code with your host
+					{$_('share-the-code-with-your-host')}
 				</h3>
 				{#if clientCreated}
 					<p class="text-gray-400 dark:text-gray-500 mb-4">
-						If your code is missing from your clipboard, you must restart the process.
+						{$_('if-your-code-is-missing-from-your-clipboard-you-must-restart-the-process')}
 					</p>
 				{/if}
 
 				{#if !clientCreated}
 					<button id="create-client" on:click={handleCreateClient} class="btn btn-primary"
-						>Create Client</button
+						>{$_('client_card_cta')}</button
 					>
 				{/if}
 			</li>
@@ -84,10 +86,10 @@
 				<label
 					for="connect-to-host"
 					class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
-					>Second Step</label
+					>{$_('second-step')}</label
 				>
 				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-					Get the code from your host
+					{$_('get-the-code-from-your-host')}
 				</h3>
 				<div class="join">
 					<input
@@ -97,7 +99,7 @@
 						bind:value={code}
 					/>
 					<button id="connect-to-host" on:click={handleConnectToHost} class="btn btn-primary"
-						>Connect to Host</button
+						>{$_('connect-to-host')}</button
 					>
 				</div>
 			</li>

@@ -1,9 +1,9 @@
 <script script lang="ts">
-	import { isWindows } from '$lib/detection/detect_os';
-	import onwebsite from '$lib/detection/onwebsite';
 	import stunServersStore from '$lib/webrtc/stun_servers';
 	import IsWindows from '$lib/detection/IsWindows.svelte';
 	import ViGEmDownload from './ViGEmDownload.svelte';
+	import { _ } from 'svelte-i18n';
+	import LanguageSelector from './LanguageSelector.svelte';
 
 	function removeStunServer(index: number) {
 		stunServersStore.update((servers) => {
@@ -21,27 +21,27 @@
 
 		if (stunServer.length === 0) return;
 
-		stunServersStore.update((servers) => [...servers, "stun:"+stunServer]);
+		stunServersStore.update((servers) => [...servers, 'stun:' + stunServer]);
 
 		form.reset();
 	}
-
 </script>
 
-<div
-	class="grid gap-40 w-full md:grid-cols-2"
->
+<div class="grid gap-40 w-full md:grid-cols-3">
+	<LanguageSelector />
+
 	<section
 		class="max-w-96 min-w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
 	>
 		<form class="max-w-md mx-auto space-y-6" on:submit|preventDefault={submitForm}>
 			<label for="helper-text" class="text-xl font-medium text-gray-900 dark:text-white"
-				>STUN Servers</label
+				>{$_('stun-servers-title')}</label
 			>
 			<a
 				href="https://raw.githubusercontent.com/pradt2/always-online-stun/master/valid_hosts.txt"
 				target="_blank"
-				class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Server List</a
+				class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+				>{$_('server-list-link')}</a
 			>
 
 			<div class="relative">
@@ -56,7 +56,7 @@
 				<button
 					type="submit"
 					class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-					>Add</button
+					>{$_('add')}</button
 				>
 			</div>
 

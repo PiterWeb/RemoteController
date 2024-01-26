@@ -7,6 +7,7 @@ import stunServers from '$lib/webrtc/stun_servers';
 import { streamingConsumingVideoElement } from './stream/stream_signal_hook';
 import { get } from 'svelte/store';
 import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook';
+import { _ } from 'svelte-i18n';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -40,7 +41,7 @@ async function CreateClientWeb() {
 	initPeerConnection();
 
 	if (!peerConnection) {
-		showToast('Error creating client', ToastType.ERROR);
+		showToast(get(_)('error-creating-client'), ToastType.ERROR);
 		return;
 	}
 
@@ -101,7 +102,7 @@ async function CreateClientWeb() {
 					signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
 
 				navigator.clipboard.writeText(copiedCode);
-				showToast('Client code copied to clipboard', ToastType.SUCCESS);
+				showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
 				return;
 			}
 
@@ -109,7 +110,7 @@ async function CreateClientWeb() {
 		};
 	} catch (error) {
 		console.error(error);
-		showToast('Error creating client', ToastType.ERROR);
+		showToast(get(_)('error-creating-client'), ToastType.ERROR);
 	} 
 	
 	return copiedCode;
@@ -136,7 +137,7 @@ async function ConnectToHostWeb(hostAndCandidatesCode: string) {
 		});
 	} catch (e) {
 		console.error(e);
-		showToast('Error connecting to host', ToastType.ERROR);
+		showToast(get(_)('error-connecting-to-host'), ToastType.ERROR);
 	}
 }
 
@@ -147,23 +148,23 @@ function handleConnectionState() {
 
 	switch (connectionState) {
 		case 'connected':
-			showToast('Connection stablished successfully', ToastType.SUCCESS);
+			showToast(get(_)('connection-stablished-successfully'), ToastType.SUCCESS);
 			goto('/mode/client/connection');
 			break;
 		case 'disconnected':
-			showToast('Connection lost', ToastType.ERROR);
+			showToast(get(_)('connection-lost'), ToastType.ERROR);
 			ClosePeerConnection();
 			CloseStreamPeerConnection();
 			goto('/');
 			break;
 		case 'failed':
-			showToast('Connection failed', ToastType.ERROR);
+			showToast(get(_)('connection-failed'), ToastType.ERROR);
 			ClosePeerConnection();
 			CloseStreamPeerConnection();
 			goto('/');
 			break;
 		case 'closed':
-			showToast('Connection closed', ToastType.ERROR);
+			showToast(get(_)('connection-closed'), ToastType.ERROR);
 			ClosePeerConnection();
 			CloseStreamPeerConnection();
 			goto('/');

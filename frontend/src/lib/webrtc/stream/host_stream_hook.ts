@@ -3,6 +3,8 @@ import { EventsEmit, EventsOn } from '$lib/wailsjs/runtime/runtime';
 import stunServers from '$lib/webrtc/stun_servers';
 import { get } from 'svelte/store';
 import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
+import { _ } from 'svelte-i18n'
+
 
 let peerConnection: RTCPeerConnection | undefined;
 
@@ -35,7 +37,7 @@ export async function startStreaming() {
 
 		return recorder;
 	} catch (e) {
-		showToast('Error starting streaming', ToastType.ERROR);
+		showToast(get(_)('error-starting-streaming'), ToastType.ERROR);
 		return undefined;
 	}
 }
@@ -47,9 +49,9 @@ export function StopStreaming() {
 		peerConnection.close();
 		peerConnection = undefined;
 
-		showToast('Streaming stopped', ToastType.SUCCESS);
+		showToast(get(_)('streaming-stopped'), ToastType.SUCCESS);
 	} catch (e) {
-		showToast('Error stopping streaming', ToastType.ERROR);
+		showToast(get(_)('error-stopping-streaming'), ToastType.ERROR);
 	}
 }
 
