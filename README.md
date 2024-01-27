@@ -31,7 +31,7 @@
 - [x] Browser Client
 - [ ] Support for keyboard/mouse
 - [x] ViGEmBus Setup (Windows)
-- [ ] Localization (translation to multiple languages)
+- [x] Localization (translation to multiple languages)
 
 ### OS Support 💻
 
