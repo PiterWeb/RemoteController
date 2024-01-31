@@ -31,7 +31,7 @@
 - [x] Browser Client
 - [ ] Support for keyboard/mouse
 - [x] ViGEmBus Setup (Windows)
-- [ ] Localization (translation to multiple languages)
+- [x] Localization (translation to multiple languages)
 
 ### OS Support 💻
 
@@ -55,7 +55,7 @@ On the other hand the UI works with Web technologies (WASM, Sveltekit, Tailwind,
 
 ## Contributting 🤝
 
-If you are intested to contribute to this project you can follow this [guide](./CONTRIBUTING.md)
+If you are interested to contribute to this project you can follow this [guide](./CONTRIBUTING.md)
 
 ## Thanks to the ViGEm project ♥
 [ViGEmBus](https://github.com/nefarius/ViGEmBus) is making this project a reallity. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
