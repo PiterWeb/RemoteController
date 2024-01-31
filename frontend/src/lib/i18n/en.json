@@ -40,5 +40,6 @@
   "second-step": "Second Step",
   "get-the-code-from-your-host": "Get the code from your host",
   "connect-to-stream": "Connect to stream",
-  "language-selector-title": "Language Selector"
+  "language-selector-title": "Language Selector",
+  "turn-servers-title": "TURN Servers"
 }

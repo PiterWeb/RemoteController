@@ -8,6 +8,7 @@ import { streamingConsumingVideoElement } from './stream/stream_signal_hook';
 import { get } from 'svelte/store';
 import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook';
 import { _ } from 'svelte-i18n';
+import turnServers from '$lib/webrtc/turn_servers';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -24,7 +25,7 @@ function initPeerConnection() {
 	peerConnection = new RTCPeerConnection({
 		iceServers: [
 			{
-				urls: get(stunServers)
+				urls: [...get(stunServers), ...get(turnServers)]
 			}
 		]
 	});
@@ -111,10 +112,9 @@ async function CreateClientWeb() {
 	} catch (error) {
 		console.error(error);
 		showToast(get(_)('error-creating-client'), ToastType.ERROR);
-	} 
-	
+	}
+
 	return copiedCode;
-	
 }
 
 async function ConnectToHostWeb(hostAndCandidatesCode: string) {

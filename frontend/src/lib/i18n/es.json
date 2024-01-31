@@ -40,5 +40,6 @@
   "second-step": "Segundo paso",
   "get-the-code-from-your-host": "Obtén el código de tu anfitrión",
   "connect-to-stream": "Conectarse a la retransmisión",
-  "language-selector-title": "Selector de idioma"
+  "language-selector-title": "Selector de idioma",
+  "turn-servers-title": "Servidores TURN"
 }
