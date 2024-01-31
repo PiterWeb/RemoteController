@@ -41,5 +41,6 @@
   "get-the-code-from-your-host": "Obtén o código do seu anfitrión",
   "connect-to-stream": "Conectarse a retransmisión",
   "language-selector-title": "Selector de lingua",
-  "turn-servers-title": "Servidores TURN"
+  "turn-servers-title": "Servidores TURN",
+  "selfhost-turn-link": "Autoaloxamento de TURN"
 }
