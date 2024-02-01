@@ -50,7 +50,7 @@
 
 | English 	| Spanish 	| Galician | Other languages |
 |---------	|-------	|-------	| ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| ⌛ Looking for contributions. Ex: Russian, Chinnese, Hebrew, etc
+| 100% ✔     	| 100% ✔      	| 100% ✔      	| ⌛ Looking for contributions
 
 ## Self Hosting ☁
 
