@@ -50,13 +50,14 @@
 
 | English 	| Spanish 	| Galician | Other languages |
 |---------	|-------	|-------	| ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| ⌛ Looking for contributions. Ex: Russian, Chinnese, Hebrew, etc
+| 100% ✔     	| 100% ✔      	| 100% ✔      	| ⌛ Looking for contributions
 
 ## Self Hosting ☁
 
 There is no way to self-host the infrastructure of RemoteController because it has no backend. But instead you can self-host if you want the TURN & STUN servers and then add them to the config.
 
-If you want to self-host a TURN server you can [try Coturn](https://github.com/coturn/coturn)
+- If you want to self-host a TURN server you can [try Coturn](https://github.com/coturn/coturn). <br>
+- If you are looking to self-host a STUN server you can [try STUNTMAN](https://github.com/jselbie/stunserver)
 
 ## How it works 👷‍♂️
 
@@ -79,3 +80,7 @@ If you are interested to contribute to this project you can follow this [guide](
 You can give a star and review us on Product Hunt
 
 <a href="https://www.producthunt.com/products/remote-controller/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-remote&#0045;controller" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=565186&theme=light" alt="Remote&#0032;Controller - Play&#0032;LOCAL&#0032;co&#0045;op&#0032;games&#0032;ONLINE | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=PiterWeb/RemoteController&type=Timeline)](https://star-history.com/#PiterWeb/RemoteController&Timeline)
