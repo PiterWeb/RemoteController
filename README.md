@@ -13,7 +13,7 @@
 
 ![Example Image from the Desktop APP](./assets/example.jpg)
 
-## Installation 📦
+## Download 📦
 
 - https://remote-controller.vercel.app/download/
 
