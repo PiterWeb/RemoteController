@@ -63,6 +63,23 @@ There is no way to self-host the infrastructure of RemoteController because it h
 
 - If you want to self-host a TURN/STUN server you can [try Coturn](https://github.com/coturn/coturn). (This is only an example, you can choose other STUN/TURN implementations)
 
+## Build
+
+### Prerequisites
+
+You must have Wails CLI, NodeJS and Golang installed.
+
+### How to
+
+Run the following command on the root directory:
+
+  `$ wails build`
+
+now go to the build/bin folder and your executable will be there.
+
+> [!Note]
+> Please note the supported platforms in the table
+
 ## How it works 👷‍♂️
 
 This desktop APP is based on the WebRTC 🎞 standard and it uses the power of Go to communicate 🗣 with the Gamepad emulation libraries.
