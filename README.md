@@ -22,6 +22,11 @@
 - [Instalation guide](https://remote-controller.vercel.app/info/guides/installation/)
 - [How to use](https://remote-controller.vercel.app/info/guides/how-to-use/)
 
+## Resources 📚
+
+- [FAQ](https://remote-controller.vercel.app/info/resources/faq/)
+- [Security](https://remote-controller.vercel.app/info/resources/security/)
+
 ## Features 🧩
 
 - [x] Portable
