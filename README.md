@@ -67,7 +67,7 @@ There is no way to self-host the infrastructure of RemoteController because it h
 
 ### Prerequisites
 
-You must have Wails CLI, NodeJS and Golang installed.
+You must have Wails CLI, NodeJS, npm and Golang installed.
 
 ### How to
 
