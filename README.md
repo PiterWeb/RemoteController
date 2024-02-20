@@ -71,11 +71,16 @@ You must have Wails CLI, NodeJS and Golang installed.
 
 ### How to
 
-Run the following command on the root directory:
+First go to the frontend folder and run
+
+  `$ npm install`<br>
+  `$ npm run build`
+
+Now run the following command on the root directory of the main project:
 
   `$ wails build`
 
-now go to the build/bin folder and your executable will be there.
+finally go to the build/bin folder and your executable will be there.
 
 > [!Note]
 > Please note the supported platforms in the table
