@@ -1,6 +1,7 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
 import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
+import { handleKeyDown, handleKeyUp } from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
 import stunServers from '$lib/webrtc/stun_servers';
@@ -12,7 +13,8 @@ import turnServers from '$lib/webrtc/turn_servers';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
-	Controller = 'controller'
+	Controller = 'controller',
+	Keyboard = 'keyboard'
 }
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -50,6 +52,20 @@ async function CreateClientWeb() {
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 	const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
+	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard);
+
+	keyboardChannel.onopen = () => {
+
+		const sendKeyboardData = (keycode: string) => {
+			console.log('Sending keycode', keycode);
+			keyboardChannel.send(keycode);
+		}
+
+		// On keydown and keyup events, send the keycode to the host
+		handleKeyDown(sendKeyboardData);
+		handleKeyUp(sendKeyboardData);
+	};
+
 
 	controllerChannel.onopen = () => {
 		const sendGamepadData = () => {
@@ -63,15 +79,16 @@ async function CreateClientWeb() {
 			});
 		};
 
-		const gameLoop = () => {
-			sendGamepadData();
 
+		const gamepadLoop = () => {
+			sendGamepadData();
+			
 			// Continue the loop
-			requestAnimationFrame(gameLoop);
+			requestAnimationFrame(gamepadLoop);
 		};
 
-		// Start the game loop
-		gameLoop();
+		// Start the gamepad loop
+		gamepadLoop();
 	};
 
 	streamingSignalChannel.onopen = () => {
