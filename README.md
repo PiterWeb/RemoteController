@@ -34,7 +34,7 @@
 - [x] P2P "Decentralized" (WebRTC)
 - [x] Remote Streaming
 - [x] Browser Client
-- [ ] Support for keyboard/mouse
+- [x] Support for keyboard
 - [x] ViGEmBus Setup (Windows)
 - [x] Localization (translation to multiple languages)
 - [x] Support for STUN & TURN
