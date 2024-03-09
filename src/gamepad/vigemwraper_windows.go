@@ -132,6 +132,12 @@ func VIGEM_SUCCESS(val uintptr) bool {
 	return val == uintptr(VIGEM_ERROR_NONE)
 }
 
+func CloseViGEmDLL() {
+
+	syscall.FreeLibrary(syscall.Handle(vigemDLL.Handle()))
+
+}
+
 func handleVigemError(err error) error {
 
 	if err != syscall.Errno(0) {
