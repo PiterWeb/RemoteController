@@ -1,8 +1,8 @@
 package game_share
 
-type protocolType uint
+type ProtocolType uint
 
 const (
-	tcp protocolType = iota
+	tcp ProtocolType = iota
 	udp
 )

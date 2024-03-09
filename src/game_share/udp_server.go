@@ -1,5 +1,7 @@
 package game_share
 
-func serverUDP(port int) error {
+import "github.com/pion/webrtc/v3"
+
+func serverUDP(port int, datachannel *webrtc.DataChannel) error {
 	return nil
 }
