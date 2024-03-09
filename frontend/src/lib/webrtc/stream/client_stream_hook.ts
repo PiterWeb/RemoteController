@@ -72,7 +72,6 @@ async function CreateClientStream(
 	signalingChannel.send(JSON.stringify(data));
 
 	signalingChannel.onmessage = async (e) => {
-		console.log('Message received', e.data);
 		const { type, answer, candidate, role } = JSON.parse(e.data) as SignalingData;
 
 		if (!peerConnection) {

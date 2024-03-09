@@ -85,7 +85,6 @@ export function CreateHostStream() {
 	};
 
 	EventsOn('streaming-signal-client', async (data: string) => {
-		console.log('Message received', data);
 		const { type, offer, candidate, role } = JSON.parse(data) as SignalingData;
 
 		if (!peerConnection) return;
