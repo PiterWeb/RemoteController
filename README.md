@@ -22,6 +22,11 @@
 - [Instalation guide](https://remote-controller.vercel.app/info/guides/installation/)
 - [How to use](https://remote-controller.vercel.app/info/guides/how-to-use/)
 
+## Resources 📚
+
+- [FAQ](https://remote-controller.vercel.app/info/resources/faq/)
+- [Security](https://remote-controller.vercel.app/info/resources/security/)
+
 ## Features 🧩
 
 - [x] Portable
@@ -57,6 +62,28 @@
 There is no way to self-host the infrastructure of RemoteController because it has no backend. But instead you can self-host if you want the TURN & STUN servers and then add them to the config.
 
 - If you want to self-host a TURN/STUN server you can [try Coturn](https://github.com/coturn/coturn). (This is only an example, you can choose other STUN/TURN implementations)
+
+## Build
+
+### Prerequisites
+
+You must have Wails CLI, NodeJS, npm and Golang installed.
+
+### How to
+
+First go to the frontend folder and run
+
+  `$ npm install`<br>
+  `$ npm run build`
+
+Now run the following command on the root directory of the main project:
+
+  `$ wails build`
+
+finally go to the build/bin folder and your executable will be there.
+
+> [!Note]
+> Please note the supported platforms in the table
 
 ## How it works 👷‍♂️
 
