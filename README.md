@@ -1,6 +1,8 @@
 # ![Gamepad](./frontend/src/lib/assets/gamepad.svg) Remote Controller
 ### An open source & decentralized alternative to Steam remote play (No need to self host)
 
+⌛ Looking for contributions 👈
+
 > [!Note]
 > Website: 
 > https://remote-controller.vercel.app/ 
@@ -43,7 +45,7 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ⌛ Looking for contributions     	| ❌     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| (Only keyboard)⌛ Looking for contributions for Gamepad     	| ❌     	| ✔ (Known Issues with Safari)       	|
 
 ### Gamepad Support 🎮
 
