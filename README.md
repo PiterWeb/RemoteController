@@ -110,5 +110,6 @@ You can give a star and review us on Product Hunt
 <a href="https://www.producthunt.com/products/remote-controller/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-remote&#0045;controller" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=565186&theme=light" alt="Remote&#0032;Controller - Play&#0032;LOCAL&#0032;co&#0045;op&#0032;games&#0032;ONLINE | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
 ## Star History
-
+Here you can see how fast the community is growing
+<br/>
 [![Star History Chart](https://api.star-history.com/svg?repos=PiterWeb/RemoteController&type=Timeline)](https://star-history.com/#PiterWeb/RemoteController&Timeline)
