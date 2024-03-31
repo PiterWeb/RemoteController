@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/PiterWeb/RemoteController/src/game_share"
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/PiterWeb/RemoteController/src/keyboard"
 	"github.com/PiterWeb/RemoteController/src/streaming_signal"
@@ -16,9 +15,6 @@ import (
 func InitHost(ctx context.Context, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
 
 	candidates := []webrtc.ICECandidateInit{}
-
-	protocolChan := make(chan game_share.ProtocolType)
-	portChan := make(chan int)
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -45,7 +41,6 @@ func InitHost(ctx context.Context, offerEncodedWithCandidates string, answerResp
 
 		gamepad.HandleGamepad(d)
 		streaming_signal.HandleStreamingSignal(ctx, d)
-		game_share.HandleServer(protocolChan, portChan, d)
 		keyboard.HandleKeyboard(d)
 
 	})
