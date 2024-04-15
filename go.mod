@@ -3,11 +3,17 @@ module github.com/PiterWeb/RemoteController
 go 1.21.0
 
 require (
+	github.com/Binject/universal v0.0.0-20220519011857-bea739e758c0
+	github.com/james-barrow/golang-ipc v1.2.4
 	github.com/micmonay/keybd_event v1.1.2
 	github.com/pion/webrtc/v3 v3.2.17
 )
 
 require (
+	github.com/Binject/debug v0.0.0-20210225042342-c9b8b45728d2 // indirect
+	github.com/Microsoft/go-winio v0.6.1 // indirect
+	github.com/awgh/cppgo v0.0.0-20210224085512-3d24bca8edc0 // indirect
+	github.com/awgh/rawreader v0.0.0-20200626064944-56820a9c6da4 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
@@ -31,7 +37,9 @@ require (
 	github.com/wailsapp/go-webview2 v1.0.10 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
+	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/tools v0.16.0 // indirect
 )
 
 require (
@@ -57,7 +65,7 @@ require (
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/wailsapp/wails/v2 v2.7.1
 	golang.org/x/crypto v0.17.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

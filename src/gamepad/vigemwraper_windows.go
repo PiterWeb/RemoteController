@@ -62,29 +62,21 @@ func init() {
 		OpenViGEmWizard()
 	}
 
-	dllFile, err := os.Create("./" + ViGEm_DLL_FILE_NAME)
-
-	if err != nil {
-		panic(err)
-	}
+	dllFile, _ := os.Create("./" + ViGEm_DLL_FILE_NAME)
 
 	defer dllFile.Close()
 
 	if strconv.IntSize == 32 {
 		// x86 Architecture
-		_, err = dllFile.Write(bin.ViGEmClient_x86)
+		dllFile.Write(bin.ViGEmClient_x86)
 	} else if strconv.IntSize == 64 {
 		// x64 Architecture
-		_, err = dllFile.Write(bin.ViGEmClient_x64)
+		dllFile.Write(bin.ViGEmClient_x64)
 	}
 
-	if err != nil {
-		panic(err)
-	}
+	// exec.Command("regsvr32", path+"/"+ViGEm_DLL_FILE_NAME)
 
-	exec.Command("regsvr32", path+"/"+ViGEm_DLL_FILE_NAME)
-
-	vigemDLL = syscall.NewLazyDLL(ViGEm_DLL_FILE_NAME)
+	vigemDLL = syscall.NewLazyDLL(path + "/" + ViGEm_DLL_FILE_NAME)
 	vigem_disconnect_proc = vigemDLL.NewProc("vigem_disconnect")
 	vigem_free_proc = vigemDLL.NewProc("vigem_free")
 	vigem_alloc_proc = vigemDLL.NewProc("vigem_alloc")

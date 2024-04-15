@@ -14,7 +14,8 @@ import turnServers from '$lib/webrtc/turn_servers';
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
 	Controller = 'controller',
-	Keyboard = 'keyboard'
+	Keyboard = 'keyboard',
+	PluginInit = 'plugin:init'
 }
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -53,6 +54,32 @@ async function CreateClientWeb() {
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 	const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
 	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard);
+
+	// Create a data channel to init the plugins
+	const pluginInitChannel = peerConnection.createDataChannel(DataChannelLabel.PluginInit);
+
+	peerConnection.ondatachannel = (ev) => {
+		const channel = ev.channel;
+
+		const label = channel.label;
+
+		if (!label.includes("plugin:")) return;
+
+		channel.onopen = () => {
+			console.log('Channel open', label);
+			
+		}
+
+		channel.onmessage = (ev) => {
+			console.log('Message received', ev.data);
+		};
+
+	}
+
+	pluginInitChannel.onopen = () => {
+		pluginInitChannel.send('init');
+		console.log('Plugin init channel open');
+	};
 
 	keyboardChannel.onopen = () => {
 

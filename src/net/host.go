@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/PiterWeb/RemoteController/src/plugins"
+
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/PiterWeb/RemoteController/src/keyboard"
 	"github.com/PiterWeb/RemoteController/src/streaming_signal"
@@ -42,6 +44,7 @@ func InitHost(ctx context.Context, offerEncodedWithCandidates string, answerResp
 		gamepad.HandleGamepad(d)
 		streaming_signal.HandleStreamingSignal(ctx, d)
 		keyboard.HandleKeyboard(d)
+		plugins.HandleServerPlugins(d)
 
 	})
 
