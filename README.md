@@ -1,6 +1,8 @@
 # ![Gamepad](./frontend/src/lib/assets/gamepad.svg) Remote Controller
 ### An open source & decentralized alternative to Steam remote play (No need to self host)
 
+⌛ Looking for contributions 👈
+
 > [!Note]
 > Website: 
 > https://remote-controller.vercel.app/ 
@@ -34,7 +36,7 @@
 - [x] P2P "Decentralized" (WebRTC)
 - [x] Remote Streaming
 - [x] Browser Client
-- [ ] Support for keyboard/mouse
+- [x] Support for keyboard
 - [x] ViGEmBus Setup (Windows)
 - [x] Localization (translation to multiple languages)
 - [x] Support for STUN & TURN
@@ -43,7 +45,7 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ⌛ Looking for contributions     	| ❌     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| (Only keyboard)⌛ Looking for contributions for Gamepad     	| ❌     	| ✔ (Known Issues with Safari)       	|
 
 ### Gamepad Support 🎮
 
@@ -93,7 +95,7 @@ In Windows uses the ViGEm Bus Driver with the ViGEm Client DLL
 For the low level actions uses Go.
 On the other hand the UI works with Web technologies (WASM, Sveltekit, Tailwind, DaisyUI & Typescript)
 
-You can learn more about how it works under the hood [all the project](./docs/README.md)
+You can learn more about [how it works](./docs/README.md) under the hood all the project
 
 ## Contributting 🤝
 
@@ -108,5 +110,6 @@ You can give a star and review us on Product Hunt
 <a href="https://www.producthunt.com/products/remote-controller/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-remote&#0045;controller" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=565186&theme=light" alt="Remote&#0032;Controller - Play&#0032;LOCAL&#0032;co&#0045;op&#0032;games&#0032;ONLINE | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
 ## Star History
-
+Here you can see how fast the community is growing
+<br/>
 [![Star History Chart](https://api.star-history.com/svg?repos=PiterWeb/RemoteController&type=Timeline)](https://star-history.com/#PiterWeb/RemoteController&Timeline)
