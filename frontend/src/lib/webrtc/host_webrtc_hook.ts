@@ -11,6 +11,9 @@ import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
 import { toogleLoading, setLoadingMessage, setLoadingTitle } from '$lib/loading/loading_hook';
 import { StopStreaming } from '$lib/webrtc/stream/host_stream_hook';
+import type { ICEServer } from '$lib/webrtc/ice';
+import { exportStunServers } from './stun_servers';
+import { exportTurnServers } from './turn_servers';
 
 let host: boolean = false;
 
@@ -22,7 +25,13 @@ enum ConnectionState {
 
 export async function CreateHost(client: string) {
 	try {
-		const hostCode = await createHostFn(client);
+
+		const ICEServers: ICEServer[] = [
+			...exportStunServers(),
+			...exportTurnServers()
+		]
+
+		const hostCode = await createHostFn(ICEServers, client);
 
 		if (isError(hostCode)) {
 			throw new Error(hostCode);

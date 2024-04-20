@@ -14,17 +14,21 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func InitHost(ctx context.Context, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
+func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
 
 	candidates := []webrtc.ICECandidateInit{}
 
+	if len(ICEServers) == 0 {
+		ICEServers = []webrtc.ICEServer{
+			{
+				URLs:           []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"},
+			},
+		}
+	}
+
 	// Prepare the configuration
 	config := webrtc.Configuration{
-		ICEServers: []webrtc.ICEServer{
-			{
-				URLs: []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"},
-			},
-		},
+		ICEServers: ICEServers,
 	}
 
 	peerConnection, err := webrtc.NewAPI().NewPeerConnection(config)

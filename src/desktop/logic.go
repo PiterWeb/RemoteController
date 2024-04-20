@@ -4,13 +4,14 @@ import (
 	"context"
 
 	"github.com/PiterWeb/RemoteController/src/net"
+	"github.com/pion/webrtc/v3"
 )
 
-func createHost(ctx context.Context, offerEncoded string, triggerEnd <-chan struct{}) string {
+func createHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncoded string, triggerEnd <-chan struct{}) string {
 
 	answerResponse := make(chan string)
 
-	go net.InitHost(ctx, offerEncoded, answerResponse, triggerEnd)
+	go net.InitHost(ctx, ICEServers, offerEncoded, answerResponse, triggerEnd)
 
 	return <-answerResponse
 

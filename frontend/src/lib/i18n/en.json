@@ -42,5 +42,14 @@
   "connect-to-stream": "Connect to stream",
   "language-selector-title": "Language Selector",
   "turn-servers-title": "TURN Servers",
-  "selfhost-turn-link": "TURN Selfhost"
+  "selfhost-turn-link": "TURN Selfhost",
+  "config_title": "Config",
+  "config": "Modify",
+  "advance": "Advanced",
+  "delete": "Delete",
+  "create_group": "Create a new group",
+  "no_servers": "There are no servers",
+  "new_server": "New server",
+  "username": "Username",
+  "password": "Password"
 }

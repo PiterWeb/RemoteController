@@ -1,7 +1,6 @@
-import stunServers from '$lib/webrtc/stun_servers';
-import { get } from 'svelte/store';
+import {exportStunServers} from '$lib/webrtc/stun_servers';
 import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
-import turnServers from '$lib/webrtc/turn_servers';
+import {exportTurnServers} from '$lib/webrtc/turn_servers';
 
 let peerConnection: RTCPeerConnection | undefined;
 let inboundStream: MediaStream | null = null;
@@ -13,9 +12,8 @@ function initStreamingPeerConnection() {
 
 	peerConnection = new RTCPeerConnection({
 		iceServers: [
-			{
-				urls: [...get(stunServers), ...get(turnServers)]
-			}
+			...exportStunServers(),
+			...exportTurnServers()
 		]
 	});
 }

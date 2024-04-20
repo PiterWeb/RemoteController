@@ -14,6 +14,6 @@ export function TryClosePeerConnection() {
   return window['go']['desktop']['App']['TryClosePeerConnection']();
 }
 
-export function TryCreateHost(arg1) {
-  return window['go']['desktop']['App']['TryCreateHost'](arg1);
+export function TryCreateHost(arg1, arg2) {
+  return window['go']['desktop']['App']['TryCreateHost'](arg1, arg2);
 }

@@ -1,6 +1,6 @@
 <script>
 	import { beforeNavigate } from '$app/navigation';
-	import BackwardButton from '$lib/components/BackwardButton.svelte';
+	import BackwardButton from '$lib/layout/BackwardButton.svelte';
 	import { showToast, ToastType } from '$lib/toast/toast_hook';
 	import { _ } from 'svelte-i18n'
 

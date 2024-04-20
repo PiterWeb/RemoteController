@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
+
+	"github.com/pion/webrtc/v3"
 )
 
 var triggerEnd chan struct{} = make(chan struct{})
@@ -42,7 +44,7 @@ func (a *App) Shutdown(ctx context.Context) {
 }
 
 // Create a Host Peer, it receives the offer encoded and returns the encoded answer response
-func (a *App) TryCreateHost(offerEncoded string) (value string) {
+func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) (value string) {
 
 	if openPeer {
 		triggerEnd <- struct{}{}
@@ -62,7 +64,7 @@ func (a *App) TryCreateHost(offerEncoded string) (value string) {
 
 	}()
 
-	value = createHost(a.ctx, offerEncoded, triggerEnd)
+	value = createHost(a.ctx, ICEServers, offerEncoded, triggerEnd)
 
 	return value
 }

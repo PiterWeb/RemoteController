@@ -3,7 +3,7 @@
 
 	import { page } from '$app/stores';
 
-	import PageTransition from '$lib/components/PageTransition.svelte';
+	import PageTransition from '$lib/layout/PageTransition.svelte';
 	import Toast from '$lib/toast/Toast.svelte';
 
 	import GamepadSVG from '$lib/assets/gamepad.svg?raw';

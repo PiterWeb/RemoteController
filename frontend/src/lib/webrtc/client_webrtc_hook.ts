@@ -4,12 +4,12 @@ import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 import { handleKeyDown, handleKeyUp } from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
-import stunServers from '$lib/webrtc/stun_servers';
 import { streamingConsumingVideoElement } from './stream/stream_signal_hook';
 import { get } from 'svelte/store';
 import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook';
 import { _ } from 'svelte-i18n';
-import turnServers from '$lib/webrtc/turn_servers';
+import { exportStunServers } from './stun_servers';
+import { exportTurnServers } from './turn_servers';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -27,9 +27,8 @@ function initPeerConnection() {
 
 	peerConnection = new RTCPeerConnection({
 		iceServers: [
-			{
-				urls: [...get(stunServers), ...get(turnServers)]
-			}
+			...exportStunServers(),
+			...exportTurnServers()
 		]
 	});
 }

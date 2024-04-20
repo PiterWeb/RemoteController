@@ -42,5 +42,14 @@
   "connect-to-stream": "Conectarse a la retransmisión",
   "language-selector-title": "Selector de idioma",
   "turn-servers-title": "Servidores TURN",
-  "selfhost-turn-link": "Autoalojado de TURN"
+  "selfhost-turn-link": "Autoalojado de TURN",
+  "config_title": "Ajustes",
+  "config": "Modificar",
+  "advance": "Avanzado",
+  "delete": "Borrar",
+  "create_group": "Crea un nuevo grupo",
+  "no_servers": "No hay servidores",
+  "new_server": "Nuevo servidor",
+  "username": "Nombre de usuario",
+  "password": "Contraseña"
 }
