@@ -51,5 +51,7 @@
   "no_servers": "There are no servers",
   "new_server": "New server",
   "username": "Username",
-  "password": "Password"
+  "password": "Password",
+  "no_groups_warning": "Be careful you have no server, this may cause you to not be able to connect properly to other computers.",
+  "restore_default_servers": "Restore default values"
 }

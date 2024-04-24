@@ -51,5 +51,7 @@
   "no_servers": "Non existen servidores",
   "new_server": "Novo servidor",
   "username": "Nome de usuario",
-  "password": "Contrasinal"
+  "password": "Contrasinal",
+  "no_groups_warning": "Ten coidado non tes nengún servidor, isto pode provocar que non te podas conectar correctamente con outros equipos",
+  "restore_default_servers": "Restaurar os valores por defecto"
 }

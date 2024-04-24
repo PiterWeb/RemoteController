@@ -51,5 +51,7 @@
   "no_servers": "No hay servidores",
   "new_server": "Nuevo servidor",
   "username": "Nombre de usuario",
-  "password": "Contraseña"
+  "password": "Contraseña",
+  "no_groups_warning": "Ten cuidado no tienes ningún servidor, esto puede provocar que no te puedas conectar correctamente con otros equipos",
+  "restore_default_servers": "Restaurar los valores por defecto"
 }

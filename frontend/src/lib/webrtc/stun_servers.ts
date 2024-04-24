@@ -7,7 +7,7 @@ const defaultStunServers = [
 	'stun:stun.l.google.com:19305'
 ];
 
-const defaultStunConfig: ServersConfig = {
+const defaultStunConfig: Readonly<ServersConfig> = {
 	default: {
 		urls: defaultStunServers
 	}
@@ -98,5 +98,6 @@ export {
 	createServerGroup,
 	deleteServerGroup,
 	modifyGroup,
-	exportStunServers
+	exportStunServers,
+	defaultStunConfig
 };

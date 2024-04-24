@@ -1,47 +1,54 @@
 import { get, writable } from 'svelte/store';
 import type { ServersConfig, ICEServer } from '$lib/webrtc/ice';
 
-const defaultTurnConfig: ServersConfig = {};
+const defaultTurnServers: string[] = [];
+
+const defaultTurnConfig: Readonly<ServersConfig> = {
+	default: {
+		urls: defaultTurnServers
+	}
+};
 
 const turnServersStore = writable<ServersConfig>(
 	JSON.parse(localStorage.getItem('turnServers') ?? 'false') || defaultTurnConfig
 );
 
-turnServersStore.subscribe((stunServers) =>
-	localStorage.setItem('turnServers', JSON.stringify(stunServers))
+turnServersStore.subscribe((turnServers) =>
+	localStorage.setItem('turnServers', JSON.stringify(turnServers))
 );
 
 function removeServerFromGroup(group: string, url: string) {
-	turnServersStore.update((stunServers) => {
-		stunServers[group].urls = stunServers[group].urls.filter((server) => server !== url);
-		return stunServers;
+	turnServersStore.update((turnServers) => {
+		turnServers[group].urls = turnServers[group].urls.filter((server) => server !== url);
+		return turnServers;
 	});
 }
 
 function modifyGroup(name: string, newName?: string, username?: string, credential?: string) {
 	if (newName) {
-		turnServersStore.update((stunServers) => {
-			stunServers[newName] = stunServers[name];
-			stunServers[newName].username = username;
-			stunServers[newName].credential = credential;
-			delete stunServers[name];
-			return stunServers;
+		turnServersStore.update((turnServers) => {
+			turnServers[newName] = turnServers[name];
+
+			turnServers[newName].username = username;
+			turnServers[newName].credential = credential;
+			delete turnServers[name];
+			return turnServers;
 		});
 
 		return;
 	}
 
-	turnServersStore.update((stunServers) => {
-		stunServers[name].username = username;
-		stunServers[name].credential = credential;
-		return stunServers;
+	turnServersStore.update((turnServers) => {
+		turnServers[name].username = username;
+		turnServers[name].credential = credential;
+		return turnServers;
 	});
 }
 
 function addServerToGroup(group: string, url: string) {
-	turnServersStore.update((stunServers) => {
-		stunServers[group].urls.push('turn:' + url);
-		return stunServers;
+	turnServersStore.update((turnServers) => {
+		turnServers[group].urls.push('turn:' + url);
+		return turnServers;
 	});
 }
 
@@ -53,18 +60,18 @@ function createServerGroup(name: string, username?: string, credential?: string)
 			credential: credential
 		}
 	};
-	turnServersStore.update((stunServers) => {
+	turnServersStore.update((turnServers) => {
 		return {
-			...stunServers,
+			...turnServers,
 			...newServer
 		};
 	});
 }
 
 function deleteServerGroup(name: string) {
-	turnServersStore.update((stunServers) => {
-		delete stunServers[name];
-		return stunServers;
+	turnServersStore.update((turnServers) => {
+		delete turnServers[name];
+		return turnServers;
 	});
 }
 
@@ -88,5 +95,6 @@ export {
 	createServerGroup,
 	deleteServerGroup,
 	modifyGroup,
-	exportTurnServers
+	exportTurnServers,
+	defaultTurnConfig
 };

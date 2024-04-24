@@ -3,7 +3,7 @@
 	import IsWindows from '$lib/detection/IsWindows.svelte';
 	import ViGEmDownload from './ViGEmDownload.svelte';
 	import { _ } from 'svelte-i18n';
-	import LanguageSelector from './LanguageSelector.svelte';
+	import LanguageSelector from '$lib/i18n/LanguageSelector.svelte';
 	import TurnServers from './TurnServers.svelte';
 </script>
 
