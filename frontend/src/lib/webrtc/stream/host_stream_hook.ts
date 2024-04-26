@@ -112,7 +112,7 @@ export function CreateHostStream() {
 		if (!peerConnection) return;
 
 		if (peerConnection.connectionState === 'connected') {
-			showToast('Connected', ToastType.SUCCESS);
+			showToast(get(_)('connected'), ToastType.SUCCESS);
 			return;
 		}
 	};
