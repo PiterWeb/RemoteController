@@ -54,5 +54,7 @@
   "password": "Contrasinal",
   "no_groups_warning": "Ten coidado non tes nengún servidor, isto pode provocar que non te podas conectar correctamente con outros equipos",
   "restore_default_servers": "Restaurar os valores por defecto",
-  "server-group-update": "Grupo de servidores actualizado sen erros"
+  "server-group-update": "Grupo de servidores actualizado sen erros",
+  "default-loading-title": "Esperando pola conexión",
+  "default-loading-message": "Non deixes esta xanela durante o proceso"
 }

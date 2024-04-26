@@ -54,5 +54,7 @@
   "password": "Contraseña",
   "no_groups_warning": "Ten cuidado no tienes ningún servidor, esto puede provocar que no te puedas conectar correctamente con otros equipos",
   "restore_default_servers": "Restaurar los valores por defecto",
-  "server-group-update": "Grupo de servidores actualizado"
+  "server-group-update": "Grupo de servidores actualizado",
+  "default-loading-title": "Esperando por la conexión",
+  "default-loading-message": "No salgas de la pestaña durante el proceso"
 }
