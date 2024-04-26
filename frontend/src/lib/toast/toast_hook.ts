@@ -21,18 +21,23 @@ const toastWritable = writable<Toast>({
 let timer: number | undefined;
 
 export function showToast(message: string, type: Toast['type']) {
-	toastWritable.set({
-		show: true,
-		message,
-		type,
-	});
+	
+	setTimeout(() => {
+		toastWritable.set({
+			show: true,
+			message,
+			type
+		});
 
-	if (timer) clearTimeout(timer);
+		if (timer) clearTimeout(timer);
 
-	timer = window.setTimeout(() => {
-		hideToast();
-		timer = undefined;
-	}, 2000);
+		timer = window.setTimeout(() => {
+			hideToast();
+			timer = undefined;
+		}, 2000);
+
+	}, 500);
+
 }
 
 export function hideToast() {

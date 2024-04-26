@@ -4,6 +4,7 @@
 	import DeleteIcon from '$lib/layout/icons/DeleteIcon.svelte';
 	import PencilIcon from '$lib/layout/icons/PencilIcon.svelte';
 	import TrashIcon from '$lib/layout/icons/TrashIcon.svelte';
+	import { ToastType, showToast } from '$lib/toast/toast_hook';
 
 	import {
 		stunServersStore,
@@ -64,6 +65,8 @@
 		} else {
 			modifyGroupTURN(server_group, new_group, username, credential);
 		}
+
+		showToast($_('server-group-update'), ToastType.SUCCESS );
 	};
 
 	const removeServerFromGroup = (server_group: string, server: string) => {
@@ -200,7 +203,7 @@
 							type="text"
 							id="domain"
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mb-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-							placeholder="domain:port"
+							placeholder="domain:port // ip:port"
 							required
 							bind:value={newserverToAdd}
 						/>
@@ -260,6 +263,7 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 								placeholder="username"
 								required
+								value={$servers[server_group]?.username ?? ''}
 								on:change={(e) => modifyGroup(server_group, undefined, e.currentTarget.value)}
 							/>
 
@@ -275,9 +279,14 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 								placeholder="•••••••••"
 								required
+								value={$servers[server_group]?.credential ?? ''}
+								on:focusin={(e) => e.currentTarget.type = 'text'}
+								on:focusout={(e) => e.currentTarget.type = 'password'}
 								on:change={(e) => {
+									e.preventDefault()
 									const username = $servers[server_group]?.username;
 									console.log(username);
+									console.log(e.currentTarget.value);
 									modifyGroup(server_group, undefined, username, e.currentTarget.value);
 								}}
 							/>

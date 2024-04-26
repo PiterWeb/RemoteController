@@ -29,11 +29,13 @@ function removeServerFromGroup(group: string, url: string) {
 }
 
 function modifyGroup(name: string, newName?: string, username?: string, credential?: string) {
+
+	console.log({name, newName, username, credential});
 	if (newName) {
 		stunServersStore.update((stunServers) => {
 			stunServers[newName] = stunServers[name];
-			stunServers[newName].username = username;
-			stunServers[newName].credential = credential;
+			if (username) stunServers[newName].username = username;
+			if (credential) stunServers[newName].credential = credential;
 			delete stunServers[name];
 			return stunServers;
 		});

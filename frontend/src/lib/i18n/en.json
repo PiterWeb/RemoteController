@@ -53,5 +53,6 @@
   "username": "Username",
   "password": "Password",
   "no_groups_warning": "Be careful you have no server, this may cause you to not be able to connect properly to other computers.",
-  "restore_default_servers": "Restore default values"
+  "restore_default_servers": "Restore default values",
+  "server-group-update": "Server group updated successfully"
 }
