@@ -1,12 +1,8 @@
 import { get, writable } from 'svelte/store';
 import type { ServersConfig, ICEServer } from '$lib/webrtc/ice';
 
-const defaultTurnServers: string[] = [];
-
 const defaultTurnConfig: Readonly<ServersConfig> = {
-	default: {
-		urls: defaultTurnServers
-	}
+
 };
 
 const turnServersStore = writable<ServersConfig>(
