@@ -3,6 +3,13 @@
 
 	export let key: string;
 	export let duration: number = 0;
+
+	const audio = new Audio('/sounds/page_transition.mp3');
+
+	audio.volume = 0.1;
+
+	$: key && navigator.userActivation.isActive && audio.play();
+
 </script>
 
 {#key key}
