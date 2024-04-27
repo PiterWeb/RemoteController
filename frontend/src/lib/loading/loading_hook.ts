@@ -17,11 +17,21 @@ export function toogleLoading() {
 	const currentLoading = get(loadingWritable);
 
 	if (!currentLoading.message && !currentLoading.title) {
-		loadingWritable.update((store) => ({
-			...store,
-			title: get(_)('default-loading-title'),
-			message: get(_)('default-loading-message')
-		}));
+		loadingWritable.update((store) => {
+			const translatedLoading = {
+				...store,
+				title: get(_)('default-loading-title'),
+				message: get(_)('default-loading-message')
+			};
+
+			const loading = !store.loading;
+
+			if (loading) {
+				return { ...translatedLoading, loading };
+			}
+
+			return defaultLoadingStore;
+		});
 		return;
 	}
 
