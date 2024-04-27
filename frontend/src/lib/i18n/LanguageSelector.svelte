@@ -4,8 +4,6 @@
 	function setLocale(event: Event) {
 		const target = event.target as HTMLButtonElement;
 		locale.set(target.dataset.value);
-		// @ts-ignore
-		window.navigator.language = target.dataset.value;
 	}
 
 	function getLocaleName(locale: string) {
