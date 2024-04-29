@@ -35,6 +35,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@formkit/auto-animate": "^0.8.2",
 		"svelte-i18n": "^4.0.0"
 	}
 }

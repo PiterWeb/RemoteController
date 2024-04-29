@@ -1,23 +1,20 @@
 <script lang="ts">
+	import { playAudio } from '$lib/audio/audio_player';
 	import loadingWritable from '$lib/loading/loading_hook';
 
 	let loadingModal: HTMLDialogElement;
 	let title: string = '';
 	let message: string = '';
 
-	let audio: HTMLAudioElement;
-
 	$: if ($loadingWritable.loading && loadingModal) {
 		loadingModal.showModal();
 		title = $loadingWritable.title ?? title;
 		message = $loadingWritable.message ?? message;
-		audio.play();
+		playAudio('open_modal');
 	} else if (loadingModal) {
 		loadingModal.close();
 	}
 </script>
-
-<audio bind:this={audio} volume={0.1} src="/sounds/open_modal.mp3" preload="auto"></audio>
 
 <dialog class="modal modal-bottom sm:modal-middle" bind:this={loadingModal}>
 	<div class="modal-box flex flex-col items-center gap-6">
