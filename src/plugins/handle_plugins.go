@@ -10,7 +10,6 @@ import (
 )
 
 var messaging_port uint16
-var nats_client *nats.Conn
 
 func init() {
 	messaging_port = messaging.InitServer()
@@ -32,19 +31,16 @@ func HandleServerPlugins(d *webrtc.DataChannel) {
 			continue
 		}
 
-		plugin_port := 0
-
 		d.OnOpen(func() {
 
+			// Message comming from plugin to app
+			messaging_client.Subscribe(p.name+":app", func(msg *nats.Msg) {
+				msg.Ack()
+				d.Send(msg.Data)
+			})
+
+			// We pass the messaging port to the plugin so it can communicate with the app
 			_, err := p.Init_host(uint16(messaging_port))
-
-			// ipcClient, err = ipc.StartClient("from_rmc_plugin:"+p.name, &ipc.ClientConfig{})
-
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			// ipcServer, err := ipc.StartServer("to_rmc_plugin:"+p.name, &ipc.ServerConfig{})
 
 			if err != nil {
 				fmt.Println(err)
@@ -54,11 +50,8 @@ func HandleServerPlugins(d *webrtc.DataChannel) {
 
 		d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-			if plugin_port == 0 {
-				return
-			}
-
-			// _ = ipcClient.Write(1, msg.Data)
+			// Send message from app to plugin
+			messaging_client.Publish("app:"+p.name, msg.Data)
 
 		})
 
