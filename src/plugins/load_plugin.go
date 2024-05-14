@@ -39,7 +39,7 @@ func LoadPlugins() []plugin {
 		}
 
 		plugin.init_client_args = func_specs.Init_client
-		plugin.init_server_args = func_specs.Init_server
+		plugin.init_host_args = func_specs.Init_host
 		plugin.background_args = func_specs.Background
 
 		plugin.init_client = func(u ...uintptr) (uintptr, error) {

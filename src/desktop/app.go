@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/PiterWeb/RemoteController/src/plugins/messaging"
 	"github.com/pion/webrtc/v3"
 )
 
@@ -40,6 +41,7 @@ func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
 	a.TryClosePeerConnection()
+	messaging.ShutdownServer()
 
 }
 

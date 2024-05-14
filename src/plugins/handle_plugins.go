@@ -4,9 +4,17 @@ import (
 	"fmt"
 	"strings"
 
-	ipc "github.com/james-barrow/golang-ipc"
+	"github.com/PiterWeb/RemoteController/src/plugins/messaging"
+	"github.com/nats-io/nats.go"
 	"github.com/pion/webrtc/v3"
 )
+
+var messaging_port uint16
+var nats_client *nats.Conn
+
+func init() {
+	messaging_port = messaging.InitServer()
+}
 
 func HandleServerPlugins(d *webrtc.DataChannel) {
 
@@ -16,44 +24,41 @@ func HandleServerPlugins(d *webrtc.DataChannel) {
 
 	plugins := LoadPlugins()
 
+	messaging_client := messaging.Get_Client()
+
 	for _, p := range plugins {
 
 		if d.Label() != "plugin:"+p.name {
 			continue
 		}
 
-		var ipcClient *ipc.Client
+		plugin_port := 0
 
 		d.OnOpen(func() {
 
-			p.Init_server()
+			_, err := p.Init_host(uint16(messaging_port))
 
-			var err error
-
-			ipcClient, err = ipc.StartClient("from_rmc_plugin:"+p.name, &ipc.ClientConfig{})
+			// ipcClient, err = ipc.StartClient("from_rmc_plugin:"+p.name, &ipc.ClientConfig{})
 
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			ipcServer, err := ipc.StartServer("to_rmc_plugin:"+p.name, &ipc.ServerConfig{})
+			// ipcServer, err := ipc.StartServer("to_rmc_plugin:"+p.name, &ipc.ServerConfig{})
 
 			if err != nil {
 				fmt.Println(err)
-			}
-
-			for {
-
-				msg, _ := ipcServer.Read()
-
-				d.Send(msg.Data)
 			}
 
 		})
 
 		d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-			_ = ipcClient.Write(1, msg.Data)
+			if plugin_port == 0 {
+				return
+			}
+
+			// _ = ipcClient.Write(1, msg.Data)
 
 		})
 

@@ -9,7 +9,7 @@ import (
 func getPluginSpecification(path string) plugins_args {
 
 	// Load the .json file with the same name as the plugin
-	// Return the init_client, init_server and background arguments
+	// Return the init_client, init_host and background arguments
 
 	path = strings.Replace(path, ".dll", ".json", 1)
 	path = strings.Replace(path, ".so", ".json", 1)
