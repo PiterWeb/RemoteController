@@ -9,7 +9,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"cy:open": "cypress open"
 	},
 	"devDependencies": {
 		"@rollup/plugin-json": "^6.1.0",
@@ -19,6 +20,7 @@
 		"@typescript-eslint/parser": "^6.0.0",
 		"@vite-pwa/sveltekit": "^0.3.0",
 		"autoprefixer": "^10.4.16",
+		"cypress": "^13.8.1",
 		"daisyui": "^3.9.4",
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
