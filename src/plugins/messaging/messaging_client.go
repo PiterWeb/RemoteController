@@ -21,6 +21,14 @@ func Get_Client() *nats.Conn {
 			if err != nil {
 				return nil
 			}
+		} else if clientInstance.IsClosed() {
+			var err error
+			clientInstance, err = nats.Connect(fmt.Sprintf("nats://localhost:%d", nats_port))
+
+			if err != nil {
+				return nil
+			}
+
 		}
 	}
 

@@ -42,6 +42,7 @@ func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
 	a.TryClosePeerConnection()
 	messaging.ShutdownServer()
+	messaging.Get_Client().Close()
 
 }
 
