@@ -31,6 +31,12 @@ func GetPlugins() []plugin {
 	return pluginsInstance
 }
 
+func ReloadPlugins() {
+	pluginsLock.Lock()
+	defer pluginsLock.Unlock()
+	pluginsInstance = loadPlugins()
+}
+
 func (p *plugin) Toogle() {
 	p.enabled = !p.enabled
 }
