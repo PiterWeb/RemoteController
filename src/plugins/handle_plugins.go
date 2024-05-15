@@ -21,7 +21,7 @@ func HandleServerPlugins(d *webrtc.DataChannel) {
 		return
 	}
 
-	plugins := LoadPlugins()
+	plugins := GetPlugins()
 
 	messaging_client := messaging.Get_Client()
 

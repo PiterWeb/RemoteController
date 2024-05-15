@@ -9,7 +9,7 @@ import (
 	"github.com/Binject/universal"
 )
 
-func LoadPlugins() []plugin {
+func loadPlugins() []plugin {
 
 	pluginPaths := getPluginPaths()
 

@@ -7,13 +7,13 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-var client_lock = &sync.Mutex{}
+var clientLock = &sync.Mutex{}
 var clientInstance *nats.Conn
 
 func Get_Client() *nats.Conn {
 	if clientInstance != nil {
-		client_lock.Lock()
-		defer client_lock.Unlock()
+		clientLock.Lock()
+		defer clientLock.Unlock()
 		if clientInstance == nil {
 			var err error
 			clientInstance, err = nats.Connect(fmt.Sprintf("nats://localhost:%d", nats_port))

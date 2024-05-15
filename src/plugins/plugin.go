@@ -1,5 +1,9 @@
 package plugins
 
+import (
+	"sync"
+)
+
 type plugin struct {
 	name             string
 	path             string
@@ -10,6 +14,21 @@ type plugin struct {
 	background       func(...uintptr) (uintptr, error)
 	background_args  []plugin_arg
 	enabled          bool
+}
+
+var pluginsLock = &sync.Mutex{}
+var pluginsInstance []plugin
+
+func GetPlugins() []plugin {
+	if pluginsInstance != nil {
+		pluginsLock.Lock()
+		defer pluginsLock.Unlock()
+		if pluginsInstance == nil {
+			pluginsInstance = loadPlugins()
+		}
+	}
+
+	return pluginsInstance
 }
 
 func (p *plugin) Toogle() {
