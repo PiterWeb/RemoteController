@@ -5,6 +5,8 @@ go 1.21.0
 require (
 	github.com/Binject/universal v0.0.0-20220519011857-bea739e758c0
 	github.com/micmonay/keybd_event v1.1.2
+	github.com/nats-io/nats-server/v2 v2.10.14
+	github.com/nats-io/nats.go v1.34.1
 	github.com/pion/webrtc/v3 v3.2.17
 )
 
@@ -27,8 +29,6 @@ require (
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/minio/highwayhash v1.0.2 // indirect
 	github.com/nats-io/jwt/v2 v2.5.5 // indirect
-	github.com/nats-io/nats-server/v2 v2.10.14 // indirect
-	github.com/nats-io/nats.go v1.34.1 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
@@ -41,7 +41,6 @@ require (
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/wailsapp/go-webview2 v1.0.10 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
-	go.uber.org/automaxprocs v1.5.3 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
