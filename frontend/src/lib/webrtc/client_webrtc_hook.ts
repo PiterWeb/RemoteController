@@ -145,8 +145,14 @@ async function CreateClientWeb() {
 				copiedCode =
 					signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
 
-				navigator.clipboard.writeText(copiedCode);
-				showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
+				if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(copiedCode).catch(() => {
+						showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+					});
+					showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
+				} else {
+					showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+				}
 				return;
 			}
 
