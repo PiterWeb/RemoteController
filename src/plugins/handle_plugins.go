@@ -9,10 +9,18 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
-var messaging_port uint16
+type NATS_PORT struct {
+	value uint16
+}
+
+func (m NATS_PORT) Get() uint16 {
+	return m.value
+}
+
+var MessagingPort NATS_PORT
 
 func init() {
-	messaging_port = messaging.InitServer()
+	MessagingPort = NATS_PORT{value: messaging.InitServer()}
 }
 
 func HandleServerPlugins(d *webrtc.DataChannel) {
@@ -27,20 +35,24 @@ func HandleServerPlugins(d *webrtc.DataChannel) {
 
 	for _, p := range plugins {
 
-		if d.Label() != "plugin:"+p.name {
+		if p.IsEnabled() {
+			continue
+		}
+
+		if d.Label() != "plugin:"+p.Name {
 			continue
 		}
 
 		d.OnOpen(func() {
 
 			// Message comming from plugin to app
-			messaging_client.Subscribe(p.name+":app", func(msg *nats.Msg) {
+			messaging_client.Subscribe(p.Name+":app", func(msg *nats.Msg) {
 				msg.Ack()
 				d.Send(msg.Data)
 			})
 
 			// We pass the messaging port to the plugin so it can communicate with the app
-			_, err := p.Init_host(uint16(messaging_port))
+			_, err := p.Init_host(MessagingPort.Get())
 
 			if err != nil {
 				fmt.Println(err)
@@ -51,7 +63,7 @@ func HandleServerPlugins(d *webrtc.DataChannel) {
 		d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
 			// Send message from app to plugin
-			messaging_client.Publish("app:"+p.name, msg.Data)
+			messaging_client.Publish("app:"+p.Name, msg.Data)
 
 		})
 
