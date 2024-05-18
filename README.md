@@ -65,6 +65,8 @@ There is no way to self-host the infrastructure of RemoteController because it h
 
 - If you want to self-host a TURN/STUN server you can [try Coturn](https://github.com/coturn/coturn). (This is only an example, you can choose other STUN/TURN implementations)
 
+- Also you can host the Web version (but it is only frontend) to make like a network of Remote Controller web clients
+
 ## Build
 
 ### Prerequisites
