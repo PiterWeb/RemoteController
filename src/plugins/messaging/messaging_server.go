@@ -35,6 +35,9 @@ func InitServer() (port uint16) {
 
 	opts := &server.Options{
 		Port: free_port,
+		Websocket: server.WebsocketOpts{
+			Port: free_port + 1,
+		},
 	}
 
 	ns, err := server.NewServer(opts)
