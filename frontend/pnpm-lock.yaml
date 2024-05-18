@@ -8,6 +8,9 @@ dependencies:
   '@formkit/auto-animate':
     specifier: ^0.8.2
     version: 0.8.2
+  nats.ws:
+    specifier: ^1.26.0
+    version: 1.26.0
   svelte-i18n:
     specifier: ^4.0.0
     version: 4.0.0(svelte@4.0.5)
@@ -4410,6 +4413,12 @@ packages:
     hasBin: true
     dev: true
 
+  /nats.ws@1.26.0:
+    resolution: {integrity: sha512-OgcN+uDMuqa4EugGCitk3/e5vYqOgdpBT275reOtJHaxNDGrNc+2IchpldWAuVmGbA7w0cdB/XCMLgr34+vpgg==}
+    optionalDependencies:
+      nkeys.js: 1.1.0
+    dev: false
+
   /natural-compare-lite@1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
     dev: true
@@ -4421,6 +4430,15 @@ packages:
   /next-tick@1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: false
+
+  /nkeys.js@1.1.0:
+    resolution: {integrity: sha512-tB/a0shZL5UZWSwsoeyqfTszONTt4k2YS0tuQioMOD180+MbombYVgzDUYHlx+gejYK6rgf08n/2Df99WY0Sxg==}
+    engines: {node: '>=10.0.0'}
+    requiresBuild: true
+    dependencies:
+      tweetnacl: 1.0.3
+    dev: false
+    optional: true
 
   /node-releases@2.0.13:
     resolution: {integrity: sha512-uYr7J37ae/ORWdZeQ1xxMJe3NtdmqMC/JZK+geofDrkLUApKRHPd18/TxtBOJ4A0/+uUIliorNrfYV6s1b02eQ==}
@@ -5544,6 +5562,12 @@ packages:
   /tweetnacl@0.14.5:
     resolution: {integrity: sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==}
     dev: true
+
+  /tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
