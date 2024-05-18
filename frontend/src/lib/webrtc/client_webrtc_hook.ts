@@ -10,6 +10,7 @@ import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
+import { getPlugins} from '$lib/plugins/handle_plugin';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -57,12 +58,19 @@ async function CreateClientWeb() {
 	// Create a data channel to init the plugins
 	const pluginInitChannel = peerConnection.createDataChannel(DataChannelLabel.PluginInit);
 
+	// Load the plugins in memory
+	await getPlugins()
+
 	peerConnection.ondatachannel = (ev) => {
 		const channel = ev.channel;
 
 		const label = channel.label;
 
 		if (!label.includes("plugin:")) return;
+
+		const pluginName = label.split(':')[1];
+
+		
 
 		channel.onopen = () => {
 			console.log('Channel open', label);
