@@ -4,22 +4,28 @@ tasks:
   build:
     cmds:
       - wails build -platform=windows/amd64,windows/arm64,linux/amd64,linux/arm64
+    desc: Build the application for all platforms
   build-win:
     cmds:
       - wails build -platform=windows/amd64,windows/arm64
+    desc: Build the application for Windows
   build-linux:
     cmds:
       - wails build -platform=linux/amd64,linux/arm64
+    desc: Build the application for Linux
 
   dev-all:
     cmds:
       - wails dev
+    desc: Run the application in development mode
 
   dev-front:
     cmds:
       - cd frontend
       - pnpm run dev
+    desc: Run the frontend in development mode
   test:
     cmds:
       - cd frontend
       - pnpm run test
+    desc: Run the frontend tests
