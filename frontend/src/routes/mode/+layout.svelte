@@ -26,9 +26,9 @@
 		// but if goes one level down, we want to close the connection
 		if (actualPathname.includes('/mode/client') && nextPathname.includes(actualPathname)) return;
 		if (actualPathname.includes('/mode/host') && nextPathname.includes(actualPathname)) return;
+		if (actualPathname.includes('/mode/config')) return;
 
 		// If the user tryes to leave the page, we will show the browser's dialog to confirm the action
-
 		if (confirm($_('are-you-sure-you-want-to-leave'))) {
 			closeConnection();
 		} else {
