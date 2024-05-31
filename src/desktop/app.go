@@ -148,6 +148,10 @@ func (a *App) InitClientPlugin(pluginName string) {
 
 }
 
+func (a *App) GetNATSPort() uint16 {
+	return plugins.MessagingPort.Get()
+}
+
 // ModifyPluginArgs will modify the arguments of a plugin
 func (a *App) ModifyPluginArgs(pluginName string, args []plugins.Plugin_arg, mode string) {
 	plugins.ModifyArgs(pluginName, args, mode)
