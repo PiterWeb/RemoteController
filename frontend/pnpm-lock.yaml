@@ -6,13 +6,13 @@ settings:
 
 dependencies:
   '@formkit/auto-animate':
-    specifier: ^0.8.2
+    specifier: 0.8.2
     version: 0.8.2
   nats.ws:
-    specifier: ^1.26.0
+    specifier: 1.26.0
     version: 1.26.0
   svelte-i18n:
-    specifier: ^4.0.0
+    specifier: 4.0.0
     version: 4.0.0(svelte@4.0.5)
 
 devDependencies:
@@ -5956,7 +5956,6 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
-    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0
