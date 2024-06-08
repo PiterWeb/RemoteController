@@ -6,6 +6,8 @@
 	import TrashIcon from '$lib/layout/icons/TrashIcon.svelte';
 	import { ToastType, showToast } from '$lib/toast/toast_hook';
 
+	import autoAnimate from '@formkit/auto-animate';
+
 	import {
 		stunServersStore,
 		addServerToGroup as addServerToGroupSTUN,
@@ -216,7 +218,7 @@
 						>
 					</form>
 
-					<ul class="max-w-md mx-auto divide-y divide-gray-700 w-full">
+					<ul use:autoAnimate class="max-w-md mx-auto divide-y divide-gray-700 w-full">
 						{#if ($servers[server_group]?.urls ?? []).length === 0}
 							<div>
 								<p class="text-white text-center text-lg font-medium my-auto h-full">

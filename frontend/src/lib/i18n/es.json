@@ -56,5 +56,8 @@
   "restore_default_servers": "Restaurar los valores por defecto",
   "server-group-update": "Grupo de servidores actualizado",
   "default-loading-title": "Esperando por la conexión",
-  "default-loading-message": "No salgas de la pestaña durante el proceso"
+  "default-loading-message": "No salgas de la pestaña durante el proceso",
+  "are-you-sure-you-want-to-leave": "¿ Estas seguro de querer salir ?",
+  "error-copying-host-code-to-clipboard": "Error al copiar el código del anfitrión al portapapeles",
+  "error-copying-client-code-to-clipboard": "Error al copiar el código de cliente al portapapeles"
 }

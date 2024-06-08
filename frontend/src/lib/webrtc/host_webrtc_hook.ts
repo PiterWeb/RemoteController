@@ -37,8 +37,14 @@ export async function CreateHost(client: string) {
 			throw new Error(hostCode);
 		}
 
-		navigator.clipboard.writeText(hostCode);
-		showToast(get(_)('host-code-copied-to-clipboard'), ToastType.SUCCESS);
+		if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(hostCode).catch(() => {
+				showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
+			});
+			showToast(get(_)('host-code-copied-to-clipboard'), ToastType.SUCCESS);
+		} else {
+			showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
+		}
 
 		// TODO
 		// Listen for connection state changes and handle them (Wails events) to redirect to the correct page

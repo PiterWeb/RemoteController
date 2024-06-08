@@ -18,17 +18,27 @@
 	}
 
 	beforeNavigate((navigator) => {
+		const nextPathname = navigator.to?.url.pathname ?? '';
 
-		const url = navigator.to?.url.toString() ?? '';
+		const actualPathname = navigator.from?.url.pathname ?? '';
 
-		if (url.includes('/mode/client') || url.includes('/mode/host')) return;
+		// If the user is navigating to the same page or one level up, we don't want to close the connection
+		// but if goes one level down, we want to close the connection
+		if (actualPathname.includes('/mode/client') && nextPathname.includes(actualPathname)) return;
+		if (actualPathname.includes('/mode/host') && nextPathname.includes(actualPathname)) return;
+		if (actualPathname.includes('/mode/config')) return;
 
-		closeConnection()
+		// If the user tryes to leave the page, we will show the browser's dialog to confirm the action
+		if (confirm($_('are-you-sure-you-want-to-leave'))) {
+			closeConnection();
+		} else {
+			return navigator.cancel();
+		}
 
-	})
-
+		closeConnection();
+	});
 </script>
 
-<BackwardButton path="/"/>
+<BackwardButton path="/" />
 
 <slot />

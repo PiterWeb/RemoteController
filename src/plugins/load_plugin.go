@@ -9,20 +9,20 @@ import (
 	"github.com/Binject/universal"
 )
 
-func LoadPlugins() []plugin {
+func loadPlugins() []Plugin {
 
 	pluginPaths := getPluginPaths()
 
-	plugins := []plugin{}
+	plugins := []Plugin{}
 
 	loader, err := universal.NewLoader()
 
 	if err != nil {
-		return []plugin{}
+		return []Plugin{}
 	}
 
 	for _, path := range pluginPaths {
-		plugin := plugin{}
+		plugin := Plugin{}
 
 		func_specs := getPluginSpecification(path)
 
@@ -38,9 +38,9 @@ func LoadPlugins() []plugin {
 			continue
 		}
 
-		plugin.init_client_args = func_specs.Init_client
-		plugin.init_server_args = func_specs.Init_server
-		plugin.background_args = func_specs.Background
+		plugin.Init_client_args = func_specs.Init_client
+		plugin.Init_host_args = func_specs.Init_host
+		plugin.Background_args = func_specs.Background
 
 		plugin.init_client = func(u ...uintptr) (uintptr, error) {
 			return lib.Call("init_client", u...)
@@ -54,9 +54,9 @@ func LoadPlugins() []plugin {
 			return lib.Call("background", u...)
 		}
 
-		plugin.name = strings.Split(path, "/")[len(strings.Split(path, "/"))-1]
-		fmt.Println(plugin.name)
-		plugin.path = path
+		plugin.Name = strings.Split(path, "/")[len(strings.Split(path, "/"))-1]
+		fmt.Println(plugin.Name)
+		plugin.Path = path
 
 		plugins = append(plugins, plugin)
 

@@ -4,12 +4,41 @@ tasks:
   build:
     cmds:
       - wails build -platform=windows/amd64,windows/arm64,linux/amd64,linux/arm64
-
+    desc: Build the application for all platforms
+  build-win:
+    cmds:
+      - wails build -platform=windows/amd64,windows/arm64
+    desc: Build the application for Windows
+  build-linux:
+    cmds:
+      - wails build -platform=linux/amd64,linux/arm64
+    desc: Build the application for Linux
+  build-wasm-front-linux:
+    cmds:
+      - cd frontend
+      - cd static
+      - cd wasm
+      - GOOS=js GOARCH=wasm go build -o signal.wasm
+    desc: Build the frontend wasm for Linux
+  build-wasm-front-win:
+    cmds:
+      - cd frontend
+      - cd static
+      - cd wasm
+      - powershell.exe -Command { $env:GOOS="js";$env:GOARCH="wasm"; go build -o signal.wasm }
+    desc: Build the frontend wasm for Windows
   dev-all:
     cmds:
       - wails dev
+    desc: Run the application in development mode
 
   dev-front:
     cmds:
       - cd frontend
       - pnpm run dev
+    desc: Run the frontend in development mode
+  test:
+    cmds:
+      - cd frontend
+      - pnpm run test
+    desc: Run the frontend tests

@@ -21,7 +21,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	if len(ICEServers) == 0 {
 		ICEServers = []webrtc.ICEServer{
 			{
-				URLs:           []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"},
+				URLs: []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"},
 			},
 		}
 	}
@@ -41,6 +41,9 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 			fmt.Printf("cannot close peerConnection: %v\n", err)
 		}
 	}()
+
+	// Reload plugins in case a new plugin was added or configuration changed
+	plugins.ReloadPlugins()
 
 	// Register data channel creation handling
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {

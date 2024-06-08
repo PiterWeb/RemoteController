@@ -6,8 +6,36 @@ export function GetCurrentOS() {
   return window['go']['desktop']['App']['GetCurrentOS']();
 }
 
+export function GetNATSPort() {
+  return window['go']['desktop']['App']['GetNATSPort']();
+}
+
+export function GetPlugin(arg1) {
+  return window['go']['desktop']['App']['GetPlugin'](arg1);
+}
+
+export function GetPlugins() {
+  return window['go']['desktop']['App']['GetPlugins']();
+}
+
+export function InitClientPlugin(arg1) {
+  return window['go']['desktop']['App']['InitClientPlugin'](arg1);
+}
+
+export function ModifyPluginArgs(arg1, arg2, arg3) {
+  return window['go']['desktop']['App']['ModifyPluginArgs'](arg1, arg2, arg3);
+}
+
 export function OpenViGEmWizard() {
   return window['go']['desktop']['App']['OpenViGEmWizard']();
+}
+
+export function ReloadPlugins() {
+  return window['go']['desktop']['App']['ReloadPlugins']();
+}
+
+export function TooglePlugin(arg1) {
+  return window['go']['desktop']['App']['TooglePlugin'](arg1);
 }
 
 export function TryClosePeerConnection() {
