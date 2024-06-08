@@ -58,8 +58,8 @@ async function CreateClientWeb() {
 	// Create a data channel to init the plugins
 	const pluginInitChannel = peerConnection.createDataChannel(DataChannelLabel.PluginInit);
 
-	// Load the plugins in memory
-	await getPlugins()
+	// Load the plugins in memory (only in desktop mode)
+	// await getPlugins()
 
 	peerConnection.ondatachannel = (ev) => {
 		const channel = ev.channel;

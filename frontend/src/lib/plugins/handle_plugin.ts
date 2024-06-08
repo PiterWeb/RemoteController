@@ -6,7 +6,7 @@ export async function getPlugins() {
     return await GetPlugins();
 }
 
-PluginWebsocket.connect(await GetNATSPort())
+// PluginWebsocket.connect(await GetNATSPort())
 
 // Handle the plugin initialization
 function handleInitPlugin(pluginName: string, channel: RTCDataChannel) {

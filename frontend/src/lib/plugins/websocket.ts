@@ -1,4 +1,4 @@
-import { connect, Msg, NatsConnection, NatsError } from 'nats.ws';
+import { connect, type Msg, type NatsConnection, NatsError } from 'nats.ws';
 
 export default class PluginWebsocket {
 	static #port: number;
