@@ -18,7 +18,6 @@
   "error-creating-client": "Error creating client",
   "client-code-copied-to-clipboard": "Client code copied to clipboard",
   "error-connecting-to-host": "Error connecting to host",
-  "connection-stablished-successfully": "Connection stablished successfully",
   "connection-lost": "Connection lost",
   "connection-failed": "Connection failed",
   "connection-closed": "Connection closed",
@@ -59,5 +58,6 @@
   "default-loading-message": "Make sure to stay focused on this window",
   "are-you-sure-you-want-to-leave": "Are you sure you want to leave?",
   "error-copying-host-code-to-clipboard": "Error copying host code to clipboard",
-  "error-copying-client-code-to-clipboard": "Error copying client code to clipboard"
+  "error-copying-client-code-to-clipboard": "Error copying client code to clipboard",
+  "connection-established-successfully": "Connection established successfully"
 }

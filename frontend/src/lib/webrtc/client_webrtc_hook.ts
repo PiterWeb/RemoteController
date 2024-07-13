@@ -205,7 +205,7 @@ function handleConnectionState() {
 
 	switch (connectionState) {
 		case 'connected':
-			showToast(get(_)('connection-stablished-successfully'), ToastType.SUCCESS);
+			showToast(get(_)('connection-established-successfully'), ToastType.SUCCESS);
 			goto('/mode/client/connection');
 			break;
 		case 'disconnected':

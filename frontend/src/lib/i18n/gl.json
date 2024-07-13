@@ -18,7 +18,6 @@
   "error-creating-client": "Erro ó crear o cliente",
   "client-code-copied-to-clipboard": "Código de cliente copiado ó portapeis",
   "error-connecting-to-host": "Erro no intento de conexión co anfitrión",
-  "connection-stablished-successfully": "Conexión satisfactoria",
   "connection-lost": "Conexión perdida",
   "connection-failed": "Fallo na conexión",
   "connection-closed": "Conexión pechada",
@@ -59,5 +58,6 @@
   "default-loading-message": "Non deixes esta xanela durante o proceso",
   "are-you-sure-you-want-to-leave": "Estas seguro de querer marchar ?",
   "error-copying-host-code-to-clipboard": "Erro ó copiar o código do anfitrión ó portapapeis",
-  "error-copying-client-code-to-clipboard": "Erro ó copiar o código do cliente ó portapapeis"
+  "error-copying-client-code-to-clipboard": "Erro ó copiar o código do cliente ó portapapeis",
+  "connection-established-successfully": "Conexión satisfactoria"
 }
