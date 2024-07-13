@@ -1,0 +1,20 @@
+{
+  "add": "Добавь",
+  "advance": "Расширенные",
+  "are-you-sure-you-want-to-leave": "Ты уверен, что хочешь уйти?",
+  "client-code-copied-to-clipboard": "Клиентский код, скопированный в буфер обмена",
+  "client_card_cta": "Создать клиента",
+  "client_card_description": "Подключите свой геймпад и играйте в потоковом режиме",
+  "client_card_title": "Клиент",
+  "code-is-empty": "Код пуст",
+  "config": "Модифицировать",
+  "config_title": "Конфигурация",
+  "connect-to-client": "Подключение к клиенту",
+  "connect-to-host": "Подключиться к хосту",
+  "connect-to-stream": "Подключиться к потоку",
+  "connected": "Связанный",
+  "connection-closed": "Соединение закрыто",
+  "connection-failed": "Не удалось установить соединение",
+  "connection-lost": "Соединение потеряно",
+  "connection-established-successfully": "Соединение успешно установлено"
+}
