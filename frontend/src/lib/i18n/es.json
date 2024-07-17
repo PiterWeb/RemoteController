@@ -59,5 +59,6 @@
   "are-you-sure-you-want-to-leave": "¿ Estas seguro de querer salir ?",
   "error-copying-host-code-to-clipboard": "Error al copiar el código del anfitrión al portapapeles",
   "error-copying-client-code-to-clipboard": "Error al copiar el código de cliente al portapapeles",
-  "connection-established-successfully": "Conexión satisfactoria"
+  "connection-established-successfully": "Conexión satisfactoria",
+  "tutorial_btn": "Tutorial"
 }

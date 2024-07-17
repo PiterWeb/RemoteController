@@ -150,7 +150,7 @@
 	</form>
 </section>
 
-<section>
+<section id="tutorial-group-server">
 	<ul>
 		{#if Object.keys($servers).length === 0}
 			<p class="text-red-400 text-center text-lg font-medium my-auto h-full">

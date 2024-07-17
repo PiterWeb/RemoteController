@@ -8,6 +8,9 @@ dependencies:
   '@formkit/auto-animate':
     specifier: 0.8.2
     version: 0.8.2
+  driver.js:
+    specifier: ^1.3.1
+    version: 1.3.1
   nats.ws:
     specifier: 1.26.0
     version: 1.26.0
@@ -2959,6 +2962,10 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
+
+  /driver.js@1.3.1:
+    resolution: {integrity: sha512-MvUdXbqSgEsgS/H9KyWb5Rxy0aE6BhOVT4cssi2x2XjmXea6qQfgdx32XKVLLSqTaIw7q/uxU5Xl3NV7+cN6FQ==}
+    dev: false
 
   /ecc-jsbn@0.1.2:
     resolution: {integrity: sha512-eh9O+hwRHNbG4BLTjEl3nw044CkGm5X6LoaCf7LPp7UU8Qrt47JYNi6nPX8xjW97TKGKm1ouctg0QSpZe9qrnw==}

@@ -16,5 +16,6 @@
   "connection-closed": "Соединение закрыто",
   "connection-failed": "Не удалось установить соединение",
   "connection-lost": "Соединение потеряно",
-  "connection-established-successfully": "Соединение успешно установлено"
+  "connection-established-successfully": "Соединение успешно установлено",
+  "tutorial_btn": "Руководство"
 }

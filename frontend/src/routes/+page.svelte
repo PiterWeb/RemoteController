@@ -2,8 +2,77 @@
 
 	import onwebsite from '$lib/detection/onwebsite';
 	import { _ } from 'svelte-i18n'
+	import TutorialDriver from '$lib/tutorial/driver';
+	import { goto } from '$app/navigation';
+
+	function startTutorial() {
+		TutorialDriver.setSteps([
+			{
+				element: "#tutorial-config-btn",
+				popover: {
+					title: $_('tutorial_config_title'),
+					description: $_('tutorial_config_description'),
+					onNextClick: () => {
+						goto('/mode/config')
+						setTimeout(() => {
+							TutorialDriver.moveNext()
+						}, 500)
+					},
+				},
+			},
+			{
+				element: "#tutorial-stun-card",
+				popover: {
+					title: $_('tutorial_config_title'),
+					description: $_('tutorial_config_description'),
+					onPrevClick: () => {
+						goto('/')
+						setTimeout(() => {
+							TutorialDriver.movePrevious()
+						}, 500)
+					},
+					onNextClick: () => {
+						goto('/mode/config/advanced/stun')
+						setTimeout(() => {
+							TutorialDriver.moveNext()
+						}, 500)
+					},
+				},
+			},
+			{
+				element: "#tutorial-group-server",
+				popover: {
+					title: $_('tutorial_group_server_title'),
+					description: $_('tutorial_group_server_description'),
+					onPrevClick: () => {
+						goto('/mode/config')
+						setTimeout(() => {
+							TutorialDriver.movePrevious()
+						}, 500)
+					},
+					onNextClick: () => {
+						goto('/mode/config')
+						setTimeout(() => {
+							TutorialDriver.moveNext()
+						}, 500)
+					},
+					
+				}
+			},
+			{
+
+			}
+		])
+
+		TutorialDriver.drive()
+	}
+
 
 </script>
+
+<button on:click={startTutorial} class="btn btn-primary text-white">
+	{$_('tutorial_btn')}
+</button>
 
 <h2 class="text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
 	<span

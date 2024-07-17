@@ -40,6 +40,7 @@
 	<div class="flex-none">
 		<a href="/mode/config" class="btn btn-ghost">
 			<svg
+				id="tutorial-config-btn"
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
 				height="24"

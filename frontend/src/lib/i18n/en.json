@@ -59,5 +59,6 @@
   "are-you-sure-you-want-to-leave": "Are you sure you want to leave?",
   "error-copying-host-code-to-clipboard": "Error copying host code to clipboard",
   "error-copying-client-code-to-clipboard": "Error copying client code to clipboard",
-  "connection-established-successfully": "Connection established successfully"
+  "connection-established-successfully": "Connection established successfully",
+  "tutorial_btn": "Tutorial"
 }
