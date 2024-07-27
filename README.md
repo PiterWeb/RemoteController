@@ -13,7 +13,7 @@
 - Enjoy videogames from other devices using your gamepad
 ### The limit is in your imagination ... 
 
-![Example Image from the Desktop APP](./assets/example.jpg)
+![Example Image from the Desktop APP](./assets/example.png)
 
 ## Download 📦
 
@@ -28,6 +28,9 @@
 
 - [FAQ](https://remote-controller.vercel.app/info/resources/faq/)
 - [Security](https://remote-controller.vercel.app/info/resources/security/)
+- Video Resource 1: How to use Remote Controller
+
+![](./assets/video-resource-1.mp4)
 
 ## Features 🧩
 
