@@ -28,9 +28,10 @@
 
 - [FAQ](https://remote-controller.vercel.app/info/resources/faq/)
 - [Security](https://remote-controller.vercel.app/info/resources/security/)
-- Video Resource 1: How to use Remote Controller
 
-![](./assets/video-resource-1.mp4)
+- https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
+
+(Note that videos may show beta versions of the APP and could have bugs)
 
 ## Features 🧩
 
