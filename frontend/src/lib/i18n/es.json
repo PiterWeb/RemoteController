@@ -60,5 +60,7 @@
   "error-copying-host-code-to-clipboard": "Error al copiar el código del anfitrión al portapapeles",
   "error-copying-client-code-to-clipboard": "Error al copiar el código de cliente al portapapeles",
   "connection-established-successfully": "Conexión satisfactoria",
-  "tutorial_btn": "Tutorial"
+  "tutorial_btn": "Tutorial",
+  "tutorial_language_title": "Escoge un idioma",
+  "tutorial_language_description": "Tienes disponibles idiomas a tu elección"
 }

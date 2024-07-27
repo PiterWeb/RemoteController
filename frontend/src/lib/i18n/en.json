@@ -60,5 +60,7 @@
   "error-copying-host-code-to-clipboard": "Error copying host code to clipboard",
   "error-copying-client-code-to-clipboard": "Error copying client code to clipboard",
   "connection-established-successfully": "Connection established successfully",
-  "tutorial_btn": "Tutorial"
+  "tutorial_btn": "Tutorial",
+  "tutorial_language_title": "Choose a language",
+  "tutorial_language_description": "There are different languages available"
 }
