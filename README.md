@@ -61,7 +61,7 @@
 
 | English 	| Spanish 	| Galician | Russian |Other languages |
 |---------	|-------	|-------	| ------- | ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| 29.5% (Not very good level) |⌛ Looking for contributions
+| 100% ✔     	| 100% ✔      	| 100% ✔      	| 29.5% |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
