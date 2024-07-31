@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/PiterWeb/RemoteController/src/plugins"
-
+	// "github.com/PiterWeb/RemoteController/src/plugins"
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/PiterWeb/RemoteController/src/keyboard"
 	"github.com/PiterWeb/RemoteController/src/streaming_signal"
@@ -43,7 +42,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	}()
 
 	// Reload plugins in case a new plugin was added or configuration changed
-	plugins.ReloadPlugins()
+	// plugins.ReloadPlugins()
 
 	// Register data channel creation handling
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
@@ -51,7 +50,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		gamepad.HandleGamepad(d)
 		streaming_signal.HandleStreamingSignal(ctx, d)
 		keyboard.HandleKeyboard(d)
-		plugins.HandleServerPlugins(d)
+		// plugins.HandleServerPlugins(d)
 
 	})
 
@@ -113,5 +112,8 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 
 	// Block until cancel by user
 	<-triggerEnd
+
+	// Close the signaling channel
+	runtime.EventsOff(ctx, "streaming-signal-server")
 
 }

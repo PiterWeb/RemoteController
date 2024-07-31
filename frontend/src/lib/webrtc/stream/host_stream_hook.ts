@@ -1,5 +1,5 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
-import { EventsEmit, EventsOn } from '$lib/wailsjs/runtime/runtime';
+import { EventsEmit, EventsOff, EventsOn } from '$lib/wailsjs/runtime/runtime';
 // import { stunServersStore} from '$lib/webrtc/stun_servers';
 import { get } from 'svelte/store';
 import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
@@ -86,9 +86,9 @@ export function CreateHostStream() {
 	};
 
 	EventsOn('streaming-signal-client', async (data: string) => {
-		const { type, offer, candidate, role } = JSON.parse(data) as SignalingData;
-
 		if (!peerConnection) return;
+
+		const { type, offer, candidate, role } = JSON.parse(data) as SignalingData;
 
 		if (role !== 'client') return;
 
@@ -99,11 +99,11 @@ export function CreateHostStream() {
 			case 'offer':
 				if (!offer) return;
 				await peerConnection.setRemoteDescription(offer);
-				// eslint-disable-next-line no-case-declarations
 				const mediarecorder = await startStreaming();
 				if (!mediarecorder) return;
 				mediarecorder.stream.getTracks().forEach((track) => peerConnection?.addTrack(track));
 				await peerConnection.setLocalDescription(await peerConnection.createAnswer());
+				EventsOff("streaming-signal-client")
 				break;
 		}
 	});

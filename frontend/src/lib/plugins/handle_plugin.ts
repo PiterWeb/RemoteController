@@ -1,9 +1,9 @@
-import { GetPlugins, GetNATSPort } from "$lib/wailsjs/go/desktop/App";
+// import { GetPlugins, GetNATSPort } from "$lib/wailsjs/go/desktop/App";
 import PluginWebsocket from "$lib/plugins/websocket";
 
 
 export async function getPlugins() {
-    return await GetPlugins();
+    // return await GetPlugins();
 }
 
 // PluginWebsocket.connect(await GetNATSPort())

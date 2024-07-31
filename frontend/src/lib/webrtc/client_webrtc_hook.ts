@@ -10,7 +10,7 @@ import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
-import { getPlugins} from '$lib/plugins/handle_plugin';
+// import { getPlugins} from '$lib/plugins/handle_plugin';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -27,10 +27,7 @@ function initPeerConnection() {
 	}
 
 	peerConnection = new RTCPeerConnection({
-		iceServers: [
-			...exportStunServers(),
-			...exportTurnServers()
-		]
+		iceServers: [...exportStunServers(), ...exportTurnServers()]
 	});
 }
 
@@ -56,7 +53,7 @@ async function CreateClientWeb() {
 	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard);
 
 	// Create a data channel to init the plugins
-	const pluginInitChannel = peerConnection.createDataChannel(DataChannelLabel.PluginInit);
+	// const pluginInitChannel = peerConnection.createDataChannel(DataChannelLabel.PluginInit);
 
 	// Load the plugins in memory (only in desktop mode)
 	// await getPlugins()
@@ -66,40 +63,34 @@ async function CreateClientWeb() {
 
 		const label = channel.label;
 
-		if (!label.includes("plugin:")) return;
+		if (!label.includes('plugin:')) return;
 
 		const pluginName = label.split(':')[1];
 
-		
-
 		channel.onopen = () => {
 			console.log('Channel open', label);
-			
-		}
+		};
 
 		channel.onmessage = (ev) => {
 			console.log('Message received', ev.data);
 		};
-
-	}
-
-	pluginInitChannel.onopen = () => {
-		pluginInitChannel.send('init');
-		console.log('Plugin init channel open');
 	};
 
-	keyboardChannel.onopen = () => {
+	// pluginInitChannel.onopen = () => {
+	// 	pluginInitChannel.send('init');
+	// 	console.log('Plugin init channel open');
+	// };
 
+	keyboardChannel.onopen = () => {
 		const sendKeyboardData = (keycode: string) => {
 			console.log('Sending keycode', keycode);
 			keyboardChannel.send(keycode);
-		}
+		};
 
 		// On keydown and keyup events, send the keycode to the host
 		handleKeyDown(sendKeyboardData);
 		handleKeyUp(sendKeyboardData);
 	};
-
 
 	controllerChannel.onopen = () => {
 		const sendGamepadData = () => {
@@ -113,10 +104,9 @@ async function CreateClientWeb() {
 			});
 		};
 
-
 		const gamepadLoop = () => {
 			sendGamepadData();
-			
+
 			// Continue the loop
 			requestAnimationFrame(gamepadLoop);
 		};
@@ -207,24 +197,32 @@ function handleConnectionState() {
 		case 'connected':
 			showToast(get(_)('connection-established-successfully'), ToastType.SUCCESS);
 			goto('/mode/client/connection');
+			// Inside try-catch cause in browser will not work
+			import('$lib/wailsjs/go/desktop/App').then(obj => obj.NotifyCreateClient()).catch();
 			break;
 		case 'disconnected':
 			showToast(get(_)('connection-lost'), ToastType.ERROR);
 			ClosePeerConnection();
 			CloseStreamPeerConnection();
 			goto('/');
+			// Inside try-catch cause in browser will not work
+			import('$lib/wailsjs/go/desktop/App').then(obj => obj.NotifyCloseClient).catch();
 			break;
 		case 'failed':
 			showToast(get(_)('connection-failed'), ToastType.ERROR);
 			ClosePeerConnection();
 			CloseStreamPeerConnection();
 			goto('/');
+			// Inside try-catch cause in browser will not work
+			import('$lib/wailsjs/go/desktop/App').then(obj => obj.NotifyCloseClient).catch();
 			break;
 		case 'closed':
 			showToast(get(_)('connection-closed'), ToastType.ERROR);
 			ClosePeerConnection();
 			CloseStreamPeerConnection();
 			goto('/');
+			// Inside try-catch cause in browser will not work
+			import('$lib/wailsjs/go/desktop/App').then(obj => obj.NotifyCloseClient).catch();
 			break;
 	}
 }
