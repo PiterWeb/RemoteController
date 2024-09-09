@@ -1,18 +1,26 @@
 <script lang="ts">
 	import onwebsite from '$lib/detection/onwebsite';
 	import { _ } from 'svelte-i18n';
-	import TutorialDriver from '$lib/tutorial/driver';
 	import { goto } from '$app/navigation';
+	import StartTutorial from '$lib/tutorial/driver';
+	import type { Driver } from 'driver.js';
 
-	function goNextTutorial(duration: number = 750) {
+	const TUTORIAL_DELAY = 750;
+
+	let tutorialDriver: Driver;
+	let currentStep = 0;
+
+	function goNextTutorial(duration: number = TUTORIAL_DELAY) {
 		setTimeout(() => {
-			TutorialDriver.moveNext();
+			tutorialDriver.moveNext();
+			currentStep++;
 		}, duration);
 	}
 
-	function goPrevTutorial(duration: number = 750) {
+	function goPrevTutorial(duration: number = TUTORIAL_DELAY) {
 		setTimeout(() => {
-			TutorialDriver.movePrevious();
+			tutorialDriver.movePrevious();
+			currentStep--;
 		}, duration);
 	}
 
@@ -33,14 +41,8 @@
 			popover: {
 				title: $_('tutorial_language_title'),
 				description: $_('tutorial_language_description'),
-				onNextClick: () => {
-					tutorialSteps = [...tutorialSteps]
-					TutorialDriver.setSteps(tutorialSteps);
-					goNextTutorial();
-				},
+				onNextClick: () => goNextTutorial,
 				onPrevClick: () => {
-					tutorialSteps = [...tutorialSteps]
-					TutorialDriver.setSteps(tutorialSteps);
 					goto('/');
 					goPrevTutorial();
 				}
@@ -71,18 +73,16 @@
 					goNextTutorial();
 				}
 			}
-		},
-		{}
+		}
 	];
-
-	function startTutorial() {
-		TutorialDriver.setSteps(tutorialSteps);
-
-		TutorialDriver.drive();
-	}
 </script>
 
-<button on:click={startTutorial} class="btn btn-primary text-white">
+<button
+	on:click={() => {
+		tutorialDriver = StartTutorial(tutorialSteps);
+	}}
+	class="btn btn-primary text-white"
+>
 	{$_('tutorial_btn')}
 </button>
 
