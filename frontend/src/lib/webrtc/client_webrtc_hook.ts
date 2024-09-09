@@ -65,7 +65,7 @@ async function CreateClientWeb() {
 
 		if (!label.includes('plugin:')) return;
 
-		const pluginName = label.split(':')[1];
+		// const pluginName = label.split(':')[1];
 
 		channel.onopen = () => {
 			console.log('Channel open', label);
