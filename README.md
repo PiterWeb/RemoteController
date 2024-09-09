@@ -81,8 +81,8 @@ You must have Wails CLI, NodeJS, npm and Golang installed.
 
 First go to the frontend folder and run
 
-  `$ npm install`<br>
-  `$ npm run build`
+  `$ pnpm install`<br>
+  `$ pnpm run build`
 
 Now run the following command on the root directory of the main project:
 
