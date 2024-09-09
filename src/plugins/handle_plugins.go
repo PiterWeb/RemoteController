@@ -19,9 +19,9 @@ func (m NATS_PORT) Get() uint16 {
 
 var MessagingPort NATS_PORT
 
-func init() {
-	MessagingPort = NATS_PORT{value: messaging.InitServer()}
-}
+// func init() {
+// 	MessagingPort = NATS_PORT{value: messaging.InitServer()}
+// }
 
 func HandleServerPlugins(d *webrtc.DataChannel) {
 
