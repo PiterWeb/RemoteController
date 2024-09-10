@@ -1,85 +1,14 @@
 <script lang="ts">
 	import onwebsite from '$lib/detection/onwebsite';
 	import { _ } from 'svelte-i18n';
-	import { goto } from '$app/navigation';
-	import StartTutorial from '$lib/tutorial/driver';
+	import { StartTutorial } from '$lib/tutorial/driver';
 	import type { Driver } from 'driver.js';
 
-	const TUTORIAL_DELAY = 750;
-
-	let tutorialDriver: Driver;
-	let currentStep = 0;
-
-	function goNextTutorial(duration: number = TUTORIAL_DELAY) {
-		setTimeout(() => {
-			tutorialDriver.moveNext();
-			currentStep++;
-		}, duration);
-	}
-
-	function goPrevTutorial(duration: number = TUTORIAL_DELAY) {
-		setTimeout(() => {
-			tutorialDriver.movePrevious();
-			currentStep--;
-		}, duration);
-	}
-
-	let tutorialSteps = [
-		{
-			element: '#tutorial-config-btn',
-			popover: {
-				title: $_('tutorial_config_title'),
-				description: $_('tutorial_config_description'),
-				onNextClick: () => {
-					goto('/mode/config');
-					goNextTutorial();
-				}
-			}
-		},
-		{
-			element: '#tutorial-language',
-			popover: {
-				title: $_('tutorial_language_title'),
-				description: $_('tutorial_language_description'),
-				onNextClick: () => goNextTutorial,
-				onPrevClick: () => {
-					goto('/');
-					goPrevTutorial();
-				}
-			}
-		},
-		{
-			element: '#tutorial-stun-card',
-			popover: {
-				title: $_('tutorial_stun_title'),
-				description: $_('tutorial_stun_description'),
-				onNextClick: () => {
-					goto('/mode/config/advanced/stun');
-					goNextTutorial();
-				}
-			}
-		},
-		{
-			element: '#tutorial-group-server',
-			popover: {
-				title: $_('tutorial_group_server_title'),
-				description: $_('tutorial_group_server_description'),
-				onPrevClick: () => {
-					goto('/mode/config');
-					goPrevTutorial();
-				},
-				onNextClick: () => {
-					goto('/mode/config');
-					goNextTutorial();
-				}
-			}
-		}
-	];
 </script>
 
 <button
 	on:click={() => {
-		tutorialDriver = StartTutorial(tutorialSteps);
+		StartTutorial();
 	}}
 	class="btn btn-primary text-white"
 >
