@@ -3,7 +3,7 @@ import {
 	TryClosePeerConnection as closeConnectionFn
 } from '$lib/wailsjs/go/desktop/App';
 
-import { EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
+import { EventsOff, EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
 
 import { _ } from 'svelte-i18n'
 import { get } from 'svelte/store';
@@ -106,6 +106,7 @@ export function ListenForConnectionChanges() {
 					host = false;
 					goto('/');
 					connectionStateCancelEventListener();
+					EventsOff("connection_state")
 					break;
 			}
 		}

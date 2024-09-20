@@ -3,6 +3,7 @@
 </script>
 
 <section
+	id="tutorial-stun-card"
 	class="min-w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
 >
 	<form class="max-w-lg mx-auto space-y-6" method="GET" action="/mode/config/advanced/stun">

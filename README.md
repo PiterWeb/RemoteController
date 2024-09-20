@@ -13,7 +13,7 @@
 - Enjoy videogames from other devices using your gamepad
 ### The limit is in your imagination ... 
 
-![Example Image from the Desktop APP](./assets/example.jpg)
+![Example Image from the Desktop APP](./assets/example.png)
 
 ## Download 📦
 
@@ -28,6 +28,10 @@
 
 - [FAQ](https://remote-controller.vercel.app/info/resources/faq/)
 - [Security](https://remote-controller.vercel.app/info/resources/security/)
+
+- https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
+
+(Note that videos may show beta versions of the APP and could have bugs)
 
 ## Features 🧩
 
@@ -55,9 +59,9 @@
 
 ### Translations 🔠
 
-| English 	| Spanish 	| Galician | Other languages |
-|---------	|-------	|-------	| ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| ⌛ Looking for contributions
+| English 	| Spanish 	| Galician | Russian |Other languages |
+|---------	|-------	|-------	| ------- | ------- |
+| 100% ✔     	| 100% ✔      	| 100% ✔      	| 29.5% |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
@@ -77,8 +81,8 @@ You must have Wails CLI, NodeJS, npm and Golang installed.
 
 First go to the frontend folder and run
 
-  `$ npm install`<br>
-  `$ npm run build`
+  `$ pnpm install`<br>
+  `$ pnpm run build`
 
 Now run the following command on the root directory of the main project:
 
