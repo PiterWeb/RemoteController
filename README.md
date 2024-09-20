@@ -51,17 +51,17 @@
 |---------	|-------	|-------	|---------	|
 | ✔       	| (Only keyboard)⌛ Looking for contributions for Gamepad     	| ❌     	| ✔ (Known Issues with Safari)       	|
 
-### Gamepad Support 🎮
+### Native Gamepad Support 🎮
 
 | PC Controller (XInput/DirectInput) 	| Xbox Controller (XInput) 	| PlayStation Controler
 |---------	|-------	|-------	|
-| ✔       	| ✔     	| ❌     	|
+| ✔       	| ✔     	| ❌ (You can achieve emulating a Xbox Controller)     	|
 
 ### Translations 🔠
 
 | English 	| Spanish 	| Galician | Russian |Other languages |
 |---------	|-------	|-------	| ------- | ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| 29.5% |⌛ Looking for contributions
+| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
