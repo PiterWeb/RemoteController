@@ -8,7 +8,6 @@
 
 	import GamepadSVG from '$lib/assets/gamepad.svg?raw';
 	import Loading from '$lib/loading/Loading.svelte';
-	import onwebsite from '$lib/detection/onwebsite';
 </script>
 
 <svelte:head>
@@ -19,22 +18,11 @@
 <nav class="navbar bg-primary text-primary-content">
 	<div class="flex-1">
 		<h1>
-			{#if onwebsite}
-				<a
-					href="https://remote-controller.vercel.app/"
-					class="btn btn-ghost normal-case text-xl items-start content-center"
-				>
-					{@html GamepadSVG}
-
-					<div class="hidden md:block">Remote Controller</div>
-				</a>
-			{:else}
 				<a href="/" class="btn btn-ghost normal-case text-xl items-start content-center">
 					{@html GamepadSVG}
 
 					<div class="hidden md:block">Remote Controller</div>
 				</a>
-			{/if}
 		</h1>
 	</div>
 	<div class="flex-none">

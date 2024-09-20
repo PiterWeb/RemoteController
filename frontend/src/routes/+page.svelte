@@ -27,7 +27,7 @@
 		>{$_('main_title_role')}</span
 	>
 </h2>
-<div class="flex gap-4 mt-4 md:flex-row flex-col">
+<div id="tutorial-play" class="flex gap-4 mt-4 md:flex-row flex-col">
 	{#if !onwebsite}
 		<div
 			class="card md:w-96 md:h-52 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"

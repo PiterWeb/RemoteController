@@ -1,6 +1,6 @@
 import { goto } from '$app/navigation';
 import { driver } from 'driver.js';
-import type { Driver } from 'driver.js';
+import type { Driver, DriveStep } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { _ } from 'svelte-i18n';
 import { get } from 'svelte/store';
@@ -20,10 +20,13 @@ export function StartTutorial(selectedStep: number = 0) {
 		animate: true,
 		smoothScroll: true,
 		stagePadding: 1,
-		stageRadius: 1
+		stageRadius: 1,
+		doneBtnText: get(_)('tutorial_done_text'),
+		nextBtnText: get(_)('tutorial_next_text'),
+		prevBtnText: get(_)('tutorial_prev_text')
 	});
 
-	const driverSteps = [
+	const driverSteps: DriveStep[] = [
 		{
 			element: '#tutorial-config-btn',
 			popover: {
@@ -70,10 +73,63 @@ export function StartTutorial(selectedStep: number = 0) {
 					goPrevTutorial();
 				},
 				onNextClick: () => {
+					goNextTutorial();
+				}
+			}
+		},
+		{
+			element: '#tutorial-back-btn',
+			popover: {
+				title: get(_)('tutorial_go_back_title'),
+				description: get(_)('tutorial_go_back_description'),
+				onPrevClick: () => {
+					goPrevTutorial();
+				},
+				onNextClick: () => {
 					goto('/mode/config');
 					goNextTutorial();
 				}
 			}
+		},
+		{
+			element: '#tutorial-turn-card',
+			popover: {
+				title: get(_)('tutorial_turn_title'),
+				description: get(_)('tutorial_turn_description'),
+				onPrevClick: () => {
+					goto('/mode/config/advanced/stun');
+					goPrevTutorial();
+				},
+				onNextClick: () => {
+					goNextTutorial();
+				}
+			}
+		},
+		{
+			element: '#tutorial-back-btn',
+			popover: {
+				title: get(_)('tutorial_go_back_title'),
+				description: get(_)('tutorial_go_back_description'),
+				onPrevClick: () => {
+					goPrevTutorial();
+				},
+				onNextClick: () => {
+					goto('/');
+					goNextTutorial();
+				}
+			}
+		},
+		{ 
+			element: '#tutorial-play',
+			popover: {
+				title: get(_)('tutorial_play_title'),
+				description: get(_)('tutorial_play_description'),
+				onPrevClick: () => {
+					goto("/mode/config")
+					goPrevTutorial();
+				},
+			} 
+
 		}
 	];
 
