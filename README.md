@@ -61,7 +61,7 @@
 
 | English 	| Spanish 	| Galician | Russian | French |Other languages |
 |---------	|-------	|-------	| ------- | ------- | ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ | 100% ✔ |⌛ Looking for contributions
+| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ | 100% ✔ (@Zorkyx22) |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
