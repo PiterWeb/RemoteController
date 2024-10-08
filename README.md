@@ -59,9 +59,9 @@
 
 ### Translations 🔠
 
-| English 	| Spanish 	| Galician | Russian |Other languages |
-|---------	|-------	|-------	| ------- | ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ |⌛ Looking for contributions
+| English 	| Spanish 	| Galician | Russian | French |Other languages |
+|---------	|-------	|-------	| ------- | ------- | ------- |
+| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ | 100% ✔ |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
