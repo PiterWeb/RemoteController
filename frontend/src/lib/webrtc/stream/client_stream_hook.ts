@@ -1,6 +1,6 @@
-import {exportStunServers} from '$lib/webrtc/stun_servers';
+import { exportStunServers } from '$lib/webrtc/stun_servers';
 import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
-import {exportTurnServers} from '$lib/webrtc/turn_servers';
+import { exportTurnServers } from '$lib/webrtc/turn_servers';
 
 let peerConnection: RTCPeerConnection | undefined;
 let inboundStream: MediaStream | null = null;
@@ -11,16 +11,13 @@ function initStreamingPeerConnection() {
 	}
 
 	peerConnection = new RTCPeerConnection({
-		iceServers: [
-			...exportStunServers(),
-			...exportTurnServers()
-		]
+		iceServers: [...exportStunServers(), ...exportTurnServers()]
 	});
 }
 
 async function CreateClientStream(
 	signalingChannel: RTCDataChannel,
-	videoElement:HTMLVideoElement
+	videoElement: HTMLVideoElement
 ) {
 	initStreamingPeerConnection();
 
@@ -37,7 +34,6 @@ async function CreateClientStream(
 
 		signalingChannel.send(JSON.stringify(data));
 	};
-
 
 	peerConnection.ontrack = (ev) => {
 		if (ev.streams && ev.streams[0]) {
@@ -60,12 +56,23 @@ async function CreateClientStream(
 
 	await peerConnection.setLocalDescription(offer);
 
+	// Configuración de parámetros del códec
+	peerConnection.getSenders().forEach((sender) => {
+		const params = sender.getParameters();
+		if (!params.encodings) {
+			params.encodings = [{}];
+		}
+		params.encodings[0].maxBitrate = 6000 * 1000; // Configura el bitrate máximo (en bits por segundo)
+		params.encodings[0].maxFramerate = 60; // Configura el frame rate máximo
+		params.encodings[0].scaleResolutionDownBy = 1.0; // Mantiene la resolución original
+		sender.setParameters(params);
+	});
+
 	const data: SignalingData = {
 		type: 'offer',
 		offer: offer,
 		role: 'client'
-
-	}
+	};
 
 	signalingChannel.send(JSON.stringify(data));
 

@@ -30,7 +30,8 @@ export async function startStreaming() {
 		});
 
 		const recorder = new MediaRecorder(mediastream, {
-			mimeType: MIME_TYPE
+			mimeType: MIME_TYPE,
+			videoBitsPerSecond: 6000000
 		});
 
 		return recorder;
