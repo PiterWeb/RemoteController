@@ -1,5 +1,5 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
-import { EventsEmit, EventsOff, EventsOn } from '$lib/wailsjs/runtime/runtime';
+import { EventsEmit, EventsOn } from '$lib/wailsjs/runtime/runtime';
 // import { stunServersStore} from '$lib/webrtc/stun_servers';
 import { get } from 'svelte/store';
 import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
@@ -16,24 +16,21 @@ function initStreamingPeerConnection() {
 	}
 
 	peerConnection = new RTCPeerConnection({
-		iceServers: [
-			...exportStunServers(),
-			...exportTurnServers()
-		]
+		iceServers: [...exportStunServers(), ...exportTurnServers()]
 	});
 }
 
-// const MIME_TYPE = 'video/webm;codecs=vp9,opus';
+const MIME_TYPE = 'video/mp4;codecs="avc1.64001F, mp4a.40.2"';
 
 export async function startStreaming() {
 	try {
 		const mediastream = await navigator.mediaDevices.getDisplayMedia({
-			video: true,
+			video: { frameRate: 60, noiseSuppression: true, autoGainControl: true },
 			audio: true
 		});
 
 		const recorder = new MediaRecorder(mediastream, {
-			mimeType: 'video/webm;codecs=vp9,opus'
+			mimeType: MIME_TYPE
 		});
 
 		return recorder;
@@ -99,11 +96,11 @@ export function CreateHostStream() {
 			case 'offer':
 				if (!offer) return;
 				await peerConnection.setRemoteDescription(offer);
+				// eslint-disable-next-line no-case-declarations
 				const mediarecorder = await startStreaming();
 				if (!mediarecorder) return;
 				mediarecorder.stream.getTracks().forEach((track) => peerConnection?.addTrack(track));
 				await peerConnection.setLocalDescription(await peerConnection.createAnswer());
-				EventsOff("streaming-signal-client")
 				break;
 		}
 	});
