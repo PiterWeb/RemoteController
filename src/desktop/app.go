@@ -7,7 +7,6 @@ import (
 
 	"runtime"
 
-	"github.com/PiterWeb/RemoteController/src/plugins/messaging"
 	"github.com/pion/webrtc/v3"
 	wRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -65,8 +64,6 @@ func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
 	a.TryClosePeerConnection()
-	messaging.ShutdownServer()
-	messaging.Get_Client().Close()
 	close(triggerEnd)
 }
 
