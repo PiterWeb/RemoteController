@@ -34,7 +34,8 @@ tasks:
       - pnpm run dev
     desc: Run the frontend in development mode
   test:
+    desc: Run E2E tests
     dir: frontend
+    deps: [dev-all]
     cmds:
       - pnpm run test
-    desc: Run the frontend tests
