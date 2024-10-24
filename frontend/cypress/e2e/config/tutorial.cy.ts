@@ -8,7 +8,7 @@ describe('Tutorial flow', () => {
 		cy.visit('http://localhost:34115/');
 		cy.get('button.btn').click();
 		cy.get('button.driver-popover-next-btn').click();
-		cy.location('pathname').should('equal', '/mode/config/');
+		cy.location('pathname').should('equal', '/mode/config');
 		cy.wait(1000);
 		cy.get('.grid > :nth-child(5) > .btn').click();
 		cy.get(':nth-child(3) > .btn').click();
@@ -18,13 +18,13 @@ describe('Tutorial flow', () => {
 		cy.get('button.driver-popover-next-btn').click();
 		cy.wait(1000);
 		cy.get('button.driver-popover-next-btn').click();
-		cy.location('pathname').should('equal', '/mode/config/advanced/stun/');
+		cy.location('pathname').should('equal', '/mode/config/advanced/stun');
 		cy.wait(1000);
 		cy.get('button.driver-popover-next-btn').click();
 		cy.wait(1000);
 		cy.get('button.driver-popover-next-btn').click();
 		cy.wait(1000);
-		cy.location('pathname').should('equal', '/mode/config/');
+		cy.location('pathname').should('equal', '/mode/config');
 		cy.get('button.driver-popover-next-btn').click();
 		cy.wait(1000);
 		cy.get('button.driver-popover-next-btn').click();
