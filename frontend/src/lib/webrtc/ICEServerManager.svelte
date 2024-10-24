@@ -1,5 +1,4 @@
 <script lang="ts">
-	export let type: 'stun' | 'turn' = 'stun';
 
 	import DeleteIcon from '$lib/layout/icons/DeleteIcon.svelte';
 	import PencilIcon from '$lib/layout/icons/PencilIcon.svelte';
@@ -29,6 +28,11 @@
 	} from './turn_servers';
 
 	import { _ } from 'svelte-i18n';
+	interface Props {
+		type?: 'stun' | 'turn';
+	}
+
+	let { type = 'stun' }: Props = $props();
 
 	const deleteServerGroup = (server_group: string) => {
 		if (type === 'stun') {
@@ -93,8 +97,8 @@
 
 	let servers = type === 'stun' ? stunServersStore : turnServersStore;
 
-	let groupToCreate: string;
-	let newserverToAdd: string;
+	let groupToCreate: string | undefined = $state();
+	let newserverToAdd: string | undefined = $state();
 </script>
 
 <h2 class="text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
@@ -111,7 +115,7 @@
 
 <section>
 	<button
-		on:click={() => {
+		onclick={() => {
 			if (type === 'stun') {
 				const defaultStunConfigCopy = JSON.parse(JSON.stringify(defaultStunConfig));
 				stunServersStore.set(defaultStunConfigCopy);
@@ -128,7 +132,8 @@
 
 <section>
 	<form
-		on:submit|preventDefault={() => {
+		onsubmit={e => {
+			e.preventDefault()
 			groupToCreate = '';
 		}}
 		class="flex flex-col gap-4 items-center justify-center sm:w-[30vw] w-[75vw] p-4 my-4 border rounded-lg shadow sm:p-6 bg-gray-800 border-gray-700"
@@ -144,7 +149,7 @@
 			required
 			bind:value={groupToCreate}
 		/>
-		<button on:click={createServerGroup} type="submit" class="btn btn-primary text-white w-full"
+		<button onclick={createServerGroup} type="submit" class="btn btn-primary text-white w-full"
 			>{$_('add')}</button
 		>
 	</form>
@@ -163,19 +168,19 @@
 					<button
 						type="button"
 						class="btn btn-circle btn-sm btn-ghost text-white"
-						on:click={() => deleteServerGroup(server_group)}
+						onclick={() => deleteServerGroup(server_group)}
 					>
 						<DeleteIcon /></button
 					>
 				</div>
 				<div class="flex flex-row gap-4">
-					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<button
 						type="button"
 						aria-label="Edit group name"
 						class="cursor-pointer hover:-rotate-12 transition-transform mb-2"
-						on:click={() => editNameGroup(server_group, i)}
+						onclick={() => editNameGroup(server_group, i)}
 					>
 						<PencilIcon />
 					</button>
@@ -184,9 +189,9 @@
 						class="w-11/12 text-lg font-medium text-gray-900 dark:text-white mb-2 focus"
 						contenteditable="false"
 						id="group-{server_group}-{i}"
-						on:input={(e) =>
+						oninput={(e) =>
 							e.currentTarget.textContent && modifyGroup(server_group, e.currentTarget.textContent)}
-						on:focusout={() => editNameGroup(server_group, i)}
+						onfocusout={() => editNameGroup(server_group, i)}
 					>
 						{server_group}
 					</h4>
@@ -194,7 +199,8 @@
 
 				<div class="grid lg:grid-cols-3 grid-cols-1 gap-y-10 lg:gap-x-4">
 					<form
-						on:submit|preventDefault={() => {
+						onsubmit={e => {
+							e.preventDefault()
 							newserverToAdd = '';
 						}}
 					>
@@ -210,7 +216,7 @@
 							bind:value={newserverToAdd}
 						/>
 						<button
-							on:click={() => {
+							onclick={() => {
 								addServerToGroup(server_group);
 							}}
 							type="submit"
@@ -242,7 +248,7 @@
 										</p>
 									</div>
 									<button
-										on:click={() => removeServerFromGroup(server_group, server)}
+										onclick={() => removeServerFromGroup(server_group, server)}
 										class="h-5 w-5 mx-10 text-gray-400 cursor-pointer"
 									>
 										<TrashIcon />
@@ -266,7 +272,7 @@
 								placeholder="username"
 								required
 								value={$servers[server_group]?.username ?? ''}
-								on:change={(e) => modifyGroup(server_group, undefined, e.currentTarget.value)}
+								onchange={(e) => modifyGroup(server_group, undefined, e.currentTarget.value)}
 							/>
 
 							<label
@@ -282,9 +288,9 @@
 								placeholder="•••••••••"
 								required
 								value={$servers[server_group]?.credential ?? ''}
-								on:focusin={(e) => e.currentTarget.type = 'text'}
-								on:focusout={(e) => e.currentTarget.type = 'password'}
-								on:change={(e) => {
+								onfocusin={e => e.currentTarget.type = 'text'}
+								onfocusout={e => e.currentTarget.type = 'password'}
+								onchange={e => {
 									e.preventDefault()
 									const username = $servers[server_group]?.username;
 									console.log(username);

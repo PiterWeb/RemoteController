@@ -2,14 +2,21 @@
 	import { slide } from 'svelte/transition';
 	import { playAudio } from '$lib/audio/audio_player';
 
-	export let key: string;
-	export let duration: number = 0;
+	interface Props {
+		key: string;
+		duration?: number;
+		children?: import('svelte').Snippet;
+	}
 
-	$: key && playAudio('page_transition');
+	let { key, duration = 0, children }: Props = $props();
+
+	$effect(() => {
+		key && playAudio('page_transition');
+	});
 </script>
 
 {#key key}
 	<div in:slide={{ delay: duration / 4, duration, axis: 'x' }}>
-		<slot />
+		{@render children?.()}
 	</div>
 {/key}

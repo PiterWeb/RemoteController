@@ -5,7 +5,7 @@
 
 	import { onMount } from 'svelte';
 
-	let streaming = false;
+	let streaming = $state(false);
 
 	function createStream() {
 		CreateHostStream();
@@ -17,5 +17,5 @@
 	});
 </script>
 
-<button on:click={createStream} disabled={streaming} class="btn btn-primary">{$_('start-streaming')}</button
+<button onclick={createStream} disabled={streaming} class="btn btn-primary">{$_('start-streaming')}</button
 >

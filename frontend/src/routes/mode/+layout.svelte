@@ -7,6 +7,8 @@
 
 	import { ClosePeerConnection } from '$lib/webrtc/client_webrtc_hook';
 	import { CancelConnection } from '$lib/webrtc/host_webrtc_hook';
+	/** @type {{children?: import('svelte').Snippet}} */
+	let { children } = $props();
 
 	function handleToast() {
 		showToast($_('you-are-now-disconnected'), ToastType.INFO);
@@ -41,4 +43,4 @@
 
 <BackwardButton path="/" />
 
-<slot />
+{@render children?.()}

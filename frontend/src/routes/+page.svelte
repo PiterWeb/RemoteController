@@ -2,12 +2,11 @@
 	import onwebsite from '$lib/detection/onwebsite';
 	import { _ } from 'svelte-i18n';
 	import { StartTutorial } from '$lib/tutorial/driver';
-	import type { Driver } from 'driver.js';
 
 </script>
 
 <button
-	on:click={() => {
+	onclick={() => {
 		StartTutorial();
 	}}
 	class="btn btn-primary text-white"
