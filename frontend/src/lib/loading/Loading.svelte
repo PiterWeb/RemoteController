@@ -1,19 +1,22 @@
 <script lang="ts">
+
 	import { playAudio } from '$lib/audio/audio_player';
 	import loadingWritable from '$lib/loading/loading_hook';
 
-	let loadingModal: HTMLDialogElement;
-	let title: string = '';
-	let message: string = '';
+	let loadingModal: HTMLDialogElement | undefined = $state();
+	let title: string = $state('');
+	let message: string = $state('');
 
-	$: if ($loadingWritable.loading && loadingModal) {
-		loadingModal.showModal();
-		title = $loadingWritable.title ?? title;
-		message = $loadingWritable.message ?? message;
-		playAudio('open_modal');
-	} else if (loadingModal) {
-		loadingModal.close();
-	}
+	$effect(() => {
+		if ($loadingWritable.loading && loadingModal) {
+			loadingModal.showModal();
+			title = $loadingWritable.title ?? title;
+			message = $loadingWritable.message ?? message;
+			playAudio('open_modal');
+		} else if (loadingModal) {
+			loadingModal.close();
+		}
+	});
 </script>
 
 <dialog class="modal modal-bottom sm:modal-middle" bind:this={loadingModal}>

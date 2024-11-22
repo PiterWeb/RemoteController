@@ -1,10 +1,13 @@
 <script>
+
 	import { playAudio } from '$lib/audio/audio_player';
 	import toast from '$lib/toast/toast_hook';
 
-    $: if ($toast.show) {
-        playAudio('open_modal');
-    }
+    $effect(() => {
+        if ($toast.show) {
+            playAudio('open_modal');
+        }
+    });
 
 </script>
 

@@ -10,13 +10,11 @@ import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
-// import { getPlugins} from '$lib/plugins/handle_plugin';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
 	Controller = 'controller',
 	Keyboard = 'keyboard',
-	PluginInit = 'plugin:init'
 }
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -52,20 +50,10 @@ async function CreateClientWeb() {
 	const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
 	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard);
 
-	// Create a data channel to init the plugins
-	// const pluginInitChannel = peerConnection.createDataChannel(DataChannelLabel.PluginInit);
-
-	// Load the plugins in memory (only in desktop mode)
-	// await getPlugins()
-
 	peerConnection.ondatachannel = (ev) => {
 		const channel = ev.channel;
 
 		const label = channel.label;
-
-		if (!label.includes('plugin:')) return;
-
-		// const pluginName = label.split(':')[1];
 
 		channel.onopen = () => {
 			console.log('Channel open', label);
@@ -75,11 +63,6 @@ async function CreateClientWeb() {
 			console.log('Message received', ev.data);
 		};
 	};
-
-	// pluginInitChannel.onopen = () => {
-	// 	pluginInitChannel.send('init');
-	// 	console.log('Plugin init channel open');
-	// };
 
 	keyboardChannel.onopen = () => {
 		const sendKeyboardData = (keycode: string) => {

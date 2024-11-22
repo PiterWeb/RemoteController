@@ -5,8 +5,8 @@
 	import { _ } from 'svelte-i18n'
 
 
-	let code = '';
-	let clientCreated = false;
+	let code = $state('');
+	let clientCreated = $state(false);
 
 	function handleConnectToHost() {
 		if (code.length < 1) {
@@ -40,7 +40,7 @@
 				{#if !clientCreated}
 					<div
 						class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"
-					/>
+					></div>
 				{:else}
 					<span
 						class="absolute flex items-center justify-center rounded-full mt-1.5 w-3 h-3 -start-1.5 border border-white dark:border-gray-900"
@@ -74,7 +74,7 @@
 				{/if}
 
 				{#if !clientCreated}
-					<button id="create-client" on:click={handleCreateClient} class="btn btn-primary"
+					<button id="create-client" onclick={handleCreateClient} class="btn btn-primary"
 						>{$_('client_card_cta')}</button
 					>
 				{/if}
@@ -82,7 +82,7 @@
 			<li class="mb-10 ms-4">
 				<div
 					class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"
-				/>
+				></div>
 				<label
 					for="connect-to-host"
 					class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
@@ -98,7 +98,7 @@
 						class="input input-bordered w-full max-w-xs"
 						bind:value={code}
 					/>
-					<button id="connect-to-host" on:click={handleConnectToHost} class="btn btn-primary"
+					<button id="connect-to-host" onclick={handleConnectToHost} class="btn btn-primary"
 						>{$_('connect-to-host')}</button
 					>
 				</div>

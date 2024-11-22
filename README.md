@@ -26,8 +26,9 @@
 
 ## Resources 📚
 
-- [FAQ](https://remote-controller.vercel.app/info/resources/faq/)
-- [Security](https://remote-controller.vercel.app/info/resources/security/)
+- [Docs](./docs/) 📘
+- [FAQ](https://remote-controller.vercel.app/info/resources/faq/) 💬
+- [Security](https://remote-controller.vercel.app/info/resources/security/) 🔐
 
 - https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 
@@ -49,19 +50,19 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| (Only keyboard)⌛ Looking for contributions for Gamepad     	| ❌     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| (Only keyboard)⌛ Looking for contributions for Gamepad     	| (In theory keyboard works)⌛ Looking for contributions for Gamepad     	| ✔ (Known Issues with Safari)       	|
 
-### Gamepad Support 🎮
+### Native Gamepad Support 🎮
 
 | PC Controller (XInput/DirectInput) 	| Xbox Controller (XInput) 	| PlayStation Controler
 |---------	|-------	|-------	|
-| ✔       	| ✔     	| ❌     	|
+| ✔       	| ✔     	| ❌ (You can achieve emulating a Xbox Controller)     	|
 
 ### Translations 🔠
 
-| English 	| Spanish 	| Galician | Russian |Other languages |
-|---------	|-------	|-------	| ------- | ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| 29.5% |⌛ Looking for contributions
+| English 	| Spanish 	| Galician | Russian | French |Other languages |
+|---------	|-------	|-------	| ------- | ------- | ------- |
+| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ | 100% ✔ (@Zorkyx22) |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
@@ -71,37 +72,50 @@ There is no way to self-host the infrastructure of RemoteController because it h
 
 - Also you can host the Web version (but it is only frontend) to make like a network of Remote Controller web clients
 
+## Run Dev
+
+### Prerequisites
+
+You must have Task CLI, Wails CLI, NodeJS, pnpm and Golang installed.
+
+### How to
+
+Go to the root project folder and run
+
+  - Full App :
+
+    `$ task dev-all`
+
+  - Frontend:
+
+    `$ task dev-front`
+
 ## Build
 
 ### Prerequisites
 
-You must have Wails CLI, NodeJS, npm and Golang installed.
+You must have Task CLI, Wails CLI, NodeJS, pnpm and Golang installed.
 
 ### How to
 
-First go to the frontend folder and run
+Go to the root project folder and run
 
-  `$ pnpm install`<br>
-  `$ pnpm run build`
+- For general builds:
 
-Now run the following command on the root directory of the main project:
+    `$ task build`
 
-  `$ wails build`
+- For Windows builds:
 
-finally go to the build/bin folder and your executable will be there.
+    `$ task build-win`
+
+- For Linux builds:
+
+    `$ task build-linux`
+
+finally go to the build/bin folder and your executables will be there.
 
 > [!Note]
 > Please note the supported platforms in the table
-
-## How it works 👷‍♂️
-
-This desktop APP is based on the WebRTC 🎞 standard and it uses the power of Go to communicate 🗣 with the Gamepad emulation libraries.
-In Windows uses the ViGEm Bus Driver with the ViGEm Client DLL
-
-For the low level actions uses Go.
-On the other hand the UI works with Web technologies (WASM, Sveltekit, Tailwind, DaisyUI & Typescript)
-
-You can learn more about [how it works](./docs/README.md) under the hood all the project
 
 ## Contributting 🤝
 

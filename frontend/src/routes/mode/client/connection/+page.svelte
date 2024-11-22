@@ -2,7 +2,7 @@
 	import { streamingConsumingVideoElement } from '$lib/webrtc/stream/stream_signal_hook';
 	import { _ } from 'svelte-i18n';
 
-	let consumingStream = false;
+	let consumingStream = $state(false);
 
 	function connectToStream() {
 		streamingConsumingVideoElement.set(
@@ -13,7 +13,7 @@
 	}
 </script>
 
-<button class="btn btn-primary" disabled={consumingStream} on:click={connectToStream}>
+<button class="btn btn-primary" disabled={consumingStream} onclick={connectToStream}>
 	{$_('connect-to-stream')}</button
 >
 

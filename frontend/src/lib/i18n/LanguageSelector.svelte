@@ -23,7 +23,7 @@
 	<ul class="grid grid-cols-2 justify-between w-full">
 		{#each $locales as locale}
 			<li class="w-full my-4 flex justify-center">
-				<button on:click={setLocale} data-value={locale} class="btn btn-primary text-white"
+				<button onclick={setLocale} data-value={locale} class="btn btn-primary text-white"
 					>{getLocaleName(locale)}</button
 				>
 			</li>
