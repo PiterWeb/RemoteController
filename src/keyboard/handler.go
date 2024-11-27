@@ -30,6 +30,8 @@ func HandleKeyboard(d *webrtc.DataChannel) {
 		fmt.Println("keyboard data channel is open")
 	})
 
+	var SHIFT_KEY_PRESSED, CTRL_KEY_PRESSED, ALT_KEY_PRESSED bool
+
 	d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
 		fmt.Println("keyboard message: ", msg.Data)
@@ -44,25 +46,34 @@ func HandleKeyboard(d *webrtc.DataChannel) {
 
 		switch keyJS {
 		case "SHIFTLEFT_1":
-			kb.HasSHIFT(true)
+			SHIFT_KEY_PRESSED = true
 			return
 		case "SHIFTLEFT_0":
-			kb.HasSHIFT(false)
+			SHIFT_KEY_PRESSED = false
 		case "CTRLLEFT_1":
-			kb.HasCTRL(true)
+			CTRL_KEY_PRESSED = true
 			return
 		case "CTRLLEFT_0":
-			kb.HasCTRL(false)
+			CTRL_KEY_PRESSED = false
 		case "ALTLEFT_1":
-			kb.HasALT(true)
+			ALT_KEY_PRESSED = true
 			return
 		case "ALTLEFT_0":
-			kb.HasALT(false)
+			ALT_KEY_PRESSED = false
 			return
 		default:
-			key := keyBoardJSToGolang[keyJS]
-			kb.SetKeys(key)
-			_ = kb.Launching()
+			if key, ok := keyBoardJSToGolang[keyJS]; ok {
+				kb.SetKeys(key)
+
+				kb.HasALT(ALT_KEY_PRESSED)
+				kb.HasCTRL(CTRL_KEY_PRESSED)
+				kb.HasSHIFTR(SHIFT_KEY_PRESSED)
+
+				kb.Press()
+				// This sleep is arbitrary, it may be necessary to adjust it
+				time.Sleep(10 * time.Millisecond)
+				kb.Release()
+			}
 		}
 
 	})
