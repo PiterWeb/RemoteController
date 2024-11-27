@@ -1,4 +1,4 @@
-<script script lang="ts">
+<script lang="ts">
 	import StunServers from './StunServers.svelte';
 	import IsWindows from '$lib/detection/IsWindows.svelte';
 	import ViGEmDownload from './ViGEmDownload.svelte';
