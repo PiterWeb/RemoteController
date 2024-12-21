@@ -20,21 +20,14 @@ function initStreamingPeerConnection() {
 	});
 }
 
-const MIME_TYPE = 'video/mp4;codecs="avc1.64001F, mp4a.40.2"';
-
 export async function startStreaming() {
 	try {
 		const mediastream = await navigator.mediaDevices.getDisplayMedia({
-			video: { frameRate: 60, noiseSuppression: true, autoGainControl: true },
+			video: { frameRate: { ideal: 30, max: 60 }, noiseSuppression: true, autoGainControl: true },
 			audio: true
 		});
 
-		const recorder = new MediaRecorder(mediastream, {
-			mimeType: MIME_TYPE,
-			videoBitsPerSecond: 6000000
-		});
-
-		return recorder;
+		return mediastream;
 	} catch (e) {
 		showToast(get(_)('error-starting-streaming'), ToastType.ERROR);
 		return undefined;
@@ -98,9 +91,23 @@ export function CreateHostStream() {
 				if (!offer) return;
 				await peerConnection.setRemoteDescription(offer);
 				// eslint-disable-next-line no-case-declarations
-				const mediarecorder = await startStreaming();
-				if (!mediarecorder) return;
-				mediarecorder.stream.getTracks().forEach((track) => peerConnection?.addTrack(track));
+				const stream = await startStreaming();
+
+				stream?.getTracks().forEach((track) => {
+					const sender = peerConnection?.addTrack(track, stream);
+					if (!sender) return;
+					const params = sender.getParameters();
+					if (!params.encodings) {
+						params.encodings = [{}];
+					}
+					params.encodings.forEach((enc, i) => {
+						params.encodings[i].maxBitrate =  5_000_000
+						params.encodings[i].maxFramerate = 60
+					})
+					
+					sender.setParameters(params);
+				});
+
 				await peerConnection.setLocalDescription(await peerConnection.createAnswer());
 				break;
 		}

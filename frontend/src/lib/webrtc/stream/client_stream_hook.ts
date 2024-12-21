@@ -62,9 +62,8 @@ async function CreateClientStream(
 		if (!params.encodings) {
 			params.encodings = [{}];
 		}
-		params.encodings[0].maxBitrate = 6000 * 1000; // Configura el bitrate máximo (en bits por segundo)
+		params.encodings[0].maxBitrate = 5_000_000; // Configura el bitrate máximo (en bits por segundo)
 		params.encodings[0].maxFramerate = 60; // Configura el frame rate máximo
-		params.encodings[0].scaleResolutionDownBy = 1.0; // Mantiene la resolución original
 		sender.setParameters(params);
 	});
 
