@@ -5,17 +5,9 @@
 
 	import { onMount } from 'svelte';
 
-	let streaming = $state(false);
-
-	function createStream() {
-		CreateHostStream();
-		streaming = true;
-	}
-
 	onMount(() => {
 		ListenForConnectionChanges();
 	});
 </script>
 
-<button onclick={createStream} disabled={streaming} class="btn btn-primary">{$_('start-streaming')}</button
->
+<h2>Connection</h2>

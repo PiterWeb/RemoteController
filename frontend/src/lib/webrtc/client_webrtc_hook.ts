@@ -3,8 +3,8 @@ import { goto } from '$app/navigation';
 import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 import { handleKeyDown, handleKeyUp } from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
-import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
-import { streamingConsumingVideoElement } from './stream/stream_signal_hook';
+// import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
+import { streamingConsumingVideoElement } from './stream/stream_signal_hook.svelte';
 import { get } from 'svelte/store';
 import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook';
 import { _ } from 'svelte-i18n';
@@ -12,12 +12,12 @@ import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
 
 enum DataChannelLabel {
-	StreamingSignal = 'streaming-signal',
 	Controller = 'controller',
 	Keyboard = 'keyboard',
 }
 
 let peerConnection: RTCPeerConnection | undefined;
+let inboundStream: MediaStream | null = null;
 
 function initPeerConnection() {
 	if (peerConnection) {
@@ -47,7 +47,7 @@ async function CreateClientWeb() {
 	peerConnection.onconnectionstatechange = handleConnectionState;
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
-	const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
+	// const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
 	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard);
 
 	peerConnection.ondatachannel = (ev) => {
@@ -98,20 +98,54 @@ async function CreateClientWeb() {
 		gamepadLoop();
 	};
 
-	streamingSignalChannel.onopen = () => {
-		const unlistener = streamingConsumingVideoElement.subscribe((videoElement) => {
-			if (!videoElement) return;
-			CreateClientStream(streamingSignalChannel, videoElement);
-			unlistener();
-		});
-	};
+	// streamingSignalChannel.onopen = () => {
+	// 	const unlistener = streamingConsumingVideoElement.subscribe((videoElement) => {
+	// 		if (!videoElement) return;
+	// 		CreateClientStream(streamingSignalChannel, videoElement);
+	// 		unlistener();
+	// 	});
+	// };
 
 	let copiedCode: string = '';
 
 	try {
-		const offer = await peerConnection.createOffer();
+
+		const VIDEO_CONTAINER_ELEMENT_ID = "stream-video"
+
+		peerConnection.ontrack = (ev) => {
+			console.log(ev)
+			try {
+				const el = document.createElement(ev.track.kind) as HTMLMediaElement
+				el.srcObject = ev.streams.length === 0 ? null : ev.streams[0]
+				el.autoplay = true
+				el.controls = true
+				console.log(el)
+				const videoElement = document.getElementById(VIDEO_CONTAINER_ELEMENT_ID)
+				if (videoElement === null) throw new Error("stream-video DivElement NOT FOUND")
+				videoElement.appendChild(el)
+				console.log(videoElement)
+			} catch (e) {
+				console.error(e)
+			}
+		};
+
+		const offer = await peerConnection.createOffer({
+			offerToReceiveAudio: true,
+			offerToReceiveVideo: true
+		});
 
 		await peerConnection.setLocalDescription(offer);
+
+		// Configuración de parámetros del códec
+		// peerConnection.getSenders().forEach((sender) => {
+		// 	const params = sender.getParameters();
+		// 	if (!params.encodings) {
+		// 		params.encodings = [{}];
+		// 	}
+		// 	params.encodings[0].maxBitrate = 1_000_000; // Configura el bitrate máximo (en bits por segundo)
+		// 	params.encodings[0].maxFramerate = 60; // Configura el frame rate máximo
+		// 	sender.setParameters(params);
+		// });
 
 		// Show spinner while waiting for connection
 		toogleLoading();
@@ -139,6 +173,7 @@ async function CreateClientWeb() {
 
 			candidates.push(ev.candidate.toJSON());
 		};
+
 	} catch (error) {
 		console.error(error);
 		showToast(get(_)('error-creating-client'), ToastType.ERROR);

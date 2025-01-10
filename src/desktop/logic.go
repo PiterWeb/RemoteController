@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/PiterWeb/RemoteController/src/net"
-	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v4"
 )
 
 func createHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncoded string, triggerEnd <-chan struct{}) string {

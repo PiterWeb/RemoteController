@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v4"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 

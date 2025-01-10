@@ -1,28 +1,15 @@
 <script lang="ts">
-	import { streamingConsumingVideoElement } from '$lib/webrtc/stream/stream_signal_hook';
+	import { streamingConsumingVideoElement } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 	import { _ } from 'svelte-i18n';
+	import { consumingStream } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 
-	let consumingStream = $state(false);
-
-	function connectToStream() {
-		streamingConsumingVideoElement.set(
-			document.getElementById('stream-video')! as HTMLVideoElement
-		);
-
-		consumingStream = true;
+	function toogleStream() {
+		consumingStream.value = !consumingStream.value;
 	}
 </script>
 
-<button class="btn btn-primary" disabled={consumingStream} onclick={connectToStream}>
+<button class="btn btn-primary" class:btn-neutral={consumingStream.value}  onclick={toogleStream}>
 	{$_('connect-to-stream')}</button
 >
 
-<video
-	id="stream-video"
-	class="aspect-video"
-	class:hidden={!consumingStream}
-	controls
-	controlslist="nodownload"
->
-	<track kind="captions" />
-</video>
+
