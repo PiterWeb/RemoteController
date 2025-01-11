@@ -1,5 +1,3 @@
-import { writable } from "svelte/store";
-
 export interface SignalingData {
 	type: 'offer' | 'answer' | 'candidate';
 	offer?: RTCSessionDescriptionInit;
@@ -8,6 +6,6 @@ export interface SignalingData {
 	role: 'host' | 'client';
 }
 
-export const streamingConsumingVideoElement = writable<HTMLVideoElement | undefined>(undefined);
-
 export const consumingStream = $state({value:false});
+
+export const mediaStreams: {value: MediaStream[]} = $state({value: []})

@@ -5,7 +5,7 @@
 	import { _ } from 'svelte-i18n'
 
 
-	import { ClosePeerConnection } from '$lib/webrtc/client_webrtc_hook';
+	import { ClosePeerConnection } from '$lib/webrtc/client_webrtc_hook.svelte';
 	import { CancelConnection } from '$lib/webrtc/host_webrtc_hook';
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();

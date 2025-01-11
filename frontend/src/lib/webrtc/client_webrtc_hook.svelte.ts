@@ -3,13 +3,12 @@ import { goto } from '$app/navigation';
 import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 import { handleKeyDown, handleKeyUp } from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
-// import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
-import { streamingConsumingVideoElement } from './stream/stream_signal_hook.svelte';
 import { get } from 'svelte/store';
 import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook';
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
+import { mediaStreams } from './stream/stream_signal_hook.svelte';
 
 enum DataChannelLabel {
 	Controller = 'controller',
@@ -17,7 +16,6 @@ enum DataChannelLabel {
 }
 
 let peerConnection: RTCPeerConnection | undefined;
-let inboundStream: MediaStream | null = null;
 
 function initPeerConnection() {
 	if (peerConnection) {
@@ -98,35 +96,18 @@ async function CreateClientWeb() {
 		gamepadLoop();
 	};
 
-	// streamingSignalChannel.onopen = () => {
-	// 	const unlistener = streamingConsumingVideoElement.subscribe((videoElement) => {
-	// 		if (!videoElement) return;
-	// 		CreateClientStream(streamingSignalChannel, videoElement);
-	// 		unlistener();
-	// 	});
-	// };
-
 	let copiedCode: string = '';
 
 	try {
 
-		const VIDEO_CONTAINER_ELEMENT_ID = "stream-video"
-
 		peerConnection.ontrack = (ev) => {
 			console.log(ev)
-			try {
-				const el = document.createElement(ev.track.kind) as HTMLMediaElement
-				el.srcObject = ev.streams.length === 0 ? null : ev.streams[0]
-				el.autoplay = true
-				el.controls = true
-				console.log(el)
-				const videoElement = document.getElementById(VIDEO_CONTAINER_ELEMENT_ID)
-				if (videoElement === null) throw new Error("stream-video DivElement NOT FOUND")
-				videoElement.appendChild(el)
-				console.log(videoElement)
-			} catch (e) {
-				console.error(e)
-			}
+
+			const mediaStream = ev.streams.length === 0 ? null : ev.streams[0]
+			if (mediaStream === null) return
+
+			mediaStreams.value.push(mediaStream)
+
 		};
 
 		const offer = await peerConnection.createOffer({

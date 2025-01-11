@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { streamingConsumingVideoElement } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 	import { _ } from 'svelte-i18n';
 	import { consumingStream } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 

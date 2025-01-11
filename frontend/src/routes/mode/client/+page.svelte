@@ -1,5 +1,5 @@
 <script>
-	import { CreateClientWeb, ConnectToHostWeb } from '$lib/webrtc/client_webrtc_hook';
+	import { CreateClientWeb, ConnectToHostWeb } from '$lib/webrtc/client_webrtc_hook.svelte';
 
 	import { showToast, ToastType } from '$lib/toast/toast_hook';
 	import { _ } from 'svelte-i18n'
