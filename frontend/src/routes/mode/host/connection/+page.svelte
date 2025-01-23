@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { CreateHostStream } from '$lib/webrtc/stream/host_stream_hook';
+	import { CreateHostStream, fixedResolutions } from '$lib/webrtc/stream/host_stream_hook';
 	import { ListenForConnectionChanges } from '$lib/webrtc/host_webrtc_hook';
 	import { _ } from 'svelte-i18n'
+	import { streaming } from "$lib/webrtc/stream/stream_signal_hook.svelte";
 
 	import { onMount } from 'svelte';
 
-	let streaming = $state(false);
+	let selected_resolution = $state(fixedResolutions.resolution720p)
 
 	function createStream() {
-		CreateHostStream();
-		streaming = true;
+		CreateHostStream(selected_resolution);
+		streaming.value = true;
 	}
 
 	onMount(() => {
@@ -17,5 +18,14 @@
 	});
 </script>
 
-<button onclick={createStream} disabled={streaming} class="btn btn-primary">{$_('start-streaming')}</button
+<div class:hidden={streaming.value} class="w-full h-full">
+	<h2>Resolutions</h2>
+	<select class="form-select"  bind:value={selected_resolution} id="resolution" aria-label="Default select example">
+		{#each Object.values(fixedResolutions) as resolution}
+			<option selected={resolution === selected_resolution} value={resolution}>{resolution}</option>
+		{/each}
+	</select>
+</div>
+
+<button onclick={createStream} disabled={streaming.value} class="btn btn-primary">{$_('start-streaming')}</button
 >

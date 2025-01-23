@@ -1,12 +1,10 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { EventsEmit, EventsOn } from '$lib/wailsjs/runtime/runtime';
-// import { stunServersStore} from '$lib/webrtc/stun_servers';
 import { get } from 'svelte/store';
-import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
+import { setStreaming, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
-// import turnServers from '$lib/webrtc/turn_servers';
 
 let peerConnection: RTCPeerConnection | undefined;
 
@@ -20,15 +18,31 @@ function initStreamingPeerConnection() {
 	});
 }
 
-export async function startStreaming() {
+
+export enum fixedResolutions {
+	resolution1080p = "1080",
+	resolution720p = "720",
+	resolution480p = "480",
+	resolution360p = "360"
+}
+
+const resolutions: Map<fixedResolutions,{width: number, height: number}> = new Map()
+
+resolutions.set(fixedResolutions.resolution1080p, {width: 1920, height: 1080})
+resolutions.set(fixedResolutions.resolution720p,{width: 1280, height: 720})
+resolutions.set(fixedResolutions.resolution480p, {width:854, height: 480})
+resolutions.set(fixedResolutions.resolution360p, {width: 640, height:360})
+
+async function getDisplayMediaStream(resolution: fixedResolutions = fixedResolutions.resolution720p) {
 	try {
 		const mediastream = await navigator.mediaDevices.getDisplayMedia({
 			video: { 
-				frameRate: { min:30, max: 60 },
+				frameRate: { ideal:30, max: 60 },
+				...(resolutions.get(resolution) ?? {}),
 				noiseSuppression: true, 
 				autoGainControl: true,
 			},
-			audio: true
+			audio: true,
 		});
 
 		return mediastream;
@@ -40,6 +54,7 @@ export async function startStreaming() {
 
 export function StopStreaming() {
 	try {
+		setStreaming(false)
 		if (!peerConnection) return;
 
 		peerConnection.close();
@@ -51,12 +66,28 @@ export function StopStreaming() {
 	}
 }
 
-export function CreateHostStream() {
+export function CreateHostStream(resolution: fixedResolutions = fixedResolutions.resolution720p) {
 	initStreamingPeerConnection();
 
 	if (!peerConnection) {
 		throw new Error('Error creating stream');
 	}
+
+	peerConnection.onconnectionstatechange = async () => {
+		if (!peerConnection) return;
+
+		if (peerConnection.connectionState === 'connected') {
+			showToast(get(_)('connected'), ToastType.SUCCESS);
+			return;
+		}
+
+		const connectionTerminatedOptions: RTCPeerConnectionState[] = ["disconnected", "failed", "closed"]
+
+		if (connectionTerminatedOptions.includes(peerConnection.connectionState)) {
+			StopStreaming()
+			return
+		}
+	};
 
 	peerConnection.onicecandidate = (event) => {
 		if (event.candidate) {
@@ -89,13 +120,14 @@ export function CreateHostStream() {
 
 		switch (type) {
 			case 'candidate':
-				peerConnection.addIceCandidate(candidate);
+				try {peerConnection.addIceCandidate(candidate)} catch {}
 				break;
 			case 'offer':
 				if (!offer) return;
 				await peerConnection.setRemoteDescription(offer);
 				// eslint-disable-next-line no-case-declarations
-				const stream = await startStreaming();
+				const stream = await getDisplayMediaStream(resolution);
+
 
 				stream?.getTracks().forEach((track) => {
 					const sender = peerConnection?.addTrack(track, stream);
@@ -114,17 +146,11 @@ export function CreateHostStream() {
 					sender.setParameters(params);
 				});
 
+				stream?.getTracks().forEach(t => t.addEventListener("ended", () => {StopStreaming()}, true) )
+
 				await peerConnection.setLocalDescription(await peerConnection.createAnswer());
 				break;
 		}
 	});
 
-	peerConnection.onconnectionstatechange = async () => {
-		if (!peerConnection) return;
-
-		if (peerConnection.connectionState === 'connected') {
-			showToast(get(_)('connected'), ToastType.SUCCESS);
-			return;
-		}
-	};
 }

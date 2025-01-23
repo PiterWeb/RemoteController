@@ -1,5 +1,5 @@
 import { exportStunServers } from '$lib/webrtc/stun_servers';
-import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
+import { setConsumingStream,streamingConsumingVideoElement, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -23,6 +23,17 @@ async function CreateClientStream(
 
 	if (!videoElement || !peerConnection) throw new Error('Error creating stream');
 
+	peerConnection.onconnectionstatechange = () => {
+		if (!peerConnection) return;
+
+		const connectionTerminatedOptions: RTCPeerConnectionState[] = ["disconnected", "failed", "closed"]
+
+		if (connectionTerminatedOptions.includes(peerConnection.connectionState)) {
+			CloseStreamPeerConnection()
+			streamingConsumingVideoElement.set(undefined)
+		}
+	};
+
 	peerConnection.onicecandidate = (e) => {
 		if (!e.candidate) return;
 
@@ -37,6 +48,7 @@ async function CreateClientStream(
 
 	peerConnection.ontrack = (ev) => {
 		if (ev.streams && ev.streams[0]) {
+			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamPeerConnection()}, true) )
 			videoElement.srcObject = ev.streams[0];
 			videoElement.play();
 		} else {
@@ -45,7 +57,9 @@ async function CreateClientStream(
 				videoElement.srcObject = inboundStream;
 				videoElement.play();
 			}
+			ev.track.addEventListener("ended", () => {CloseStreamPeerConnection()}, true)
 			inboundStream.addTrack(ev.track);
+			inboundStream.getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamPeerConnection()}, true))
 		}
 	};
 
@@ -94,17 +108,16 @@ async function CreateClientStream(
 				await peerConnection.setRemoteDescription(answer);
 				break;
 			case 'candidate':
-				peerConnection.addIceCandidate(candidate);
+				try {peerConnection.addIceCandidate(candidate)} catch {}
 				break;
 		}
 	};
 
-	peerConnection.onconnectionstatechange = () => {
-		console.log('Connection state changed', peerConnection?.connectionState);
-	};
+
 }
 
 function CloseStreamPeerConnection() {
+	setConsumingStream(false)
 	if (!peerConnection) return;
 	peerConnection.close();
 	peerConnection = undefined;

@@ -5,8 +5,8 @@
 	import { _ } from 'svelte-i18n'
 
 
-	import { ClosePeerConnection } from '$lib/webrtc/client_webrtc_hook';
-	import { CancelConnection } from '$lib/webrtc/host_webrtc_hook';
+	import { CloseClientConnection } from '$lib/webrtc/client_webrtc_hook';
+	import { CloseHostConnection } from '$lib/webrtc/host_webrtc_hook';
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
 
@@ -15,8 +15,10 @@
 	}
 
 	function closeConnection() {
-		ClosePeerConnection(handleToast);
-		CancelConnection(handleToast);
+		try {
+			CloseClientConnection(handleToast);
+			CloseHostConnection(handleToast);
+		} catch {}
 	}
 
 	beforeNavigate((navigator) => {
@@ -26,6 +28,7 @@
 
 		// If the user is navigating to the same page or one level up, we don't want to close the connection
 		// but if goes one level down, we want to close the connection
+		if (actualPathname === nextPathname) return;
 		if (actualPathname.includes('/mode/client') && nextPathname.includes(actualPathname)) return;
 		if (actualPathname.includes('/mode/host') && nextPathname.includes(actualPathname)) return;
 		if (actualPathname.includes('/mode/config')) return;
@@ -36,8 +39,6 @@
 		} else {
 			return navigator.cancel();
 		}
-
-		closeConnection();
 	});
 </script>
 

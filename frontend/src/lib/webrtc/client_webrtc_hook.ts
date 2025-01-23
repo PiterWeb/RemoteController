@@ -4,8 +4,8 @@ import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 import { handleKeyDown, handleKeyUp, unhandleKeyDown, unhandleKeyUp } from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
-import { streamingConsumingVideoElement } from './stream/stream_signal_hook';
-import { get } from 'svelte/store';
+import { streamingConsumingVideoElement } from './stream/stream_signal_hook.svelte';
+import { get, type Unsubscriber } from 'svelte/store';
 import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook';
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
@@ -29,7 +29,7 @@ function initPeerConnection() {
 	});
 }
 
-function ClosePeerConnection(fn?: () => void) {
+function CloseClientConnection(fn?: () => void) {
 	if (!peerConnection) return;
 	if (fn) fn();
 	peerConnection.close();
@@ -106,13 +106,19 @@ async function CreateClientWeb() {
 		gamepadLoop();
 	};
 
+	let unlistener: Unsubscriber
+
 	streamingSignalChannel.onopen = () => {
-		const unlistener = streamingConsumingVideoElement.subscribe((videoElement) => {
+		unlistener = streamingConsumingVideoElement.subscribe((videoElement) => {
 			if (!videoElement) return;
+			CloseStreamPeerConnection()
 			CreateClientStream(streamingSignalChannel, videoElement);
-			unlistener();
 		});
 	};
+
+	streamingSignalChannel.onclose = () => {
+		unlistener()
+	}
 
 	let copiedCode: string = '';
 
@@ -193,7 +199,7 @@ function handleConnectionState() {
 			break;
 		case 'disconnected':
 			showToast(get(_)('connection-lost'), ToastType.ERROR);
-			ClosePeerConnection();
+			CloseClientConnection();
 			CloseStreamPeerConnection();
 			goto('/');
 			// Inside try-catch cause in browser will not work
@@ -201,7 +207,7 @@ function handleConnectionState() {
 			break;
 		case 'failed':
 			showToast(get(_)('connection-failed'), ToastType.ERROR);
-			ClosePeerConnection();
+			CloseClientConnection();
 			CloseStreamPeerConnection();
 			goto('/');
 			// Inside try-catch cause in browser will not work
@@ -209,7 +215,7 @@ function handleConnectionState() {
 			break;
 		case 'closed':
 			showToast(get(_)('connection-closed'), ToastType.ERROR);
-			ClosePeerConnection();
+			CloseClientConnection();
 			CloseStreamPeerConnection();
 			goto('/');
 			// Inside try-catch cause in browser will not work
@@ -232,4 +238,4 @@ function signalDecode<T>(signal: string): T {
 	return JSON.parse(window.signalDecode(signal)) as T;
 }
 
-export { CreateClientWeb, ConnectToHostWeb, ClosePeerConnection };
+export { CreateClientWeb, ConnectToHostWeb, CloseClientConnection };
