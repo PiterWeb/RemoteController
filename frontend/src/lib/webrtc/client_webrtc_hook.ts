@@ -4,12 +4,12 @@ import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
 import { handleKeyDown, handleKeyUp, unhandleKeyDown, unhandleKeyUp } from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
-import { streamingConsumingVideoElement } from './stream/stream_signal_hook.svelte';
-import { get, type Unsubscriber } from 'svelte/store';
-import { CloseStreamPeerConnection } from '$lib/webrtc/stream/client_stream_hook';
+import { get } from 'svelte/store';
+import { CloseStreamClientConnection} from '$lib/webrtc/stream/client_stream_hook';
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
+import { getConsumingStream, setConsumingStream } from './stream/stream_signal_hook.svelte';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -106,18 +106,37 @@ async function CreateClientWeb() {
 		gamepadLoop();
 	};
 
-	let unlistener: Unsubscriber
-
 	streamingSignalChannel.onopen = () => {
-		unlistener = streamingConsumingVideoElement.subscribe((videoElement) => {
-			if (!videoElement) return;
-			CloseStreamPeerConnection()
+
+		let activeStream = false
+
+		setInterval(() => {
+
+			if (!getConsumingStream() && activeStream) {
+				activeStream = false
+				CloseStreamClientConnection()
+			};
+			if (getConsumingStream() == activeStream) return
+
+			activeStream = true
+			CloseStreamClientConnection()
+			
+			const videoElement = document.getElementById("stream-video") as HTMLVideoElement
+			
+			if (!videoElement) {
+				console.error("video element not found")
+				return
+			}
+			
+			setConsumingStream(true)
 			CreateClientStream(streamingSignalChannel, videoElement);
-		});
+
+		}, 500)
+
 	};
 
 	streamingSignalChannel.onclose = () => {
-		unlistener()
+		CloseStreamClientConnection()
 	}
 
 	let copiedCode: string = '';
@@ -200,7 +219,7 @@ function handleConnectionState() {
 		case 'disconnected':
 			showToast(get(_)('connection-lost'), ToastType.ERROR);
 			CloseClientConnection();
-			CloseStreamPeerConnection();
+			CloseStreamClientConnection()
 			goto('/');
 			// Inside try-catch cause in browser will not work
 			import('$lib/wailsjs/go/desktop/App').then(obj => obj.NotifyCloseClient).catch();
@@ -208,7 +227,7 @@ function handleConnectionState() {
 		case 'failed':
 			showToast(get(_)('connection-failed'), ToastType.ERROR);
 			CloseClientConnection();
-			CloseStreamPeerConnection();
+			CloseStreamClientConnection()
 			goto('/');
 			// Inside try-catch cause in browser will not work
 			import('$lib/wailsjs/go/desktop/App').then(obj => obj.NotifyCloseClient).catch();
@@ -216,7 +235,7 @@ function handleConnectionState() {
 		case 'closed':
 			showToast(get(_)('connection-closed'), ToastType.ERROR);
 			CloseClientConnection();
-			CloseStreamPeerConnection();
+			CloseStreamClientConnection()
 			goto('/');
 			// Inside try-catch cause in browser will not work
 			import('$lib/wailsjs/go/desktop/App').then(obj => obj.NotifyCloseClient).catch();

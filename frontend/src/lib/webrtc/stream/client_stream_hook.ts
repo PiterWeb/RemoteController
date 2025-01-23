@@ -1,5 +1,5 @@
 import { exportStunServers } from '$lib/webrtc/stun_servers';
-import { setConsumingStream,streamingConsumingVideoElement, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
+import { setConsumingStream, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -29,8 +29,7 @@ async function CreateClientStream(
 		const connectionTerminatedOptions: RTCPeerConnectionState[] = ["disconnected", "failed", "closed"]
 
 		if (connectionTerminatedOptions.includes(peerConnection.connectionState)) {
-			CloseStreamPeerConnection()
-			streamingConsumingVideoElement.set(undefined)
+			CloseStreamClientConnection()
 		}
 	};
 
@@ -48,7 +47,7 @@ async function CreateClientStream(
 
 	peerConnection.ontrack = (ev) => {
 		if (ev.streams && ev.streams[0]) {
-			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamPeerConnection()}, true) )
+			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
 			videoElement.srcObject = ev.streams[0];
 			videoElement.play();
 		} else {
@@ -57,9 +56,9 @@ async function CreateClientStream(
 				videoElement.srcObject = inboundStream;
 				videoElement.play();
 			}
-			ev.track.addEventListener("ended", () => {CloseStreamPeerConnection()}, true)
+			ev.track.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
 			inboundStream.addTrack(ev.track);
-			inboundStream.getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamPeerConnection()}, true))
+			inboundStream.getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true))
 		}
 	};
 
@@ -108,7 +107,7 @@ async function CreateClientStream(
 				await peerConnection.setRemoteDescription(answer);
 				break;
 			case 'candidate':
-				try {peerConnection.addIceCandidate(candidate)} catch {}
+				try {peerConnection.addIceCandidate(candidate)} catch {/** */}
 				break;
 		}
 	};
@@ -116,11 +115,11 @@ async function CreateClientStream(
 
 }
 
-function CloseStreamPeerConnection() {
+function CloseStreamClientConnection() {
 	setConsumingStream(false)
 	if (!peerConnection) return;
 	peerConnection.close();
 	peerConnection = undefined;
 }
 
-export { CreateClientStream, CloseStreamPeerConnection };
+export { CreateClientStream, CloseStreamClientConnection };

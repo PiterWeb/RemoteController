@@ -19,13 +19,12 @@
 </script>
 
 <div class:hidden={streaming.value} class="w-full h-full">
-	<h2>Resolutions</h2>
-	<select class="form-select"  bind:value={selected_resolution} id="resolution" aria-label="Default select example">
+	<h2>{$_("resolutions")}</h2>
+	<select class="select select-primary w-full max-w-xs"  bind:value={selected_resolution} id="resolution" aria-label="Default select example">
 		{#each Object.values(fixedResolutions) as resolution}
 			<option selected={resolution === selected_resolution} value={resolution}>{resolution}</option>
 		{/each}
 	</select>
 </div>
 
-<button onclick={createStream} disabled={streaming.value} class="btn btn-primary">{$_('start-streaming')}</button
->
+<button onclick={createStream} disabled={streaming.value} class="btn btn-primary">{$_('start-streaming')}</button>
