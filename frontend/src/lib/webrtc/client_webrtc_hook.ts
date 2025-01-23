@@ -1,7 +1,7 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
 import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
-import { handleKeyDown, handleKeyUp } from '$lib/keyboard/keyboard_hook';
+import { handleKeyDown, handleKeyUp, unhandleKeyDown, unhandleKeyUp } from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
 import { streamingConsumingVideoElement } from './stream/stream_signal_hook';
@@ -64,6 +64,9 @@ async function CreateClientWeb() {
 		};
 	};
 
+	let keyDownHandler: ReturnType<typeof handleKeyDown>
+	let keyUpHandler: ReturnType<typeof handleKeyUp>
+
 	keyboardChannel.onopen = () => {
 		const sendKeyboardData = (keycode: string) => {
 			console.log('Sending keycode', keycode);
@@ -71,9 +74,14 @@ async function CreateClientWeb() {
 		};
 
 		// On keydown and keyup events, send the keycode to the host
-		handleKeyDown(sendKeyboardData);
-		handleKeyUp(sendKeyboardData);
+		keyDownHandler = handleKeyDown(sendKeyboardData);
+		keyUpHandler = handleKeyUp(sendKeyboardData);
 	};
+
+	keyboardChannel.onclose = () => {
+		unhandleKeyDown(keyDownHandler)
+		unhandleKeyUp(keyUpHandler)
+	}
 
 	controllerChannel.onopen = () => {
 		const sendGamepadData = () => {

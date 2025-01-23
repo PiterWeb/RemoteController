@@ -23,7 +23,11 @@ function initStreamingPeerConnection() {
 export async function startStreaming() {
 	try {
 		const mediastream = await navigator.mediaDevices.getDisplayMedia({
-			video: { frameRate: { ideal: 30, max: 60 }, noiseSuppression: true, autoGainControl: true },
+			video: { 
+				frameRate: { min:30, max: 60 },
+				noiseSuppression: true, 
+				autoGainControl: true,
+			},
 			audio: true
 		});
 
@@ -100,9 +104,11 @@ export function CreateHostStream() {
 					if (!params.encodings) {
 						params.encodings = [{}];
 					}
-					params.encodings.forEach((enc, i) => {
+					params.encodings.forEach((_, i) => {
 						params.encodings[i].maxBitrate =  5_000_000
 						params.encodings[i].maxFramerate = 60
+						// params.encodings[i].scaleResolutionDownBy = 1.25
+						params.encodings[i].priority = "high"
 					})
 					
 					sender.setParameters(params);
