@@ -1,5 +1,5 @@
 import { exportStunServers } from '$lib/webrtc/stun_servers';
-import type { SignalingData } from '$lib/webrtc/stream/stream_signal_hook';
+import { setConsumingStream, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -23,6 +23,16 @@ async function CreateClientStream(
 
 	if (!videoElement || !peerConnection) throw new Error('Error creating stream');
 
+	peerConnection.onconnectionstatechange = () => {
+		if (!peerConnection) return;
+
+		const connectionTerminatedOptions: RTCPeerConnectionState[] = ["disconnected", "failed", "closed"]
+
+		if (connectionTerminatedOptions.includes(peerConnection.connectionState)) {
+			CloseStreamClientConnection()
+		}
+	};
+
 	peerConnection.onicecandidate = (e) => {
 		if (!e.candidate) return;
 
@@ -37,6 +47,7 @@ async function CreateClientStream(
 
 	peerConnection.ontrack = (ev) => {
 		if (ev.streams && ev.streams[0]) {
+			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
 			videoElement.srcObject = ev.streams[0];
 			videoElement.play();
 		} else {
@@ -45,7 +56,9 @@ async function CreateClientStream(
 				videoElement.srcObject = inboundStream;
 				videoElement.play();
 			}
+			ev.track.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
 			inboundStream.addTrack(ev.track);
+			inboundStream.getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true))
 		}
 	};
 
@@ -64,6 +77,8 @@ async function CreateClientStream(
 		}
 		params.encodings[0].maxBitrate = 5_000_000; // Configura el bitrate máximo (en bits por segundo)
 		params.encodings[0].maxFramerate = 60; // Configura el frame rate máximo
+		// params.encodings[i].scaleResolutionDownBy = 1.25
+		params.encodings[0].priority = "high"
 		sender.setParameters(params);
 	});
 
@@ -92,20 +107,19 @@ async function CreateClientStream(
 				await peerConnection.setRemoteDescription(answer);
 				break;
 			case 'candidate':
-				peerConnection.addIceCandidate(candidate);
+				try {peerConnection.addIceCandidate(candidate)} catch {/** */}
 				break;
 		}
 	};
 
-	peerConnection.onconnectionstatechange = () => {
-		console.log('Connection state changed', peerConnection?.connectionState);
-	};
+
 }
 
-function CloseStreamPeerConnection() {
+function CloseStreamClientConnection() {
+	setConsumingStream(false)
 	if (!peerConnection) return;
 	peerConnection.close();
 	peerConnection = undefined;
 }
 
-export { CreateClientStream, CloseStreamPeerConnection };
+export { CreateClientStream, CloseStreamClientConnection };

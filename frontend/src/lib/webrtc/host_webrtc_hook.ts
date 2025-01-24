@@ -46,9 +46,6 @@ export async function CreateHost(client: string) {
 			showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
 		}
 
-		// TODO
-		// Listen for connection state changes and handle them (Wails events) to redirect to the correct page
-
 		toogleLoading();
 		setLoadingMessage(get(_)('waiting-for-client-to-connect'));
 		setLoadingTitle(get(_)('make-sure-to-pass-the-code-to-the-client'));
@@ -68,6 +65,7 @@ export async function CreateHost(client: string) {
 					break;
 				default:
 					showToast(get(_)('unknown-connection-state'), ToastType.ERROR);
+					break;
 			}
 		});
 	} catch (e) {
@@ -79,7 +77,7 @@ function isError(err: string) {
 	return err.toUpperCase().includes('ERROR');
 }
 
-export function CancelConnection(fn?: () => void) {
+export function CloseHostConnection(fn?: () => void) {
 	if (!host) return;
 	closeConnectionFn();
 	if (fn) fn();
