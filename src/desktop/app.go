@@ -7,7 +7,7 @@ import (
 
 	"runtime"
 
-	"github.com/pion/webrtc/v4"
+	"github.com/pion/webrtc/v3"
 	wRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/micmonay/keybd_event"
-	"github.com/pion/webrtc/v4"
+	"github.com/pion/webrtc/v3"
 )
 
 func HandleKeyboard(d *webrtc.DataChannel) {

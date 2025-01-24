@@ -4,7 +4,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/pion/webrtc/v4"
+	"github.com/pion/webrtc/v3"
 	"github.com/pquerna/ffjson/ffjson"
 )
 

@@ -9,7 +9,7 @@ import (
 	"github.com/PiterWeb/RemoteController/src/gamepad"
 	"github.com/PiterWeb/RemoteController/src/keyboard"
 	"github.com/PiterWeb/RemoteController/src/streaming_signal"
-	"github.com/pion/webrtc/v4"
+	"github.com/pion/webrtc/v3"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -30,13 +30,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		ICEServers: ICEServers,
 	}
 
-	codecSelector, mediaEngine, err := getMediaEngine()
-
-	if err != nil {
-		panic(err)
-	}
-
-	peerConnection, err := webrtc.NewAPI(webrtc.WithMediaEngine(mediaEngine)).NewPeerConnection(config)
+	peerConnection, err := webrtc.NewAPI().NewPeerConnection(config)
 	if err != nil {
 		panic(err)
 	}
@@ -84,20 +78,6 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 
 		}
 	})
-
-	mediaStream, err := getDisplayMedia(peerConnection, codecSelector)
-
-	if err != nil {
-		panic(err)
-	}
-
-	defer func() {
-		for i, track := range (*mediaStream).GetTracks() {
-			if err := track.Close(); err != nil {
-				fmt.Printf("cannot close track %d: %v\n", i, err)
-			}
-		}
-	}()
 
 	offerEncodedWithCandidatesSplited := strings.Split(offerEncodedWithCandidates, ";")
 
