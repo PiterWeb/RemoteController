@@ -33,14 +33,17 @@ resolutions.set(fixedResolutions.resolution720p,{width: 1280, height: 720})
 resolutions.set(fixedResolutions.resolution480p, {width:854, height: 480})
 resolutions.set(fixedResolutions.resolution360p, {width: 640, height:360})
 
+const DEFAULT_MAX_FRAMERATE = 60
+const DEFAULT_IDEAL_FRAMERATE = 30
+
 let stream: MediaStream | undefined
 let unlistenerStreamingSignal: (() => void) | undefined
 
-async function getDisplayMediaStream(resolution: fixedResolutions = fixedResolutions.resolution720p) {
+async function getDisplayMediaStream(resolution: fixedResolutions = fixedResolutions.resolution720p, idealFrameRate = DEFAULT_IDEAL_FRAMERATE, maxFramerate = DEFAULT_MAX_FRAMERATE) {
 	try {
 		const mediastream = await navigator.mediaDevices.getDisplayMedia({
 			video: { 
-				frameRate: { ideal:30, max: 60 },
+				frameRate: { ideal: idealFrameRate, max: maxFramerate },
 				...(resolutions.get(resolution) ?? {}),
 				noiseSuppression: true, 
 				autoGainControl: true,
@@ -73,7 +76,7 @@ export function StopStreaming() {
 	}
 }
 
-export function CreateHostStream(resolution: fixedResolutions = fixedResolutions.resolution720p) {
+export function CreateHostStream(resolution: fixedResolutions = fixedResolutions.resolution720p, idealFrameRate = DEFAULT_IDEAL_FRAMERATE, maxFramerate = DEFAULT_MAX_FRAMERATE) {
 	initStreamingPeerConnection();
 
 	if (!peerConnection) {
@@ -135,9 +138,8 @@ export function CreateHostStream(resolution: fixedResolutions = fixedResolutions
 				if (!offer || offerArrived) return;
 				await peerConnection.setRemoteDescription(offer);
 				offerArrived = true
-				console.log("displaymedia");
 				// eslint-disable-next-line no-case-declarations
-				stream = await getDisplayMediaStream(resolution);
+				stream = await getDisplayMediaStream(resolution, idealFrameRate, maxFramerate);
 
 				stream?.getTracks().forEach((track) => {
 					if (!stream) return
@@ -149,7 +151,7 @@ export function CreateHostStream(resolution: fixedResolutions = fixedResolutions
 					}
 					params.encodings.forEach((_, i) => {
 						params.encodings[i].maxBitrate =  5_000_000
-						params.encodings[i].maxFramerate = 60
+						params.encodings[i].maxFramerate = maxFramerate
 						// params.encodings[i].scaleResolutionDownBy = 1.25
 						params.encodings[i].priority = "high"
 					})
