@@ -3,10 +3,10 @@
 package gamepad
 
 import (
-	"fmt"
+	// "fmt"
 
 	"github.com/pion/webrtc/v3"
-	"github.com/pquerna/ffjson/ffjson"
+	// "github.com/pquerna/ffjson/ffjson"
 )
 
 func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
@@ -23,11 +23,11 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-		var pad clonedGamepad
+		// var pad clonedGamepad
 
-		ffjson.Unmarshal(msg.Data, &pad)
+		// ffjson.Unmarshal(msg.Data, &pad)
 
-		fmt.Println(pad)
+		// fmt.Println(pad)
 
 	})
 }
