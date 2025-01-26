@@ -50,7 +50,7 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| (Only keyboard)⌛ Looking for contributions for Gamepad     	| (In theory keyboard works)⌛ Looking for contributions for Gamepad     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ⌛ Looking for contributions for Gamepad and Keyboard     	| (In theory keyboard works)⌛ Looking for contributions for Gamepad     	| ✔ (Known Issues with Safari)       	|
 
 ### Native Gamepad Support 🎮
 
