@@ -17,7 +17,8 @@
 
 ## Download 📦
 
-- https://remote-controller.vercel.app/download/
+- (Website) https://remote-controller.vercel.app/download/
+- (Github) https://github.com/PiterWeb/RemoteController/releases/latest
 
 ## Guides 📘
 
