@@ -50,13 +50,13 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ⌛ Looking for contributions for Gamepad and Keyboard     	| (In theory keyboard works)⌛ Looking for contributions for Gamepad     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ⌛ Looking for contributions for Gamepad and Keyboard     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
 
 ### Native Gamepad Support 🎮
 
 | PC Controller (XInput/DirectInput) 	| Xbox Controller (XInput) 	| PlayStation Controler
 |---------	|-------	|-------	|
-| ✔       	| ✔     	| ❌ (You can achieve emulating a Xbox Controller)     	|
+| ✔       	| ✔     	| ❌ (But you can achieve [emulating a Xbox Controller](https://github.com/Ryochan7/DS4Windows))     	|
 
 ### Translations 🔠
 
@@ -76,7 +76,7 @@ There is no way to self-host the infrastructure of RemoteController because it h
 
 ### Prerequisites
 
-You must have Task CLI, Wails CLI, NodeJS, pnpm and Golang installed.
+You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/es/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
 
 ### How to
 
@@ -94,7 +94,7 @@ Go to the root project folder and run
 
 ### Prerequisites
 
-You must have Task CLI, Wails CLI, NodeJS, pnpm and Golang installed.
+You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/es/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
 
 ### How to
 
