@@ -5,6 +5,8 @@ package gamepad
 import (
 	// "fmt"
 
+	"fmt"
+
 	"github.com/jbdemonte/virtual-device/gamepad"
 	"github.com/pion/webrtc/v3"
 	"github.com/pquerna/ffjson/ffjson"
@@ -44,9 +46,16 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 		var actualPad GamepadAPIXState
 
-		ffjson.Unmarshal(msg.Data, &actualPad)
+		err := ffjson.Unmarshal(msg.Data, &actualPad)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
 		go updateVirtualDevice(*virtualGamepad, actualPad, lastPad)
+
+		lastPad = actualPad
 
 	})
 

@@ -1,3 +1,5 @@
+//go:build !darwin
+
 package keyboard
 
 import (
@@ -10,15 +12,15 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
-func HandleKeyboard(d *webrtc.DataChannel) {
+func HandleKeyboard(d *webrtc.DataChannel) error {
 
 	if d.Label() != "keyboard" {
-		return
+		return nil
 	}
 
 	kb, err := keybd_event.NewKeyBonding()
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	// For linux, it is very important to wait 2 seconds
@@ -77,5 +79,7 @@ func HandleKeyboard(d *webrtc.DataChannel) {
 		}
 
 	})
+
+	return nil
 
 }

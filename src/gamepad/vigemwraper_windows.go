@@ -50,19 +50,23 @@ var (
 	vigem_target_free_proc        *syscall.LazyProc
 )
 
-func init() {
+func InitViGEm() error {
 
 	path, err := os.Getwd()
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	if _, err := os.ReadFile("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME); err != nil {
 		OpenViGEmWizard()
 	}
 
-	dllFile, _ := os.Create("./" + ViGEm_DLL_FILE_NAME)
+	dllFile, err := os.Create("./" + ViGEm_DLL_FILE_NAME)
+
+	if err != nil {
+		return err
+	}
 
 	defer dllFile.Close()
 
@@ -88,8 +92,10 @@ func init() {
 	vigem_target_x360_update_proc = vigemDLL.NewProc("vigem_target_x360_update")
 
 	if _, err = os.Create("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME); err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 
 }
 
