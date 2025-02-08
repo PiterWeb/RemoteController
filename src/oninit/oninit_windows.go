@@ -1,8 +1,12 @@
 package oninit
 
-import "github.com/PiterWeb/RemoteController/src/gamepad"
+import (
+	"embed"
 
-func Execute() error {
+	"github.com/PiterWeb/RemoteController/src/gamepad"
+)
+
+func Execute(assets embed.FS) error {
 	err := gamepad.InitViGEm()
 
 	if err != nil {

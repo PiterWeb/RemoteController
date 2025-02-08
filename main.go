@@ -10,16 +10,24 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
-func init() {
-	_ = oninit.Execute()
-}
-
 //go:embed frontend/build/*
 var assets embed.FS
+
+func init() {
+
+	go func() {
+
+		err := oninit.Execute(assets)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+	}()
+}
 
 func main() {
 	// Create an instance of the app structure
@@ -57,9 +65,6 @@ func main() {
 			DisableWindowIcon:    true,
 			Theme:                windows.Theme(windows.Acrylic),
 			WebviewUserDataPath:  "",
-		},
-		Linux: &linux.Options{
-			WebviewGpuPolicy: linux.WebviewGpuPolicyOnDemand,
 		},
 	})
 

@@ -1,7 +1,10 @@
 package oninit
 
-func Execute() error {
+import (
+	"embed"
+)
 
+func Execute(assets embed.FS) error {
 	return nil
 
 }

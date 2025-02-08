@@ -1,13 +1,28 @@
 package oninit
 
-import "github.com/PiterWeb/RemoteController/src/net/websocket"
+import (
+	"embed"
+	"log"
 
-func Execute() error {
+	"github.com/PiterWeb/RemoteController/src/net/http_assets"
+	"github.com/PiterWeb/RemoteController/src/net/websocket"
+)
+
+func Execute(assets embed.FS) error {
 
 	wsPort := 8080
-	clientPort := 80
+	clientPort := 8081
 
-	err := websocket.InitWebsocketServer(wsPort, clientPort)
+	go func() {
+
+		err := websocket.InitWebsocketServer(wsPort, clientPort)
+
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+
+	err := http_assets.InitHTTPAssets(clientPort, assets)
 
 	if err != nil {
 		return err
