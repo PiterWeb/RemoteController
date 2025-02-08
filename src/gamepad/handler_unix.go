@@ -35,7 +35,9 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 	defer func() {
 		if err := recover(); err != nil {
-			(*virtualGamepad).Unregister()
+			if virtualGamepad != nil {
+				(*virtualGamepad).Unregister()
+			}
 		}
 	}()
 

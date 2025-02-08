@@ -52,6 +52,12 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 	})
 
+	defer func() {
+		if err := recover(); err != nil {
+			FreeTargetAndDisconnect(virtualDevice)
+		}
+	}()
+
 	gamepadChannel.OnClose(func() {
 
 		FreeTargetAndDisconnect(virtualDevice)

@@ -3,6 +3,7 @@ package net
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	// "github.com/PiterWeb/RemoteController/src/plugins"
@@ -13,6 +14,8 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+var defaultSTUNServers = []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"}
+
 func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
 
 	candidates := []webrtc.ICECandidateInit{}
@@ -20,7 +23,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	if len(ICEServers) == 0 {
 		ICEServers = []webrtc.ICEServer{
 			{
-				URLs: []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"},
+				URLs: defaultSTUNServers,
 			},
 		}
 	}
@@ -30,9 +33,15 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		ICEServers: ICEServers,
 	}
 
+	defer func() {
+		if err := recover(); err != nil {
+			answerResponse <- "Error"
+		}
+	}()
+
 	peerConnection, err := webrtc.NewAPI().NewPeerConnection(config)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	defer func() {
@@ -94,7 +103,8 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 
 	for _, candidate := range receivedCandidates {
 		if err := peerConnection.AddICECandidate(candidate); err != nil {
-			panic(err)
+			log.Println(err)
+			continue
 		}
 	}
 
