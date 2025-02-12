@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { CreateHostStream, fixedResolutions } from '$lib/webrtc/stream/host_stream_hook';
+	import { CreateHostStream} from '$lib/webrtc/stream/host_stream_hook';
+	import { FIXED_RESOLUTIONS } from "$lib/webrtc/stream/config"
 	import { ListenForConnectionChanges } from '$lib/webrtc/host_webrtc_hook';
 	import { _ } from 'svelte-i18n'
 	import { streaming } from "$lib/webrtc/stream/stream_signal_hook.svelte";
@@ -8,7 +9,7 @@
 	import { onMount } from 'svelte';
 	import { elasticOut } from 'svelte/easing';
 
-	let selected_resolution = $state(fixedResolutions.resolution720p)
+	let selected_resolution = $state(FIXED_RESOLUTIONS.resolution720p)
 
 	let idealFramerate = $state(25)
 
@@ -26,7 +27,7 @@
 	<div class="w-full h-full">
 		<h3>{$_("resolutions")}</h3>
 		<select class="select select-primary w-full max-w-xs mt-6"  bind:value={selected_resolution} id="resolution" aria-label="Default select example">
-			{#each Object.values(fixedResolutions) as resolution}
+			{#each Object.values(FIXED_RESOLUTIONS) as resolution}
 			<option selected={resolution === selected_resolution} value={resolution}>{resolution}p</option>
 			{/each}
 		</select>
