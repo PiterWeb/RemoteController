@@ -3,7 +3,7 @@ import {
 	TryClosePeerConnection as closeConnectionFn
 } from '$lib/wailsjs/go/desktop/App';
 
-import { EventsOff, EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
+import { BrowserOpenURL, EventsOff, EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
 
 import { _ } from 'svelte-i18n'
 import { get } from 'svelte/store';
@@ -14,6 +14,8 @@ import { StopStreaming } from '$lib/webrtc/stream/host_stream_hook';
 import type { ICEServer } from '$lib/webrtc/ice';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
+import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
+import { isLinux } from '$lib/detection/detect_os';
 
 let host: boolean = false;
 
@@ -50,13 +52,14 @@ export async function CreateHost(client: string) {
 		setLoadingMessage(get(_)('waiting-for-client-to-connect'));
 		setLoadingTitle(get(_)('make-sure-to-pass-the-code-to-the-client'));
 
-		EventsOnce('connection_state', (state: ConnectionState) => {
+		EventsOnce('connection_state', async (state: ConnectionState) => {
 			toogleLoading();
 
 			switch (state.toUpperCase()) {
 				case ConnectionState.Connected:
 					showToast(get(_)('connected'), ToastType.SUCCESS);
 					host = true;
+					if (await isLinux()) BrowserOpenURL("http://localhost:8081/mode/host/connection");
 					goto('/mode/host/connection');
 					break;
 				case ConnectionState.Failed:
