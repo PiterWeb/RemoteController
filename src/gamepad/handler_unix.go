@@ -3,9 +3,7 @@
 package gamepad
 
 import (
-	// "fmt"
-
-	"fmt"
+	"log"
 
 	"github.com/jbdemonte/virtual-device/gamepad"
 	"github.com/pion/webrtc/v3"
@@ -28,7 +26,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		virtualGamepad, err = generateVirtualDevice()
 
 		if err != nil {
-			panic(err)
+			log.Println(err)
 		}
 
 	})
@@ -51,7 +49,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		err := ffjson.Unmarshal(msg.Data, &actualPad)
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
@@ -71,7 +69,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		err := (*virtualGamepad).Unregister()
 
 		if err != nil {
-			panic(err)
+			log.Println(err)
 		}
 
 	})
