@@ -42,7 +42,7 @@
 - [x] P2P "Decentralized" (WebRTC)
 - [x] Remote Streaming
 - [x] Browser Client
-- [x] Support for keyboard
+- [x] Support for keyboard (very experimental)
 - [x] ViGEmBus Setup (Windows)
 - [x] Localization (translation to multiple languages)
 - [x] Support for STUN & TURN
@@ -51,7 +51,7 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ⌛ Looking for contributions for Gamepad and Keyboard     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ⌛ Working on Gamepad support (no Keyboard for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
 
 ### Native Gamepad Support 🎮
 
@@ -71,7 +71,7 @@ There is no way to self-host the infrastructure of RemoteController because it h
 
 - If you want to self-host a TURN/STUN server you can [try Coturn](https://github.com/coturn/coturn). (This is only an example, you can choose other STUN/TURN implementations)
 
-- Also you can host the Web version (but it is only frontend) to make like a network of Remote Controller web clients
+- Also you can host the Web version (but it is only frontend, so is not very usefull)
 
 ## Run Dev
 
