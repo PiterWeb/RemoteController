@@ -1,13 +1,13 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
-import { EventsEmit, EventsOn } from '$lib/wailsjs/runtime/runtime';
 import { get } from 'svelte/store';
 import { setStreaming, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './config';
+import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config';
 import ws from '$lib/websocket/ws';
+import { isLinux } from '$lib/detection/detect_os';
 
 let peerConnection: RTCPeerConnection | undefined;
 
@@ -84,7 +84,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		}
 	};
 
-	peerConnection.onicecandidate = (event) => {
+	peerConnection.onicecandidate = async (event) => {
 		if (event.candidate) {
 			const data: SignalingData = {
 				type: 'candidate',
@@ -93,6 +93,8 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 			};
 
 			if (IS_RUNNING_EXTERNAL) return ws.send(JSON.stringify(data));
+			
+			const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
 			EventsEmit('streaming-signal-server', JSON.stringify(data));
 			return;
 		}
@@ -107,6 +109,8 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		};
 
 		if (IS_RUNNING_EXTERNAL) return ws.send(JSON.stringify(data));
+
+		const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
 		EventsEmit('streaming-signal-server', JSON.stringify(data));
 
 		return
@@ -116,6 +120,8 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 
 	async function onSignalArrive(data: string) {
 		if (!peerConnection) return;
+
+		console.log(data)
 
 		const { type, offer, candidate, role } = JSON.parse(data) as SignalingData;
 
@@ -177,12 +183,30 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 	}
 
 	if (!IS_RUNNING_EXTERNAL) {
-		unlistenerStreamingSignal = EventsOn('streaming-signal-client', (data: string) => onSignalArrive(data));
+		(async () => {
+			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+			unlistenerStreamingSignal = EventsOn('streaming-signal-client', (data: string) => onSignalArrive(data));
+		})()
 		return;
 	}
 
 	const cllbck = (ev: MessageEvent<string>) =>  onSignalArrive(ev.data)
 	ws.addEventListener("message", cllbck)
 	unlistenerStreamingSignal = () => ws.removeEventListener("message", cllbck)
+
+}
+
+export async function RelayHostStream() {
+
+	if (IS_RUNNING_EXTERNAL) return;
+	if (!await isLinux()) return;
+
+	const { EventsEmit, EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+
+	const cllbk = (ev: MessageEvent<any>) => EventsEmit('streaming-signal-server', ev.data);
+
+	ws.addEventListener("message", (ev) => cllbk)
+
+	EventsOn('streaming-signal-client', (data: string) => ws.send(data))
 
 }

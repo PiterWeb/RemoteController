@@ -3,8 +3,6 @@ import {
 	TryClosePeerConnection as closeConnectionFn
 } from '$lib/wailsjs/go/desktop/App';
 
-import { BrowserOpenURL, EventsOff, EventsOn, EventsOnce } from '$lib/wailsjs/runtime/runtime';
-
 import { _ } from 'svelte-i18n'
 import { get } from 'svelte/store';
 import { showToast, ToastType } from '$lib/toast/toast_hook';
@@ -14,8 +12,10 @@ import { StopStreaming } from '$lib/webrtc/stream/host_stream_hook';
 import type { ICEServer } from '$lib/webrtc/ice';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
-import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 import { isLinux } from '$lib/detection/detect_os';
+import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
+
+const BROWSER_BASE_URL = "http://localhost:8080/mode/host/connection";
 
 let host: boolean = false;
 
@@ -52,6 +52,8 @@ export async function CreateHost(client: string) {
 		setLoadingMessage(get(_)('waiting-for-client-to-connect'));
 		setLoadingTitle(get(_)('make-sure-to-pass-the-code-to-the-client'));
 
+		const {EventsOnce} = await import("$lib/wailsjs/runtime/runtime")
+
 		EventsOnce('connection_state', async (state: ConnectionState) => {
 			toogleLoading();
 
@@ -59,7 +61,10 @@ export async function CreateHost(client: string) {
 				case ConnectionState.Connected:
 					showToast(get(_)('connected'), ToastType.SUCCESS);
 					host = true;
-					if (await isLinux()) BrowserOpenURL("http://localhost:8081/mode/host/connection");
+					if (await isLinux()) {
+						const {BrowserOpenURL} = await import("$lib/wailsjs/runtime/runtime")
+						BrowserOpenURL(BROWSER_BASE_URL);
+					} 
 					goto('/mode/host/connection');
 					break;
 				case ConnectionState.Failed:
@@ -88,7 +93,12 @@ export function CloseHostConnection(fn?: () => void) {
 	StopStreaming();
 }
 
-export function ListenForConnectionChanges() {
+export async function ListenForConnectionChanges() {
+
+	if (IS_RUNNING_EXTERNAL) return;
+
+	const {EventsOn, EventsOff} = await import("$lib/wailsjs/runtime/runtime")
+
 	const connectionStateCancelEventListener = EventsOn(
 		'connection_state',
 		(state: ConnectionState) => {
