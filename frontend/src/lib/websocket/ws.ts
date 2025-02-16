@@ -1,6 +1,6 @@
 class WS extends WebSocket {
 
-    private static url = "ws://localhost:8081/ws"
+    private static url = "ws://localhost:8080/ws"
 
     static #instance: WS | null;
     private constructor() {
