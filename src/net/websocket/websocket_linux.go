@@ -1,33 +1,45 @@
 package websocket
 
 import (
-	"fmt"
+	"net/http"
 
 	"golang.org/x/net/websocket"
 )
 
-func InitWebsocketServer(wsPort int, clientPort int) error {
+func SetupWebsocketHandler() {
 
-	// origin := fmt.Sprintf("http://localhost:%d/", clientPort)
-	origin := "*"
+	http.Handle("GET /ws", websocket.Handler(echoServer))
 
-	url := fmt.Sprintf("ws://localhost:%d/ws", wsPort)
+}
 
-	ws, err := websocket.Dial(url, "", origin)
-	if err != nil {
-		return err
-	}
+var conns = []*websocket.Conn{}
 
-	defer ws.Close()
+func echoServer(ws *websocket.Conn) {
+	conns = append(conns, ws)
 
-	msg := make([]byte, 512)
+	defer func() {
+		for i, con := range conns {
+			if con.RemoteAddr().String() == ws.RemoteAddr().String() {
+				conns = append(conns[:i], conns[i+1:]...)
+				break
+			}
+		}
+		ws.Close()
+	}()
 
-	// We have to handle the messages to do the signalization of the streaming
 	for {
+		msg := []byte{}
 		if _, err := ws.Read(msg); err != nil {
-			return err
+			break
 		}
 
+		go func() {
+			for _, con := range conns {
+				if con.RemoteAddr().String() == ws.RemoteAddr().String() {
+					continue
+				}
+				con.Write(msg)
+			}
+		}()
 	}
-
 }
