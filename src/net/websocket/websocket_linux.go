@@ -1,45 +1,85 @@
 package websocket
 
 import (
+	"context"
+	"io"
+	"log"
 	"net/http"
+	"time"
 
-	"golang.org/x/net/websocket"
+	"github.com/coder/websocket"
 )
+
+var conns = map[string]*websocket.Conn{}
 
 func SetupWebsocketHandler() {
 
-	http.Handle("GET /ws", websocket.Handler(echoServer))
+	http.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
+
+		c, err := websocket.Accept(w, r, nil)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		// Set the context as needed. Use of r.Context() is not recommended
+		// to avoid surprising behavior (see http.Hijacker).
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
+
+		wsBroadcast(ctx, r, c)
+
+	})
 
 }
 
-var conns = []*websocket.Conn{}
-
-func echoServer(ws *websocket.Conn) {
-	conns = append(conns, ws)
+func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
+	conns[r.RemoteAddr] = ws
 
 	defer func() {
-		for i, con := range conns {
-			if con.RemoteAddr().String() == ws.RemoteAddr().String() {
-				conns = append(conns[:i], conns[i+1:]...)
+		for addr := range conns {
+			if r.RemoteAddr == addr {
+				delete(conns, addr)
 				break
 			}
 		}
-		ws.Close()
+
+		err := ws.CloseNow()
+
+		if err != nil {
+			log.Println(err)
+		}
 	}()
 
 	for {
-		msg := []byte{}
-		if _, err := ws.Read(msg); err != nil {
-			break
+		typ, reader, err := ws.Reader(ctx)
+		if err != nil {
+			log.Println(err)
+			return
 		}
 
-		go func() {
-			for _, con := range conns {
-				if con.RemoteAddr().String() == ws.RemoteAddr().String() {
-					continue
+		for addr, con := range conns {
+			go func() {
+
+				if r.RemoteAddr == addr {
+					return
 				}
-				con.Write(msg)
-			}
-		}()
+
+				writer, err := con.Writer(ctx, typ)
+
+				if err != nil {
+					log.Println(err)
+					return
+				}
+
+				_, err = io.Copy(writer, reader)
+
+				if err != nil {
+					log.Println(err)
+					return
+				}
+			}()
+		}
 	}
 }
