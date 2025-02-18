@@ -19,7 +19,6 @@ func SetupWebsocketHandler() {
 		c, err := websocket.Accept(w, r, nil)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
 			return
 		}
 
