@@ -28,6 +28,7 @@
 ## Resources 📚
 
 - [Docs](./docs/) 📘
+- [Linux Docs](./docs/LINUX.md) 📘
 - [FAQ](https://remote-controller.vercel.app/info/resources/faq/) 💬
 - [Security](https://remote-controller.vercel.app/info/resources/security/) 🔐
 
@@ -51,7 +52,7 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ⌛ Working on Gamepad support (no Keyboard for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ✔ Gamepad support (❌ Keyboard/Streaming for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
 
 ### Native Gamepad Support 🎮
 
