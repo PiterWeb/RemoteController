@@ -5,6 +5,7 @@ go 1.22.0
 toolchain go1.22.4
 
 require (
+	github.com/coder/websocket v1.8.12
 	github.com/jbdemonte/virtual-device v1.1.0
 	github.com/micmonay/keybd_event v1.1.2
 	github.com/pion/webrtc/v3 v3.3.4
@@ -12,7 +13,6 @@ require (
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
-	github.com/coder/websocket v1.8.12 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
@@ -61,7 +61,7 @@ require (
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/wailsapp/wails/v2 v2.7.1
 	golang.org/x/crypto v0.28.0 // indirect
-	golang.org/x/net v0.30.0
+	golang.org/x/net v0.30.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
