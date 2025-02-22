@@ -17,7 +17,8 @@
 
 ## Download 📦
 
-- https://remote-controller.vercel.app/download/
+- (Website) https://remote-controller.vercel.app/download/
+- (Github) https://github.com/PiterWeb/RemoteController/releases/latest
 
 ## Guides 📘
 
@@ -27,6 +28,7 @@
 ## Resources 📚
 
 - [Docs](./docs/) 📘
+- [Linux Docs](./docs/LINUX.md) 📘
 - [FAQ](https://remote-controller.vercel.app/info/resources/faq/) 💬
 - [Security](https://remote-controller.vercel.app/info/resources/security/) 🔐
 
@@ -41,7 +43,7 @@
 - [x] P2P "Decentralized" (WebRTC)
 - [x] Remote Streaming
 - [x] Browser Client
-- [x] Support for keyboard
+- [x] Support for keyboard (very experimental)
 - [x] ViGEmBus Setup (Windows)
 - [x] Localization (translation to multiple languages)
 - [x] Support for STUN & TURN
@@ -50,13 +52,13 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| (Only keyboard)⌛ Looking for contributions for Gamepad     	| (In theory keyboard works)⌛ Looking for contributions for Gamepad     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ✔ Gamepad support (❌ Keyboard/Streaming for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
 
 ### Native Gamepad Support 🎮
 
 | PC Controller (XInput/DirectInput) 	| Xbox Controller (XInput) 	| PlayStation Controler
 |---------	|-------	|-------	|
-| ✔       	| ✔     	| ❌ (You can achieve emulating a Xbox Controller)     	|
+| ✔       	| ✔     	| ❌ (But you can achieve [emulating a Xbox Controller](https://github.com/Ryochan7/DS4Windows))     	|
 
 ### Translations 🔠
 
@@ -70,13 +72,13 @@ There is no way to self-host the infrastructure of RemoteController because it h
 
 - If you want to self-host a TURN/STUN server you can [try Coturn](https://github.com/coturn/coturn). (This is only an example, you can choose other STUN/TURN implementations)
 
-- Also you can host the Web version (but it is only frontend) to make like a network of Remote Controller web clients
+- Also you can host the Web version (but it is only frontend, so is not very usefull)
 
 ## Run Dev
 
 ### Prerequisites
 
-You must have Task CLI, Wails CLI, NodeJS, pnpm and Golang installed.
+You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/es/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
 
 ### How to
 
@@ -94,7 +96,7 @@ Go to the root project folder and run
 
 ### Prerequisites
 
-You must have Task CLI, Wails CLI, NodeJS, pnpm and Golang installed.
+You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/es/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
 
 ### How to
 

@@ -30,10 +30,12 @@
 
   1. Fork this repository
   2. Clone it
-  3. Work on your translations (located in frontend/src/lib/i18n)
-  4. When you have finished make a pull request to merge it with the main branch
-  5. Wait for merge
-  6. Done
+  3. Work on your translations (located in frontend/src/lib/i18n):
+     - Create a JSON file of the language and register the language in the i18n.ts file (all of this if the language is not added already)
+     - Add the entries (you can do manually or using [i18n Ally extension](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally))
+  5. When you have finished make a pull request to merge it with the main branch
+  6. Wait for merge
+  7. Done
 
 
 ## Thank you for reading this & also for your interest on contributing

@@ -5,6 +5,8 @@ go 1.22.0
 toolchain go1.22.4
 
 require (
+	github.com/coder/websocket v1.8.12
+	github.com/jbdemonte/virtual-device v1.1.0
 	github.com/micmonay/keybd_event v1.1.2
 	github.com/pion/webrtc/v3 v3.3.4
 )

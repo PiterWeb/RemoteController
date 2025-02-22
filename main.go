@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/PiterWeb/RemoteController/src/desktop"
+	"github.com/PiterWeb/RemoteController/src/oninit"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -16,6 +17,17 @@ import (
 var assets embed.FS
 
 func main() {
+
+	go func() {
+
+		err := oninit.Execute(assets)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+	}()
+
 	// Create an instance of the app structure
 	app := desktop.NewApp()
 
@@ -50,8 +62,7 @@ func main() {
 			WindowIsTranslucent:  false,
 			DisableWindowIcon:    true,
 			Theme:                windows.Theme(windows.Acrylic),
-			// DisableFramelessWindowDecorations: false,
-			WebviewUserDataPath: "",
+			WebviewUserDataPath:  "",
 		},
 	})
 
