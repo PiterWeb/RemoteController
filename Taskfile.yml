@@ -37,7 +37,6 @@ tasks:
     cmds:
       - wails dev
     desc: Run the application in development mode
-
   dev-front:
     dir: frontend
     deps: [build-front]

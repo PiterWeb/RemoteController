@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/coder/websocket"
 )
@@ -18,13 +17,12 @@ func SetupWebsocketHandler() {
 
 		c, err := websocket.Accept(w, r, nil)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		// Set the context as needed. Use of r.Context() is not recommended
 		// to avoid surprising behavior (see http.Hijacker).
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
 		wsBroadcast(ctx, r, c)
@@ -72,12 +70,15 @@ func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
 					return
 				}
 
+				defer writer.Close()
+
 				_, err = io.Copy(writer, reader)
 
 				if err != nil {
 					log.Println(err)
 					return
 				}
+
 			}()
 		}
 	}

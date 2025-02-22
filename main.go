@@ -16,7 +16,7 @@ import (
 //go:embed frontend/build/*
 var assets embed.FS
 
-func init() {
+func main() {
 
 	go func() {
 
@@ -27,9 +27,7 @@ func init() {
 		}
 
 	}()
-}
 
-func main() {
 	// Create an instance of the app structure
 	app := desktop.NewApp()
 
