@@ -1,0 +1,201 @@
+Already up to date
+Done in 115ms
+
+> frontend@0.0.1 build /home/piter/programacion/RemoteController/frontend
+> vite build
+
+vite v5.4.14 building SSR bundle for production...
+transforming...
+
+╭── 🌼[35m daisyUI 3.9.4 [0mhttps://daisyui.com
+│
+├── [2m1[0m theme is enabled. How to add more themes:
+│   https://daisyui.com/docs/themes
+│
+╰── [32m⭐️ Star daisyUI project on GitHub[0m: https://github.com/saadeghi/daisyui
+
+✓ 239 modules transformed.
+rendering chunks...
+vite v5.4.14 building for production...
+transforming...
+✓ 219 modules transformed.
+rendering chunks...
+computing gzip size...
+.svelte-kit/output/client/_app/version.json                        0.03 kB │ gzip:  0.05 kB
+.svelte-kit/output/client/registerSW.js                            0.13 kB
+.svelte-kit/output/client/manifest.webmanifest                     0.26 kB
+.svelte-kit/output/client/.vite/manifest.json                     15.93 kB │ gzip:  2.12 kB
+.svelte-kit/output/client/_app/immutable/assets/5.DB0Q8XAf.css     3.94 kB │ gzip:  1.10 kB
+.svelte-kit/output/client/_app/immutable/assets/0.Cuszdi8v.css    58.10 kB │ gzip:  9.55 kB
+.svelte-kit/output/client/_app/immutable/chunks/hLXVRUXc.js        0.08 kB │ gzip:  0.10 kB │ map:   0.34 kB
+.svelte-kit/output/client/_app/immutable/entry/start.B-LmkQig.js   0.11 kB │ gzip:  0.12 kB │ map:   0.10 kB
+.svelte-kit/output/client/_app/immutable/nodes/9.Dg8OP2Gv.js       0.20 kB │ gzip:  0.17 kB │ map:   0.09 kB
+.svelte-kit/output/client/_app/immutable/nodes/10.C0LaUvQJ.js      0.20 kB │ gzip:  0.17 kB │ map:   0.10 kB
+.svelte-kit/output/client/_app/immutable/chunks/DbAY5WEH.js        0.20 kB │ gzip:  0.20 kB │ map:   0.62 kB
+.svelte-kit/output/client/_app/immutable/chunks/b_2JdLAX.js        0.24 kB │ gzip:  0.21 kB │ map:   4.11 kB
+.svelte-kit/output/client/_app/immutable/chunks/CjoC5YjT.js        0.24 kB │ gzip:  0.18 kB │ map:   1.03 kB
+.svelte-kit/output/client/_app/immutable/chunks/BOQXny9M.js        0.26 kB │ gzip:  0.20 kB │ map:   4.83 kB
+.svelte-kit/output/client/_app/immutable/chunks/C13GfaeN.js        0.28 kB │ gzip:  0.21 kB │ map:   1.14 kB
+.svelte-kit/output/client/_app/immutable/chunks/BxLr3pv-.js        0.35 kB │ gzip:  0.26 kB │ map:   3.10 kB
+.svelte-kit/output/client/_app/immutable/chunks/D7AwxqZu.js        0.36 kB │ gzip:  0.28 kB │ map:   9.88 kB
+.svelte-kit/output/client/_app/immutable/nodes/4.Cm-O131N.js       0.38 kB │ gzip:  0.27 kB │ map:   0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/BMsg_CGl.js        0.41 kB │ gzip:  0.30 kB │ map:   1.53 kB
+.svelte-kit/output/client/_app/immutable/chunks/DOFGH5yh.js        0.44 kB │ gzip:  0.28 kB │ map:   4.62 kB
+.svelte-kit/output/client/_app/immutable/chunks/BiPumCu7.js        0.48 kB │ gzip:  0.25 kB │ map:   6.56 kB
+.svelte-kit/output/client/_app/immutable/chunks/upMKZBi7.js        0.52 kB │ gzip:  0.37 kB │ map:   4.52 kB
+.svelte-kit/output/client/_app/immutable/chunks/BJOYcg0Q.js        0.53 kB │ gzip:  0.31 kB │ map:   2.30 kB
+.svelte-kit/output/client/_app/immutable/chunks/BPBvrYKc.js        0.55 kB │ gzip:  0.24 kB │ map:   1.45 kB
+.svelte-kit/output/client/_app/immutable/chunks/DZi7pNZ6.js        0.55 kB │ gzip:  0.37 kB │ map:   3.54 kB
+.svelte-kit/output/client/_app/immutable/nodes/3.3o3tHZ1r.js       0.56 kB │ gzip:  0.37 kB │ map:   0.68 kB
+.svelte-kit/output/client/_app/immutable/chunks/BpgMQSa7.js        0.66 kB │ gzip:  0.41 kB │ map:   8.86 kB
+.svelte-kit/output/client/_app/immutable/chunks/Cp8EHOwy.js        0.73 kB │ gzip:  0.48 kB │ map:   7.28 kB
+.svelte-kit/output/client/_app/immutable/chunks/CfQPQ1Lo.js        0.76 kB │ gzip:  0.52 kB │ map:   1.15 kB
+.svelte-kit/output/client/_app/immutable/nodes/1.g6bbLVA2.js       1.08 kB │ gzip:  0.57 kB │ map:   0.85 kB
+.svelte-kit/output/client/_app/immutable/nodes/2.BkxFXm04.js       1.10 kB │ gzip:  0.61 kB │ map:   2.49 kB
+.svelte-kit/output/client/_app/immutable/nodes/7.BOJv-GJp.js       1.16 kB │ gzip:  0.63 kB │ map:   3.46 kB
+.svelte-kit/output/client/_app/immutable/chunks/hbV5-FQN.js        1.16 kB │ gzip:  0.69 kB │ map:   9.35 kB
+.svelte-kit/output/client/_app/immutable/chunks/DcGTtkhu.js        1.17 kB │ gzip:  0.62 kB │ map:  19.97 kB
+.svelte-kit/output/client/_app/immutable/chunks/C1FmrZbK.js        1.18 kB │ gzip:  0.71 kB │ map:   0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/UqR1ddK0.js        1.22 kB │ gzip:  0.66 kB │ map:  10.46 kB
+.svelte-kit/output/client/_app/immutable/chunks/LCmO883v.js        1.29 kB │ gzip:  0.76 kB │ map:  16.99 kB
+.svelte-kit/output/client/_app/immutable/chunks/CKDYM5Nr.js        1.55 kB │ gzip:  0.80 kB │ map:   5.94 kB
+.svelte-kit/output/client/_app/immutable/chunks/M-uGk6ro.js        1.84 kB │ gzip:  0.67 kB │ map:   8.48 kB
+.svelte-kit/output/client/_app/immutable/chunks/B-AmGwPL.js        2.07 kB │ gzip:  1.14 kB │ map:  25.43 kB
+.svelte-kit/output/client/_app/immutable/chunks/BNBK-1YN.js        2.24 kB │ gzip:  1.05 kB │ map:  15.16 kB
+.svelte-kit/output/client/_app/immutable/chunks/Cgx2sck-.js        2.42 kB │ gzip:  1.29 kB │ map:  25.67 kB
+.svelte-kit/output/client/_app/immutable/chunks/DChWnuuc.js        3.26 kB │ gzip:  1.68 kB │ map:  24.26 kB
+.svelte-kit/output/client/_app/immutable/chunks/jXCQSXWp.js        3.71 kB │ gzip:  1.56 kB │ map:  14.82 kB
+.svelte-kit/output/client/_app/immutable/nodes/11.BOgLor_m.js      3.78 kB │ gzip:  1.72 kB │ map:   4.72 kB
+.svelte-kit/output/client/_app/immutable/nodes/6.MI3Do-AR.js       3.87 kB │ gzip:  1.75 kB │ map:   5.03 kB
+.svelte-kit/output/client/_app/immutable/chunks/DkbCwqZq.js        3.95 kB │ gzip:  1.96 kB │ map:  36.38 kB
+.svelte-kit/output/client/_app/immutable/nodes/12.Cp48rWBj.js      4.69 kB │ gzip:  2.16 kB │ map:  16.84 kB
+.svelte-kit/output/client/_app/immutable/chunks/sAdTqvA_.js        5.07 kB │ gzip:  1.89 kB │ map:   0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/B-sPVnGE.js        5.30 kB │ gzip:  2.63 kB │ map:   0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/eqKpcCdp.js        5.32 kB │ gzip:  2.07 kB │ map:   0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/Cx69IpJ1.js        5.39 kB │ gzip:  2.09 kB │ map:   0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/Bz8gR41y.js        5.51 kB │ gzip:  2.15 kB │ map:   0.09 kB
+.svelte-kit/output/client/_app/immutable/nodes/0.CWUySvJw.js       5.81 kB │ gzip:  2.68 kB │ map:  13.66 kB
+.svelte-kit/output/client/_app/immutable/chunks/BB-R5Gsc.js        6.20 kB │ gzip:  2.40 kB │ map:  18.52 kB
+.svelte-kit/output/client/_app/immutable/nodes/8.zMnycSUn.js       6.41 kB │ gzip:  2.42 kB │ map:   7.62 kB
+.svelte-kit/output/client/_app/immutable/entry/app.DjRDg9OX.js     8.41 kB │ gzip:  3.19 kB │ map:  20.84 kB
+.svelte-kit/output/client/_app/immutable/chunks/BZZ7vWKg.js       13.51 kB │ gzip:  5.53 kB │ map: 135.13 kB
+.svelte-kit/output/client/_app/immutable/chunks/DFmTKsks.js       16.89 kB │ gzip:  6.35 kB │ map:  53.72 kB
+.svelte-kit/output/client/_app/immutable/nodes/5.XONYTHBv.js      24.72 kB │ gzip:  7.36 kB │ map:  58.89 kB
+.svelte-kit/output/client/_app/immutable/chunks/CJT6RA-n.js       31.68 kB │ gzip: 12.33 kB │ map: 192.77 kB
+.svelte-kit/output/client/_app/immutable/chunks/Dx1v96YW.js       50.60 kB │ gzip: 15.17 kB │ map: 235.49 kB
+✓ built in 1.73s
+.svelte-kit/output/server/.vite/manifest.json                                        8.74 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.DB0Q8XAf.css                   3.94 kB
+.svelte-kit/output/server/_app/immutable/assets/_layout.C1BqYSKi.css                58.05 kB
+.svelte-kit/output/server/entries/pages/mode/config/advanced/stun/_page.svelte.js    0.24 kB │ map:   0.10 kB
+.svelte-kit/output/server/entries/pages/mode/config/advanced/turn/_page.svelte.js    0.24 kB │ map:   0.10 kB
+.svelte-kit/output/server/chunks/onwebsite.js                                        0.26 kB │ map:   0.52 kB
+.svelte-kit/output/server/entries/pages/mode/config/advanced/_layout.svelte.js       0.34 kB │ map:   0.52 kB
+.svelte-kit/output/server/internal.js                                                0.34 kB │ map:   0.09 kB
+.svelte-kit/output/server/chunks/equality.js                                         0.37 kB │ map:   1.06 kB
+.svelte-kit/output/server/chunks/detect_os.js                                        0.53 kB │ map:   2.05 kB
+.svelte-kit/output/server/entries/pages/mode/client/_layout.svelte.js                0.54 kB │ map:   0.73 kB
+.svelte-kit/output/server/chunks/attributes.js                                       0.56 kB │ map:   1.93 kB
+.svelte-kit/output/server/entries/pages/mode/_layout.svelte.js                       0.57 kB │ map:   1.87 kB
+.svelte-kit/output/server/chunks/escaping.js                                         0.57 kB │ map:   1.19 kB
+.svelte-kit/output/server/chunks/stores.js                                           0.58 kB │ map:   4.86 kB
+.svelte-kit/output/server/chunks/BackwardButton.js                                   0.60 kB │ map:   0.11 kB
+.svelte-kit/output/server/chunks/client.js                                           0.62 kB │ map:  94.42 kB
+.svelte-kit/output/server/entries/pages/_layout.ts.js                                0.69 kB │ map:   1.45 kB
+.svelte-kit/output/server/chunks/turn_servers.js                                     0.85 kB │ map:   5.92 kB
+.svelte-kit/output/server/entries/pages/mode/client/connection/_page.svelte.js       0.98 kB │ map:   1.12 kB
+.svelte-kit/output/server/chunks/ws.js                                               1.03 kB │ map:   2.10 kB
+.svelte-kit/output/server/entries/pages/_error.svelte.js                             1.04 kB │ map:   0.86 kB
+.svelte-kit/output/server/chunks/index.js                                            2.72 kB │ map:   7.75 kB
+.svelte-kit/output/server/entries/pages/_page.svelte.js                              2.72 kB │ map:   6.74 kB
+.svelte-kit/output/server/entries/pages/mode/client/_page.svelte.js                  2.94 kB │ map:   4.42 kB
+.svelte-kit/output/server/entries/pages/mode/host/_page.svelte.js                    3.14 kB │ map:   4.46 kB
+.svelte-kit/output/server/chunks/index2.js                                           3.84 kB │ map:  24.55 kB
+.svelte-kit/output/server/entries/pages/mode/host/connection/_page.svelte.js         4.25 kB │ map:   5.29 kB
+.svelte-kit/output/server/entries/pages/_layout.svelte.js                            4.56 kB │ map:   7.49 kB
+.svelte-kit/output/server/chunks/exports.js                                          6.16 kB │ map:  13.21 kB
+.svelte-kit/output/server/chunks/en.js                                               6.20 kB │ map:   0.21 kB
+.svelte-kit/output/server/chunks/ru.js                                               6.42 kB │ map:   0.21 kB
+.svelte-kit/output/server/chunks/gl.js                                               6.45 kB │ map:   0.21 kB
+.svelte-kit/output/server/chunks/es.js                                               6.52 kB │ map:   0.21 kB
+.svelte-kit/output/server/chunks/fr.js                                               6.64 kB │ map:   0.21 kB
+.svelte-kit/output/server/entries/pages/mode/config/_page.svelte.js                  7.13 kB │ map:   5.67 kB
+.svelte-kit/output/server/chunks/ICEServerManager.js                                 8.84 kB │ map:  13.16 kB
+.svelte-kit/output/server/chunks/internal.js                                        20.71 kB │ map:  87.72 kB
+.svelte-kit/output/server/chunks/utils.js                                           27.41 kB │ map: 103.31 kB
+.svelte-kit/output/server/chunks/runtime.js                                        100.81 kB │ map: 222.04 kB
+.svelte-kit/output/server/index.js                                                 120.76 kB │ map: 291.00 kB
+✓ built in 6.44s
+
+PWA v0.21.1
+mode      generateSW
+precache  72 entries (397.37 KiB)
+files generated
+  .svelte-kit/output/server/sw.js.map
+  .svelte-kit/output/server/sw.js
+  .svelte-kit/output/server/workbox-4723e66c.js.map
+  .svelte-kit/output/server/workbox-4723e66c.js
+
+Run npm run preview to preview your production build locally.
+
+> Using @sveltejs/adapter-static
+Overwriting build/index.html with fallback page. Consider using a different name for the fallback.
+  Wrote site to "build"
+  ✔ done
+[0;92mWails CLI[0m [0;31mv2.9.2[0m
+
+  [90m[90m•[0m[0m [39m[39mGenerating bindings: [0m[0mDone.
+  [90m[90m•[0m[0m [39m[39mInstalling frontend dependencies: [0m[0mDone.
+  [90m[90m•[0m[0m [39m[39mCompiling frontend: [0m[0mDone.
+
+> frontend@0.0.1 dev /home/piter/programacion/RemoteController/frontend
+> vite dev --host
+
+
+  VITE v5.4.14  ready in 1300 ms
+
+  ➜  Local:   http://localhost:5173/
+Building application for development...
+  ➜  Network: http://192.168.1.51:5173/
+  [90m[90m•[0m[0m [39m[39mGenerating bindings: [0m[0mDone.
+  [90m[90m•[0m[0m [39m[39mCompiling application: [0m[0mDone.
+  [90m[90m•[0m[0m [39m[39mPackaging application: [0m[0mDone.
+
+╭── 🌼[35m daisyUI 3.9.4 [0mhttps://daisyui.com
+│
+├── [2m1[0m theme is enabled. How to add more themes:
+│   https://daisyui.com/docs/themes
+│
+╰── [32m⭐️ Star daisyUI project on GitHub[0m: https://github.com/saadeghi/daisyui
+
+  [90m[90m•[0m[0m [39m[39mGenerating bindings: [0m[0mDone.
+  [90m[90m•[0m[0m [39m[39mCompiling application: [0m[0m15:37:05 [vite] page reload src/lib/wailsjs/runtime/runtime.d.ts
+15:37:05 [vite] page reload src/lib/wailsjs/runtime/runtime.js
+Done.
+  [90m[90m•[0m[0m [39m[39mPackaging application: [0m[0mDone.
+Peer Connection State has changed: connecting
+Peer Connection State has changed: connected
+  [90m[90m•[0m[0m [39m[39mGenerating bindings: [0m[0m15:48:44 [vite] hmr update /src/app.css, /src/routes/mode/+layout.svelte, /src/routes/mode/host/+page.svelte
+15:48:44 [vite] page reload src/lib/wailsjs/go/models.ts
+15:48:44 [vite] page reload src/lib/wailsjs/go/desktop/App.d.ts
+15:48:44 [vite] hmr update /src/app.css, /src/routes/mode/+layout.svelte, /src/routes/mode/host/+page.svelte
+Done.
+  [90m[90m•[0m[0m [39m[39mCompiling application: [0m[0mDone.
+  [90m[90m•[0m[0m [39m[39mPackaging application: [0m[0mDone.
+  [90m[90m•[0m[0m [39m[39mGenerating bindings: [0m[0m15:54:14 [vite] hmr update /src/app.css, /src/routes/mode/+layout.svelte, /src/routes/mode/host/+page.svelte
+15:54:14 [vite] page reload src/lib/wailsjs/go/desktop/App.d.ts
+Done.
+  [90m[90m•[0m[0m [39m[39mCompiling application: [0m[0m15:54:14 [vite] page reload src/lib/wailsjs/go/models.ts
+15:54:14 [vite] page reload src/lib/wailsjs/runtime/runtime.d.ts
+15:54:14 [vite] hmr update /src/app.css, /src/routes/mode/+layout.svelte, /src/routes/mode/host/+page.svelte
+Done.
+  [90m[90m•[0m[0m [39m[39mPackaging application: [0m[0mDone.
+Peer Connection State has changed: connecting
+Peer Connection State has changed: connected
+Peer Connection State has changed: disconnected
+Peer Connection State has changed: failed
+Peer Connection State has changed: closed
+  [90m[90m•[0m[0m [39m[39mGenerating bindings: [0m[0m16:15:50 [vite] page reload src/lib/wailsjs/go/models.ts
+Done.
+  [90m[90m•[0m[0m [39m[39mCompiling application: [0m[0m16:15:50 [vite] page reload src/lib/wailsjs/runtime/runtime.d.ts
+16:15:50 [vite] hmr update /src/app.css, /src/routes/mode/+layout.svelte, /src/routes/mode/host/+page.svelte, /src/routes/mode/host/connection/+page.svelte

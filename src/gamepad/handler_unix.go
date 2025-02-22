@@ -16,7 +16,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		return
 	}
 
-	var virtualGamepad *gamepad.VirtualGamepad
+	var virtualGamepad gamepad.VirtualGamepad
 
 	// Create a virtual device
 	gamepadChannel.OnOpen(func() {
@@ -34,17 +34,24 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	defer func() {
 		if err := recover(); err != nil {
 			if virtualGamepad != nil {
-				(*virtualGamepad).Unregister()
+				virtualGamepad.Unregister()
 			}
 		}
 	}()
 
-	var lastPad GamepadAPIXState
+	lastPad := GamepadAPIXState{
+		Connected: false,
+	}
 
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-		var actualPad GamepadAPIXState
+		if virtualGamepad == nil {
+			log.Println("VirtualGamepad is not defined")
+			return
+		}
+
+		actualPad := GamepadAPIXState{}
 
 		err := ffjson.Unmarshal(msg.Data, &actualPad)
 
@@ -53,7 +60,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 			return
 		}
 
-		go updateVirtualDevice(*virtualGamepad, actualPad, lastPad)
+		updateVirtualDevice(virtualGamepad, actualPad, lastPad)
 
 		lastPad = actualPad
 
@@ -66,7 +73,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 			return
 		}
 
-		err := (*virtualGamepad).Unregister()
+		err := virtualGamepad.Unregister()
 
 		if err != nil {
 			log.Println(err)
@@ -75,7 +82,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	})
 }
 
-func generateVirtualDevice() (*gamepad.VirtualGamepad, error) {
+func generateVirtualDevice() (gamepad.VirtualGamepad, error) {
 
 	g := gamepad.NewXBox360()
 
@@ -84,15 +91,11 @@ func generateVirtualDevice() (*gamepad.VirtualGamepad, error) {
 		return nil, err
 	}
 
-	return &g, nil
+	return g, nil
 
 }
 
 func updateVirtualDevice(virtualGamepad gamepad.VirtualGamepad, actualPad GamepadAPIXState, lastPad GamepadAPIXState) {
-
-	if actualPad.ID != lastPad.ID || actualPad.Index == lastPad.Index || actualPad.Connected != lastPad.Connected {
-		return
-	}
 
 	for i, v := range actualPad.Axes {
 		if actualPad.Axes[i] == lastPad.Axes[i] {
@@ -101,13 +104,13 @@ func updateVirtualDevice(virtualGamepad gamepad.VirtualGamepad, actualPad Gamepa
 
 		switch i {
 		case 0:
-			virtualGamepad.MoveLeftStickY(float32(v))
+			virtualGamepad.MoveLeftStickX(float32(-fixLYAxis(v)))
 		case 1:
-			virtualGamepad.MoveLeftStickX(float32(fixLYAxis(v)))
+			virtualGamepad.MoveLeftStickY(float32(v))
 		case 2:
 			virtualGamepad.MoveRightStickX(float32(v))
 		case 3:
-			virtualGamepad.MoveRightStickY(float32(fixRYAxis(v)))
+			virtualGamepad.MoveRightStickY(float32(-fixRYAxis(v)))
 		}
 
 	}
