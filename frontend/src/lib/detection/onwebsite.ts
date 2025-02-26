@@ -1,4 +1,4 @@
-// This file is used to determine if the app is running on the website(client only) or not.
+// This file is used to determine if the app is running on the website(vercel client only) or not.
 const onwebsite = import.meta.env?.VITE_ON_WEBSITE === 'true';
 
 // This will be true if using the linux client when browser opens
