@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CreateHostStream, RelayHostStream } from '$lib/webrtc/stream/host_stream_hook';
+	import { CreateHostStream } from '$lib/webrtc/stream/host_stream_hook';
 	import { FIXED_RESOLUTIONS } from '$lib/webrtc/stream/stream_config';
 	import { _ } from 'svelte-i18n';
 	import { streaming } from '$lib/webrtc/stream/stream_signal_hook.svelte';
@@ -9,7 +9,6 @@
 	import { onMount } from 'svelte';
 	import { elasticOut } from 'svelte/easing';
 	import IsLinux from '$lib/detection/IsLinux.svelte';
-	import { isLinux } from '$lib/detection/detect_os';
 
 	let selected_resolution = $state(FIXED_RESOLUTIONS.resolution720p);
 
@@ -20,12 +19,7 @@
 		streaming.value = true;
 	}
 
-	onMount(async () => {
-		
-		if (await isLinux()) {
-			await RelayHostStream()
-		}
-			
+	onMount(() => {
 		ListenForConnectionChanges();
 	});
 </script>

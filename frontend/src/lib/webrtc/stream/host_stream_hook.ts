@@ -92,7 +92,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 				role: 'host'
 			};
 
-			if (IS_RUNNING_EXTERNAL) return ws.send(JSON.stringify(data));
+			if (IS_RUNNING_EXTERNAL) return ws().send(JSON.stringify(data));
 			
 			const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
 			EventsEmit('streaming-signal-server', JSON.stringify(data));
@@ -108,7 +108,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 			role: 'host'
 		};
 
-		if (IS_RUNNING_EXTERNAL) return ws.send(JSON.stringify(data));
+		if (IS_RUNNING_EXTERNAL) return ws().send(JSON.stringify(data));
 
 		const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
 		EventsEmit('streaming-signal-server', JSON.stringify(data));
@@ -191,22 +191,23 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 	}
 
 	const cllbck = (ev: MessageEvent<string>) =>  onSignalArrive(ev.data)
-	ws.addEventListener("message", cllbck)
-	unlistenerStreamingSignal = () => ws.removeEventListener("message", cllbck)
+	ws().addEventListener("message", cllbck)
+	unlistenerStreamingSignal = () => ws().removeEventListener("message", cllbck)
 
 }
 
-export async function RelayHostStream() {
+// This functionality will be handled from Golang
+// export async function RelayHostStream() {
 
-	if (IS_RUNNING_EXTERNAL) return;
-	if (!await isLinux()) return;
+// 	if (IS_RUNNING_EXTERNAL) return;
+// 	if (!await isLinux()) return;
 
-	const { EventsEmit, EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+// 	const { EventsEmit, EventsOn } = await import('$lib/wailsjs/runtime/runtime');
 
-	const cllbk = (ev: MessageEvent<any>) => EventsEmit('streaming-signal-server', ev.data);
+// 	const cllbk = (ev: MessageEvent<any>) => EventsEmit('streaming-signal-server', ev.data);
 
-	ws.addEventListener("message", (ev) => cllbk)
+// 	ws().addEventListener("message", (ev) => cllbk)
 
-	EventsOn('streaming-signal-client', (data: string) => ws.send(data))
+// 	EventsOn('streaming-signal-client', (data: string) => ws().send(data))
 
-}
+// }
