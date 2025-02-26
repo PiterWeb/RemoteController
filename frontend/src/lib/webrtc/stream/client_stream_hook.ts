@@ -1,6 +1,7 @@
 import { exportStunServers } from '$lib/webrtc/stun_servers';
 import { setConsumingStream, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
+import { getSortedVideoCodecs } from './stream_config';
 
 let peerConnection: RTCPeerConnection | undefined;
 let inboundStream: MediaStream | null = null;
@@ -62,22 +63,29 @@ async function CreateClientStream(
 		}
 	};
 
+
 	const offer = await peerConnection.createOffer({
 		offerToReceiveAudio: true,
 		offerToReceiveVideo: true
 	});
+
+	try {
+		const [transceiver] = peerConnection.getTransceivers();
+		transceiver.setCodecPreferences(getSortedVideoCodecs());
+	} catch {
+
+	}
 
 	await peerConnection.setLocalDescription(offer);
 
 	// Configuración de parámetros del códec
 	peerConnection.getSenders().forEach((sender) => {
 		const params = sender.getParameters();
+
 		if (!params.encodings) {
 			params.encodings = [{}];
 		}
-		params.encodings[0].maxBitrate = 5_000_000; // Configura el bitrate máximo (en bits por segundo)
-		params.encodings[0].maxFramerate = 60; // Configura el frame rate máximo
-		// params.encodings[i].scaleResolutionDownBy = 1.25
+		params.encodings[0].maxBitrate = 8_500_000; // Configura el bitrate máximo (en bits por segundo)
 		params.encodings[0].priority = "high"
 		sender.setParameters(params);
 	});

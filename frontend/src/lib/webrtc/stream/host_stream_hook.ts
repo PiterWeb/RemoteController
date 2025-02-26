@@ -5,7 +5,7 @@ import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config';
+import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, getSortedVideoCodecs, RESOLUTIONS } from './stream_config';
 import ws from '$lib/websocket/ws';
 import { isLinux } from '$lib/detection/detect_os';
 
@@ -128,7 +128,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		if (role !== 'client') return;
 
 		if (type === "candidate") {
-			try {peerConnection.addIceCandidate(candidate)} catch {}
+			try {peerConnection.addIceCandidate(candidate)} catch {/** */}
 			return
 		}
 
@@ -136,6 +136,18 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		if (!offer || offerArrived) return;
 
 		try {
+
+			const [transceiver] = peerConnection.getTransceivers();
+			transceiver.setCodecPreferences(getSortedVideoCodecs());
+
+		} catch (e) {
+			
+			console.error(e)
+
+		}
+
+		try {
+
 			await peerConnection.setRemoteDescription(offer);
 		} catch {
 			// TODO: manage error
@@ -154,9 +166,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 				params.encodings = [{}];
 			}
 			params.encodings.forEach((_, i) => {
-				params.encodings[i].maxBitrate = 5_000_000;
-				params.encodings[i].maxFramerate = maxFramerate;
-				// params.encodings[i].scaleResolutionDownBy = 1.25
+				params.encodings[i].maxBitrate = 8_500_000; // Configura el bitrate máximo (en bits por segundo)
 				params.encodings[i].priority = 'high';
 			});
 
@@ -174,9 +184,11 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		);
 
 		try {
+			
 			await peerConnection.setLocalDescription(await peerConnection.createAnswer());
-		} catch {
-			// TODO: manage error
+
+		} catch (e) {
+			console.error(e)
 			return
 		}
 		
@@ -203,9 +215,9 @@ export async function RelayHostStream() {
 
 	const { EventsEmit, EventsOn } = await import('$lib/wailsjs/runtime/runtime');
 
-	const cllbk = (ev: MessageEvent<any>) => EventsEmit('streaming-signal-server', ev.data);
+	const cllbk = (ev: MessageEvent<unknown>) => EventsEmit('streaming-signal-server', ev.data);
 
-	ws.addEventListener("message", (ev) => cllbk)
+	ws.addEventListener("message", () => cllbk)
 
 	EventsOn('streaming-signal-client', (data: string) => ws.send(data))
 
