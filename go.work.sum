@@ -72,6 +72,8 @@ github.com/tidwall/gjson v1.9.3/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlf
 github.com/tidwall/match v1.1.1/go.mod h1:eRSPERbgtNPcGhD8UCthc6PmLEQXEWd3PRB5JTxsfmM=
 github.com/tidwall/pretty v1.2.0/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
 github.com/tidwall/sjson v1.1.7/go.mod h1:w/yG+ezBeTdUxiKs5NcPicO9diP38nk96QBAbIIGeFs=
+github.com/wailsapp/wails/v2 v2.7.1 h1:HAzp2c5ODOzsLC6ZMDVtNOB72ozM7/SJecJPB2Ur+UU=
+github.com/wailsapp/wails/v2 v2.7.1/go.mod h1:oIJVwwso5fdOgprBYWXBBqtx6PaSvxg8/KTQHNGkadc=
 github.com/wzshiming/ctc v1.2.3/go.mod h1:2tVAtIY7SUyraSk0JxvwmONNPFL4ARavPuEsg5+KA28=
 github.com/wzshiming/winseq v0.0.0-20200112104235-db357dc107ae/go.mod h1:VTAq37rkGeV+WOybvZwjXiJOicICdpLCN8ifpISjK20=
 github.com/xanzy/ssh-agent v0.3.0/go.mod h1:3s9xbODqPuuhK9JV1R321M/FlMZSBvE5aY6eAcqrDh0=
