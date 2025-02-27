@@ -30,7 +30,7 @@ func SetupWebsocketHandler() {
 
 		wsBroadcast(ctx, r, c)
 
-		c.Close(websocket.StatusNormalClosure, "")
+		c.Close(websocket.StatusNormalClosure, "Client connection closed")
 
 	})
 
@@ -57,7 +57,7 @@ func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
 		typ, reader, err := ws.Reader(ctx)
 		if err != nil {
 			log.Println(err)
-			continue
+			break
 		}
 
 		for addr, con := range conns {
@@ -80,7 +80,7 @@ func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
 				continue
 			}
 
-			log.Println("Message sended by WS")
+			log.Println("Message sended to ", addr)
 
 			err = writer.Close()
 
