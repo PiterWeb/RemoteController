@@ -7,7 +7,6 @@ import { exportTurnServers } from '../turn_servers';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, getSortedVideoCodecs, RESOLUTIONS } from './stream_config';
 import ws from '$lib/websocket/ws';
-import { isLinux } from '$lib/detection/detect_os';
 
 let peerConnection: RTCPeerConnection | undefined;
 
@@ -149,8 +148,9 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		try {
 
 			await peerConnection.setRemoteDescription(offer);
-		} catch {
+		} catch (e) {
 			// TODO: manage error
+			console.error(e)
 			return
 		}
 		offerArrived = true;
@@ -194,32 +194,16 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		
 	}
 
-	if (!IS_RUNNING_EXTERNAL) {
-		(async () => {
-			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
-			unlistenerStreamingSignal = EventsOn('streaming-signal-client', (data: string) => onSignalArrive(data));
-		})()
-		return;
+	if (IS_RUNNING_EXTERNAL) {
+		const cllbck = (ev: MessageEvent<string>) =>  onSignalArrive(ev.data)
+		ws().addEventListener("message", cllbck)
+		unlistenerStreamingSignal = () => ws().removeEventListener("message", cllbck)
+		return
 	}
 
-	const cllbck = (ev: MessageEvent<string>) =>  onSignalArrive(ev.data)
-	ws().addEventListener("message", cllbck)
-	unlistenerStreamingSignal = () => ws().removeEventListener("message", cllbck)
+	(async () => {
+		const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+		unlistenerStreamingSignal = EventsOn('streaming-signal-client', (data: string) => onSignalArrive(data));
+	})()
 
 }
-
-// This functionality will be handled from Golang
-// export async function RelayHostStream() {
-
-// 	if (IS_RUNNING_EXTERNAL) return;
-// 	if (!await isLinux()) return;
-
-// 	const { EventsEmit, EventsOn } = await import('$lib/wailsjs/runtime/runtime');
-
-// 	const cllbk = (ev: MessageEvent<any>) => EventsEmit('streaming-signal-server', ev.data);
-
-// 	ws().addEventListener("message", (ev) => cllbk)
-
-// 	EventsOn('streaming-signal-client', (data: string) => ws().send(data))
-
-// }
