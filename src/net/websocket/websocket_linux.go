@@ -21,7 +21,13 @@ func SetupWebsocketHandler() {
 			return
 		}
 
-		defer c.CloseNow()
+		defer func() {
+			err := c.CloseNow()
+
+			if err != nil {
+				log.Println(err)
+			}
+		}()
 
 		// Set the context as needed. Use of r.Context() is not recommended
 		// to avoid surprising behavior (see http.Hijacker).
@@ -42,7 +48,7 @@ func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
 	defer func() {
 
 		// If panic it will recover and liberate resources
-		recover()
+		_ = recover()
 
 		for addr := range conns {
 			if r.RemoteAddr == addr {
@@ -80,7 +86,7 @@ func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
 				continue
 			}
 
-			log.Println("Message sended to ", addr)
+			// log.Println("Message sended to ", addr)
 
 			err = writer.Close()
 
