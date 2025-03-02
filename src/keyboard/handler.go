@@ -3,7 +3,7 @@
 package keyboard
 
 import (
-	"fmt"
+	"log"
 	"runtime"
 	"strings"
 	"time"
@@ -29,20 +29,20 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 	}
 
 	d.OnOpen(func() {
-		fmt.Println("keyboard data channel is open")
+		log.Println("keyboard data channel is open")
 	})
 
 	var SHIFT_KEY_PRESSED, CTRL_KEY_PRESSED, ALT_KEY_PRESSED bool
 
 	d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-		fmt.Println("keyboard message: ", msg.Data)
+		log.Println("keyboard message: ", msg.Data)
 
 		if !msg.IsString || msg.Data == nil {
 			return
 		}
 
-		fmt.Println("keyboard message: ", string(msg.Data))
+		log.Println("keyboard message: ", string(msg.Data))
 
 		keyJS := strings.ToUpper(string(msg.Data))
 

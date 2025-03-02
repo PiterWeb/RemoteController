@@ -2,7 +2,6 @@ package net
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strings"
 
@@ -46,7 +45,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 
 	defer func() {
 		if err := peerConnection.Close(); err != nil {
-			fmt.Printf("cannot close peerConnection: %v\n", err)
+			log.Printf("cannot close peerConnection: %v\n", err)
 		}
 	}()
 
@@ -77,7 +76,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	// Set the handler for Peer connection state
 	// This will notify you when the peer has connected/disconnected
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
-		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
+		log.Printf("Peer Connection State has changed: %s\n", s.String())
 
 		runtime.EventsEmit(ctx, "connection_state", s.String())
 

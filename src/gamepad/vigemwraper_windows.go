@@ -78,8 +78,6 @@ func InitViGEm() error {
 		dllFile.Write(bin.ViGEmClient_x64)
 	}
 
-	// exec.Command("regsvr32", path+"/"+ViGEm_DLL_FILE_NAME)
-
 	vigemDLL = syscall.NewLazyDLL(path + "/" + ViGEm_DLL_FILE_NAME)
 	vigem_disconnect_proc = vigemDLL.NewProc("vigem_disconnect")
 	vigem_free_proc = vigemDLL.NewProc("vigem_free")
