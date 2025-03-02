@@ -32,7 +32,7 @@
 			class="card md:w-96 md:h-52 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 		>
 			<div class="card-body">
-				<h2 class="card-title text-white">{$_('host_card_title')}</h2>
+				<h2 class="card-title dark:text-white text-gray-800">{$_('host_card_title')}</h2>
 				<p class="text-gray-400">{$_('host_card_description')}</p>
 				<a href="/mode/host" class="btn btn-primary text-white">{$_('host_card_cta')}</a>
 			</div>
@@ -42,7 +42,7 @@
 		class="card md:w-96 md:h-52 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 	>
 		<div class="card-body">
-			<h2 class="card-title text-white">{$_('client_card_title')}</h2>
+			<h2 class="card-title dark:text-white text-gray-800">{$_('client_card_title')}</h2>
 			<p class="text-gray-400">{$_('client_card_description')}</p>
 			<a href="/mode/client" class="btn btn-primary text-white">{$_('client_card_cta')}</a>
 		</div>

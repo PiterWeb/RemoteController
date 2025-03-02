@@ -136,9 +136,9 @@
 			e.preventDefault()
 			groupToCreate = '';
 		}}
-		class="flex flex-col gap-4 items-center justify-center sm:w-[30vw] w-[75vw] p-4 my-4 border rounded-lg shadow sm:p-6 bg-gray-800 border-gray-700"
+		class="flex flex-col gap-4 items-center justify-center sm:w-[30vw] w-[75vw] p-4 my-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 	>
-		<label for="group" class="block mb-2 font-medium text-gray-900 dark:text-white"
+		<label for="group" class="block mb-2 font-medium  text-gray-900 dark:text-white"
 			>{$_('create_group')}</label
 		>
 		<input
@@ -163,7 +163,7 @@
 			</p>
 		{/if}
 		{#each Object.keys($servers) as server_group, i}
-			<li class="w-[75vw] p-4 my-4 border rounded-lg shadow sm:p-6 bg-gray-800 border-gray-700">
+			<li class="w-[75vw] p-4 my-4 border rounded-lg shadow sm:p-6 bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700">
 				<div class="flex justify-end h-0 mb-4 lg:mb-1">
 					<button
 						type="button"
@@ -204,7 +204,7 @@
 							newserverToAdd = '';
 						}}
 					>
-						<label for="domain" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+						<label for="domain" class="block mb-2 text-sm font-medium text-gray-400 dark:text-white"
 							>{$_('new_server')}</label
 						>
 						<input
@@ -239,7 +239,7 @@
 							<li class="pb-3 sm:pb-4">
 								<div class="flex items-center space-x-4 rtl:space-x-reverse">
 									<div class="flex-1 min-w-0">
-										<p class="text-lg truncate text-white">
+										<p class="text-lg truncate text-gray-400 dark:text-white">
 											{#if type === 'stun'}
 												{server.split('stun:')[1]}
 											{:else}
@@ -262,7 +262,7 @@
 						<form action="">
 							<label
 								for="user-{i}"
-								class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+								class="block mb-2 text-sm font-medium text-gray-400 dark:text-white"
 								>{$_('username')}</label
 							>
 							<input
@@ -277,7 +277,7 @@
 
 							<label
 								for="password"
-								class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+								class="block mb-2 text-sm font-medium text-gray-400 dark:text-white"
 								>{$_('password')}</label
 							>
 
