@@ -78,5 +78,12 @@
   "tutorial_prev_text": "Previous",
   "tutorial_play_title": "You are ready to play",
   "tutorial_play_description": "Now select your prefered mode to play (in web there is only one) and follow the instructions inside",
-  "share-the-code-with-your-client": "Share the code with your client"
+  "share-the-code-with-your-client": "Share the code with your client",
+  "go-browser": "You default browser should have been opened automatically (There are known issues in Firefox: We recommend using Chromium based Browsers)",
+  "relay-title": "Go to the browser tab",
+  "warning-go-browser": "Don't close the APP or go back in the menu",
+  "resolutions": "Resolutions",
+  "framerate": "Framerate",
+  "ideal-framerate": "Ideal Framerate",
+  "max-framerate": "Max Framerate"
 }
