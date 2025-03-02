@@ -1,9 +1,9 @@
 <script lang="ts">
 	import {locale, locales, _ } from 'svelte-i18n';
 
-	function setLocale(event: Event) {
+	async function setLocale(event: Event) {
 		const target = event.target as HTMLButtonElement;
-		locale.set(target.dataset.value);
+		await locale.set(target.dataset.value);
 	}
 
 	function getLocaleName(locale: string) {
