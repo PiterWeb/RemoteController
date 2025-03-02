@@ -84,5 +84,6 @@
   "ideal-framerate": "FPS Ideais",
   "max-framerate": "FPS Máximos",
   "relay-title": "Vai a xanela do teu navegador",
-  "resolutions": "Resolucións"
+  "resolutions": "Resolucións",
+  "warning-go-browser": "Non peches a APP ou volvas atrás no menú"
 }
