@@ -1,15 +1,17 @@
 <script>
 	import '../app.css';
 
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	import PageTransition from '$lib/layout/PageTransition.svelte';
 	import Toast from '$lib/toast/Toast.svelte';
 
 	import GamepadSVG from '$lib/assets/gamepad.svg?raw';
 	import Loading from '$lib/loading/Loading.svelte';
+
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
+
 </script>
 
 <svelte:head>
@@ -49,7 +51,7 @@
 	</div>
 </nav>
 
-<PageTransition key={$page.url.toString()} duration={750}>
+<PageTransition key={page.url.toString()} duration={750}>
 	<div class="hero min-h-[calc(100vh-4rem)] bg-base-200">
 		<div class="hero-content flex-col">
 			{@render children?.()}
