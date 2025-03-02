@@ -126,7 +126,7 @@ If you are interested to contribute to this project you can follow this [guide](
 ## Acknowledgements
 
 ### Thanks to jbdemonte/virtual-device ❤
-[jbdemonte/virtual-device](github.com/jbdemonte/virtual-device) is making this project a reality. This is the source of magic that enables RemoteController to generate virtual gamepads on Linux, is very fast and made in pure Go.
+[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is making this project a reality. This is the source of magic that enables RemoteController to generate virtual gamepads on Linux, is very fast and made in pure Go.
 ### Thanks to the ViGEm project  ❤
 [ViGEmBus](https://github.com/nefarius/ViGEmBus) is making this project a reallity. This is the source of magic that enables RemoteController to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
 
