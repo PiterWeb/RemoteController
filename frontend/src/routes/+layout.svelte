@@ -1,7 +1,7 @@
 <script>
 	import '../app.css';
 
-	import { page } from '$app/state';
+	import { page } from '$app/stores';
 
 	import PageTransition from '$lib/layout/PageTransition.svelte';
 	import Toast from '$lib/toast/Toast.svelte';
