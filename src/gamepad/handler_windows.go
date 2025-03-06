@@ -32,12 +32,6 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		return
 	}
 
-	defer func() {
-		if err := recover(); err != nil {
-			FreeTargetAndDisconnect(virtualDevice)
-		}
-	}()
-
 	virtualState := new(ViGEmState)
 
 	// Create a virtual device

@@ -4,7 +4,9 @@ class WS extends WebSocket {
 
     static #instance: WS | null;
     private constructor() {
-        try {super(WS.url)} catch {}
+        try {super(WS.url)} catch (e) {
+            console.error(e)
+        }
     }
 
 
@@ -22,6 +24,6 @@ class WS extends WebSocket {
     }
 }
 
-const ws = WS.instance
+const ws = () => WS.instance
 
 export default ws

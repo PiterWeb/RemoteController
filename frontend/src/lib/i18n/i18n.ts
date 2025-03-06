@@ -1,5 +1,5 @@
 import { browser } from '$app/environment'
-import { init, register, getLocaleFromNavigator } from 'svelte-i18n'
+import { init, register, getLocaleFromNavigator, locale} from 'svelte-i18n'
 
 const defaultLocale = 'en'
 
@@ -11,5 +11,21 @@ register('fr', () => import('./fr.json'))
 
 init({
 	fallbackLocale: defaultLocale,
-	initialLocale: browser ? new Intl.Locale(getLocaleFromNavigator() ?? defaultLocale).language : defaultLocale,
+	initialLocale: browser ? new Intl.Locale(getLocaleFromLocalStorage() ?? getLocaleFromNavigator() ?? defaultLocale).language : defaultLocale,
 })
+
+export function getLocaleFromLocalStorage() {
+	const locale_stored = localStorage.getItem('locale')
+	return locale_stored
+}
+
+function saveLocaleToLocalStorage(locale: string) {
+	browser && localStorage.setItem('locale', locale)
+}
+
+locale.subscribe((value) => {
+	console.log('locale changed to', value)
+	saveLocaleToLocalStorage(value ?? defaultLocale)
+})
+
+

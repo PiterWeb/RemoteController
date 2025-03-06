@@ -1,6 +1,6 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
-import { cloneGamepad } from '$lib/gamepad/gamepad_hook';
+import { cloneGamepad, handleGamepad } from '$lib/gamepad/gamepad_hook';
 import { handleKeyDown, handleKeyUp, unhandleKeyDown, unhandleKeyUp } from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
@@ -84,26 +84,7 @@ async function CreateClientWeb() {
 	}
 
 	controllerChannel.onopen = () => {
-		const sendGamepadData = () => {
-			const gamepadData = navigator.getGamepads();
-
-			gamepadData.forEach((gamepad) => {
-				if (!gamepad) return;
-
-				const serializedData = JSON.stringify(cloneGamepad(gamepad));
-				controllerChannel.send(serializedData);
-			});
-		};
-
-		const gamepadLoop = () => {
-			sendGamepadData();
-
-			// Continue the loop
-			requestAnimationFrame(gamepadLoop);
-		};
-
-		// Start the gamepad loop
-		gamepadLoop();
+		handleGamepad(controllerChannel)
 	};
 
 	streamingSignalChannel.onopen = () => {

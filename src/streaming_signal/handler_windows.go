@@ -2,7 +2,7 @@ package streaming_signal
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/pion/webrtc/v3"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -22,14 +22,18 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 
 	runtime.EventsOn(ctx, "streaming-signal-server", func(data ...interface{}) {
 
-		signalingData, ok := data[0].(string)
-
-		if !ok {
-			fmt.Println(data[0], ok)
+		if len(data) == 0 {
 			return
 		}
 
-		streamingSignalChannel.SendText(signalingData)
+		signalingData, ok := data[0].(string)
+
+		if !ok {
+			log.Println(data[0], ok)
+			return
+		}
+
+		_ = streamingSignalChannel.SendText(signalingData)
 
 	})
 

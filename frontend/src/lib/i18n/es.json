@@ -78,5 +78,12 @@
   "tutorial_prev_text": "Anterior",
   "tutorial_play_title": "Estas listo para jugar",
   "tutorial_play_description": "Ahora selecciona tu modo preferido para jugar (en la web solo hay uno) y sigue las instrucciones que aparecen dentro",
-  "share-the-code-with-your-client": "Comparte el código con tu cliente."
+  "share-the-code-with-your-client": "Comparte el código con tu cliente.",
+  "framerate": "FPS",
+  "go-browser": "Tu navegador por defecto debería abrirse automáticamente (Hay problemas conocidos en Firefox: recomendamos usar navegadores basados en Chromium)",
+  "ideal-framerate": "FPS ideal",
+  "max-framerate": "FPS máximo",
+  "relay-title": "Ir a la pestaña del navegador",
+  "resolutions": "Resoluciones",
+  "warning-go-browser": "No cierres la aplicación o vuelvas atrás en el menú"
 }

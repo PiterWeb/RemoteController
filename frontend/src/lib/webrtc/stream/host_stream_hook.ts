@@ -5,9 +5,8 @@ import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config';
+import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, getSortedVideoCodecs, RESOLUTIONS } from './stream_config';
 import ws from '$lib/websocket/ws';
-import { isLinux } from '$lib/detection/detect_os';
 
 let peerConnection: RTCPeerConnection | undefined;
 
@@ -92,7 +91,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 				role: 'host'
 			};
 
-			if (IS_RUNNING_EXTERNAL) return ws.send(JSON.stringify(data));
+			if (IS_RUNNING_EXTERNAL) return ws().send(JSON.stringify(data));
 			
 			const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
 			EventsEmit('streaming-signal-server', JSON.stringify(data));
@@ -108,7 +107,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 			role: 'host'
 		};
 
-		if (IS_RUNNING_EXTERNAL) return ws.send(JSON.stringify(data));
+		if (IS_RUNNING_EXTERNAL) return ws().send(JSON.stringify(data));
 
 		const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
 		EventsEmit('streaming-signal-server', JSON.stringify(data));
@@ -128,7 +127,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		if (role !== 'client') return;
 
 		if (type === "candidate") {
-			try {peerConnection.addIceCandidate(candidate)} catch {}
+			try {peerConnection.addIceCandidate(candidate)} catch {/** */}
 			return
 		}
 
@@ -136,9 +135,22 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		if (!offer || offerArrived) return;
 
 		try {
+
+			const [transceiver] = peerConnection.getTransceivers();
+			transceiver.setCodecPreferences(getSortedVideoCodecs());
+
+		} catch (e) {
+			
+			console.error(e)
+
+		}
+
+		try {
+
 			await peerConnection.setRemoteDescription(offer);
-		} catch {
+		} catch (e) {
 			// TODO: manage error
+			console.error(e)
 			return
 		}
 		offerArrived = true;
@@ -154,9 +166,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 				params.encodings = [{}];
 			}
 			params.encodings.forEach((_, i) => {
-				params.encodings[i].maxBitrate = 5_000_000;
-				params.encodings[i].maxFramerate = maxFramerate;
-				// params.encodings[i].scaleResolutionDownBy = 1.25
+				params.encodings[i].maxBitrate = 8_500_000; // Configura el bitrate máximo (en bits por segundo)
 				params.encodings[i].priority = 'high';
 			});
 
@@ -174,39 +184,26 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		);
 
 		try {
+			
 			await peerConnection.setLocalDescription(await peerConnection.createAnswer());
-		} catch {
-			// TODO: manage error
+
+		} catch (e) {
+			console.error(e)
 			return
 		}
 		
 	}
 
-	if (!IS_RUNNING_EXTERNAL) {
-		(async () => {
-			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
-			unlistenerStreamingSignal = EventsOn('streaming-signal-client', (data: string) => onSignalArrive(data));
-		})()
-		return;
+	if (IS_RUNNING_EXTERNAL) {
+		const cllbck = (ev: MessageEvent<string>) =>  onSignalArrive(ev.data)
+		ws().addEventListener("message", cllbck)
+		unlistenerStreamingSignal = () => ws().removeEventListener("message", cllbck)
+		return
 	}
 
-	const cllbck = (ev: MessageEvent<string>) =>  onSignalArrive(ev.data)
-	ws.addEventListener("message", cllbck)
-	unlistenerStreamingSignal = () => ws.removeEventListener("message", cllbck)
-
-}
-
-export async function RelayHostStream() {
-
-	if (IS_RUNNING_EXTERNAL) return;
-	if (!await isLinux()) return;
-
-	const { EventsEmit, EventsOn } = await import('$lib/wailsjs/runtime/runtime');
-
-	const cllbk = (ev: MessageEvent<any>) => EventsEmit('streaming-signal-server', ev.data);
-
-	ws.addEventListener("message", (ev) => cllbk)
-
-	EventsOn('streaming-signal-client', (data: string) => ws.send(data))
+	(async () => {
+		const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+		unlistenerStreamingSignal = EventsOn('streaming-signal-client', (data: string) => onSignalArrive(data));
+	})()
 
 }
