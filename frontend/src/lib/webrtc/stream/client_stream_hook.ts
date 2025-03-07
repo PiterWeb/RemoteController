@@ -1,7 +1,7 @@
 import { exportStunServers } from '$lib/webrtc/stun_servers';
 import { setConsumingStream, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
-import { getSortedVideoCodecs } from './stream_config';
+import { getSortedVideoCodecs} from './stream_config';
 
 let peerConnection: RTCPeerConnection | undefined;
 let inboundStream: MediaStream | null = null;
@@ -47,6 +47,11 @@ async function CreateClientStream(
 	};
 
 	peerConnection.ontrack = (ev) => {
+		try {
+				ev.transceiver.setCodecPreferences(getSortedVideoCodecs())
+		} catch {
+			console.error("Error setting codec preferences")
+		}
 		if (ev.streams && ev.streams[0]) {
 			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
 			videoElement.srcObject = ev.streams[0];
@@ -69,26 +74,7 @@ async function CreateClientStream(
 		offerToReceiveVideo: true
 	});
 
-	try {
-		const [transceiver] = peerConnection.getTransceivers();
-		transceiver.setCodecPreferences(getSortedVideoCodecs());
-	} catch {
-
-	}
-
 	await peerConnection.setLocalDescription(offer);
-
-	// Configuración de parámetros del códec
-	peerConnection.getSenders().forEach((sender) => {
-		const params = sender.getParameters();
-
-		if (!params.encodings) {
-			params.encodings = [{}];
-		}
-		params.encodings[0].maxBitrate = 8_500_000; // Configura el bitrate máximo (en bits por segundo)
-		params.encodings[0].priority = "high"
-		sender.setParameters(params);
-	});
 
 	const data: SignalingData = {
 		type: 'offer',
@@ -115,7 +101,7 @@ async function CreateClientStream(
 				await peerConnection.setRemoteDescription(answer);
 				break;
 			case 'candidate':
-				try {peerConnection.addIceCandidate(candidate)} catch {/** */}
+				try {await peerConnection.addIceCandidate(candidate)} catch {/** */}
 				break;
 		}
 	};
