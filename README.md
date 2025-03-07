@@ -1,4 +1,4 @@
-# ![Gamepad](./frontend/src/lib/assets/gamepad.svg) Remote Controller
+# ![Gamepad](./frontend/src/lib/assets/gamepad.svg) LibreRemotePlay
 ### An open source & decentralized alternative to Steam remote play (No need to self host)
 
 ⌛ Looking for contributions 👈
@@ -18,7 +18,7 @@
 ## Download 📦
 
 - (Website) https://remote-controller.vercel.app/download/
-- (Github) https://github.com/PiterWeb/RemoteController/releases/latest
+- (Github) https://github.com/PiterWeb/LibreRemotePlay/releases/latest
 
 ## Guides 📘
 
@@ -68,7 +68,7 @@
 
 ## Self Hosting ☁
 
-There is no way to self-host the infrastructure of RemoteController because it has no backend. But instead you can self-host if you want the TURN & STUN servers and then add them to the config.
+There is no way to self-host the infrastructure of LibreRemotePlay because it has no backend. But instead you can self-host if you want the TURN & STUN servers and then add them to the config.
 
 - If you want to self-host a TURN/STUN server you can [try Coturn](https://github.com/coturn/coturn). (This is only an example, you can choose other STUN/TURN implementations)
 
@@ -126,16 +126,16 @@ If you are interested to contribute to this project you can follow this [guide](
 ## Acknowledgements
 
 ### Thanks to jbdemonte/virtual-device ❤
-[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is making this project a reality. This is the source of magic that enables RemoteController to generate virtual gamepads on Linux, is very fast and made in pure Go.
+[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is making this project a reality. This is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Linux, is very fast and made in pure Go.
 ### Thanks to the ViGEm project  ❤
-[ViGEmBus](https://github.com/nefarius/ViGEmBus) is making this project a reallity. This is the source of magic that enables RemoteController to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
+[ViGEmBus](https://github.com/nefarius/ViGEmBus) is making this project a reallity. This is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
 
 ## Did you like the project 👍 ?
 You can give a star and review us on Product Hunt
 
-<a href="https://www.producthunt.com/products/remote-controller/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-remote&#0045;controller" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=565186&theme=light" alt="Remote&#0032;Controller - Play&#0032;LOCAL&#0032;co&#0045;op&#0032;games&#0032;ONLINE | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+<a href="https://www.producthunt.com/products/remote-controller/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-remote&#0045;controller" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=565186&theme=light" alt="LibreRemotePlay - Play&#0032;LOCAL&#0032;co&#0045;op&#0032;games&#0032;ONLINE | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
 ## Star History
 Here you can see how fast the community is growing
 <br/>
-[![Star History Chart](https://api.star-history.com/svg?repos=PiterWeb/RemoteController&type=Timeline)](https://star-history.com/#PiterWeb/RemoteController&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=PiterWeb/LibreRemotePlay&type=Timeline)](https://star-history.com/#PiterWeb/LibreRemotePlay&Timeline)
