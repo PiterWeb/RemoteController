@@ -34,7 +34,7 @@ WebRTC code: [/src/net/](../src/net) + [/src/streaming_signal/](../src/streaming
 
 ## General 
 
-Remote Controller uses web technologies like WebRTC and MediaDevices (displayMedia).
+LibreRemotePlay uses web technologies like WebRTC and MediaDevices (displayMedia).
 
 WebRTC is totally supported by all main desktop/mobile browsers and is also available in different languages (Go included)
 
