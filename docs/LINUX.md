@@ -2,7 +2,7 @@
 
 ## Execute in Linux
 
-When you run RemoteController you will need to be sure to:
+When you run LibreRemotePlay you will need to be sure to:
 
 - Have a compatible default web browser, any chromium based browser up to date should work. (There are known issues with Firefox)
 
