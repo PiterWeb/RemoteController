@@ -5,7 +5,7 @@
 
 > [!Note]
 > Website: 
-> https://remote-controller.vercel.app/ 
+> https://libreremoteplay.vercel.app/ 
 
 ## Use cases ✨
 
