@@ -5,7 +5,7 @@ import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, getSortedVideoCodecs, RESOLUTIONS } from './stream_config';
+import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config';
 import ws from '$lib/websocket/ws';
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -120,7 +120,6 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 	async function onSignalArrive(data: string) {
 		if (!peerConnection) return;
 
-		console.log(data)
 
 		const { type, offer, candidate, role } = JSON.parse(data) as SignalingData;
 
@@ -136,18 +135,8 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 
 		try {
 
-			const [transceiver] = peerConnection.getTransceivers();
-			transceiver.setCodecPreferences(getSortedVideoCodecs());
-
-		} catch (e) {
-			
-			console.error(e)
-
-		}
-
-		try {
-
 			await peerConnection.setRemoteDescription(offer);
+
 		} catch (e) {
 			// TODO: manage error
 			console.error(e)
@@ -158,30 +147,16 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 		stream = await getDisplayMediaStream(resolution, idealFrameRate, maxFramerate);
 
 		stream?.getTracks().forEach((track) => {
-			if (!stream) return;
-			const sender = peerConnection?.addTrack(track, stream);
-			if (!sender) return;
-			const params = sender.getParameters();
-			if (!params.encodings) {
-				params.encodings = [{}];
-			}
-			params.encodings.forEach((_, i) => {
-				params.encodings[i].maxBitrate = 8_500_000; // Configura el bitrate máximo (en bits por segundo)
-				params.encodings[i].priority = 'high';
-			});
-
-			sender.setParameters(params);
-		});
-
-		stream?.getTracks().forEach((t) =>
-			t.addEventListener(
+			track.addEventListener(
 				'ended',
 				() => {
 					StopStreaming();
 				},
 				true
 			)
-		);
+			if (!stream) return;
+			peerConnection?.addTrack(track, stream);
+		});
 
 		try {
 			

@@ -15,8 +15,8 @@
 </script>
 
 <svelte:head>
-	<title>Remote Controller - Web Client</title>
-	<meta name="description" content="Remote Controller Web CLient" />
+	<title>LibreRemotePlay - Web Client</title>
+	<meta name="description" content="LibreRemotePlay Web CLient" />
 </svelte:head>
 
 <nav class="navbar bg-primary text-primary-content">
@@ -25,7 +25,7 @@
 				<a href="/" class="btn btn-ghost normal-case text-xl items-start content-center">
 					{@html GamepadSVG}
 
-					<div class="hidden md:block">Remote Controller</div>
+					<div class="hidden md:block">LibreRemotePlay</div>
 				</a>
 		</h1>
 	</div>
