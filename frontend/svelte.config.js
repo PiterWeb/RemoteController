@@ -1,4 +1,11 @@
-import adapter from '@sveltejs/adapter-static';
+let adapter;
+
+if (import.meta.env?.VITE_ON_WEBSITE === "true") {
+	adapter = (await import('@sveltejs/adapter-vercel')).default
+} else {
+	adapter = (await import('@sveltejs/adapter-static')).default
+}
+
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
