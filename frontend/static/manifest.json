@@ -1,0 +1,15 @@
+{
+    "name": "LibreRemotePlay",
+    "short_name": "LibreRemotePlay",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "/gamepad.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ],
+    "theme_color": "#4b6bfb",
+    "background_color": "#ffffff"
+}
