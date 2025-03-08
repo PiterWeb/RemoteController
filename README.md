@@ -52,7 +52,7 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ✔ Gamepad support (❌ Keyboard/Streaming for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ✔ Gamepad/Streaming support (❌ Keyboard for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
 
 ### Native Gamepad Support 🎮
 
