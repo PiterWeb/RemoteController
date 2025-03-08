@@ -12,7 +12,8 @@
 		"format": "prettier --plugin-search-dir . --write .",
 		"cy:open": "cypress open --e2e",
 		"test": "cypress run --e2e",
-		"cy:parallel": "cypress-parallel -s cy:open -t 2 -m false"
+		"cy:parallel": "cypress-parallel -s cy:open -t 2 -m false",
+		"prebuild": "pnpm -v && corepack enable && corepack prepare pnpm@10.6.1 --activate"
 	},
 	"devDependencies": {
 		"@rollup/plugin-json": "^6.1.0",
