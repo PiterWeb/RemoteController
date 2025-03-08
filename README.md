@@ -17,13 +17,13 @@
 
 ## Download 📦
 
-- (Website) https://remote-controller.vercel.app/download/
+- (Website) https://libreremoteplay.vercel.app/download/
 - (Github) https://github.com/PiterWeb/LibreRemotePlay/releases/latest
 
 ## Guides 📘
 
-- [Instalation guide](https://remote-controller.vercel.app/info/guides/installation/)
-- [How to use](https://remote-controller.vercel.app/info/guides/how-to-use/)
+- [Instalation guide](https://libreremoteplay.vercel.app/info/guides/installation/)
+- [How to use](https://libreremoteplay.vercel.app/info/guides/how-to-use/)
 
 ## Resources 📚
 
