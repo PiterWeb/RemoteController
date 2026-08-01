@@ -16,7 +16,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/otiai10/gosseract/v2 v2.4.1 // indirect
-	github.com/pion/dtls/v3 v3.0.11 // indirect
+	github.com/pion/dtls/v3 v3.1.4 // indirect
 	github.com/pion/ice/v4 v4.1.0 // indirect
 	github.com/pion/mdns/v2 v2.1.0 // indirect
 	github.com/pion/srtp/v3 v3.0.9 // indirect
