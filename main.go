@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"log"
+	"os"
 
 	"LibreRemotePlay/src/cli"
 	_ "LibreRemotePlay/src/cli"
@@ -22,7 +23,7 @@ import (
 var assets embed.FS
 
 func main() {
-
+	
 	logFile := appLogger.InitLogger()
 
 	defer logFile.Close()
@@ -35,19 +36,20 @@ func main() {
 		Ctx: ctx,
 		CancelCtx: cancelCtx,
 		Assets: assets,
+		Dev: os.Getenv("LRP_DEV") == "true",
 	}
 	
 	go systray.Run(onSystrayReady(app), onSysTrayExit)
 	defer systray.Quit()
 
 	go func() {
-		if err := oninit.Execute(ctx, assets); err != nil {
+		if err := oninit.Execute(app); err != nil {
 			log.Println(err)
 		}
 	}()
 	
 	go func () {
-		if err := streaming_signal.InitWhipServer(ctx, streaming_signal.WhipConfig); err != nil {
+		if err := streaming_signal.InitWhipServer(app, streaming_signal.WhipConfig); err != nil {
 			log.Println(err)
 		}
 	}()
@@ -77,7 +79,14 @@ func addOpenBrowserItem(app state.App) {
 			select {
 				case <-mOpenBrowser.ClickedCh: 
 					log.Println("Opening web browser")
-					url := fmt.Sprintf("http://localhost:%d", cli.GetConfig().GetHTTPPort())
+					var url string
+
+					if app.Dev {
+						url = "http://localhost:5173"
+					} else {
+						url = fmt.Sprintf("http://localhost:%d", cli.GetConfig().GetHTTPPort())
+					}
+					
 					err := browser.OpenURL(url)
 					if err != nil {
 						log.Println(err)

@@ -1,15 +1,15 @@
 package oninit
 
 import (
-	"context"
-	"embed"
 	"log"
 
-	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
 	"LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/state"
+
+	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
 )
 
-func Execute(ctx context.Context, assets embed.FS) error {
+func Execute(app state.App) error {
 
 	ips_channel := make(chan []string, 1)
 	defer close(ips_channel)

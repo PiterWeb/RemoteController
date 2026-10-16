@@ -14,7 +14,7 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		return
 	}
 
-	go handleWhipOffer(streamingSignalChannel)
+	go handleWhipOffer(ctx, streamingSignalChannel)
 
 	streamingSignalChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 

@@ -1,29 +1,29 @@
 package oninit
 
 import (
-	"context"
-	"embed"
 	"errors"
 	"log"
 	"net/http"
 
-	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
 	"LibreRemotePlay/src/cli"
 	net_http "LibreRemotePlay/src/net/http"
 	"LibreRemotePlay/src/net/websocket"
+	"LibreRemotePlay/src/state"
+
+	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
 )
 
-func Execute(ctx context.Context, assets embed.FS) error {
+func Execute(app state.App) error {
 
 	httpServerMux := http.NewServeMux()
 	
-	websocket.SetupWebsocketHandler(ctx, httpServerMux)
+	websocket.SetupWebsocketHandler(app.Ctx, httpServerMux)
 
 	ips_channel := make(chan []string, 1)
 	errChan := make(chan error, 2)
 
 	go func() {
-		err := net_http.InitHTTPAssets(ctx, httpServerMux, assets)
+		err := net_http.InitHTTPAssets(app, httpServerMux)
 
 		if err != nil {
 			errChan <- err

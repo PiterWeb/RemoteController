@@ -14,6 +14,8 @@ import (
 
 	"LibreRemotePlay/src/cli"
 	"LibreRemotePlay/src/devices"
+	"LibreRemotePlay/src/state"
+
 	"github.com/pion/webrtc/v4"
 )
 
@@ -35,7 +37,7 @@ var WhipConfig = &whipConfig{
 	ICEServers: atomic.Pointer[[]webrtc.ICEServer]{},
 }
 
-func InitWhipServer(ctx context.Context, config *whipConfig) error {
+func InitWhipServer(app state.App, config *whipConfig) error {
 
 	var answerChan <-chan string = config.AnswerChan
 	var offerChan chan<- string = config.OfferChan
@@ -145,7 +147,7 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 		WriteTimeout: time.Second * 30,
 		ReadTimeout:  time.Second * 30,
 		BaseContext: func(l net.Listener) context.Context {
-			return ctx
+			return app.Ctx
 		},
 	}
 

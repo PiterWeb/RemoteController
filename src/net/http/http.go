@@ -3,7 +3,6 @@ package http
 
 import (
 	"context"
-	"embed"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -12,9 +11,10 @@ import (
 	"strings"
 
 	"LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/state"
 )
 
-func InitHTTPAssets(ctx context.Context,serverMux *http.ServeMux, assets embed.FS) error {
+func InitHTTPAssets(app state.App, serverMux *http.ServeMux) error {
 
 	config := cli.GetConfig()
 	clientPort := config.GetHTTPPort()
@@ -27,19 +27,19 @@ func InitHTTPAssets(ctx context.Context,serverMux *http.ServeMux, assets embed.F
 		addr = fmt.Sprintf("127.0.0.1:%d", clientPort)
 	}
 
-	staticFS, err := fs.Sub(assets, "frontend/build")
+	staticFS, err := fs.Sub(app.Assets, "frontend/build")
 
 	if err != nil {
 		return err
 	}
-
+	
 	serverMux.Handle("GET /", FileMiddleware(staticFS, http.FileServer(http.FS(staticFS))))
 
 	httpServer := &http.Server{
 		Handler: serverMux,
 		Addr:    addr,
 		BaseContext: func(l net.Listener) context.Context {
-			return ctx
+			return app.Ctx
 		},
 	}
 

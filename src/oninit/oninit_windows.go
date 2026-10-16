@@ -1,18 +1,18 @@
 package oninit
 
 import (
-	"context"
-	"embed"
 	"log"
 	"net/http"
 
-	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
 	"LibreRemotePlay/src/cli"
 	"LibreRemotePlay/src/devices/gamepad"
 	net_http "LibreRemotePlay/src/net/http"
+	"LibreRemotePlay/src/state"
+
+	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
 )
 
-func Execute(ctx context.Context, assets embed.FS) error {
+func Execute(app state.App) error {
 	err := gamepad.InitViGEm()
 
 	if err != nil {
@@ -25,7 +25,7 @@ func Execute(ctx context.Context, assets embed.FS) error {
 	errChan := make(chan error, 2)
 
 	go func() {
-		err := net_http.InitHTTPAssets(ctx, httpServerMux, assets)
+		err := net_http.InitHTTPAssets(app, httpServerMux)
 
 		if err != nil {
 			errChan <- err
