@@ -1,6 +1,6 @@
 package audio
 
-import "github.com/PiterWeb/RemoteController/src/devices"
+import "LibreRemotePlay/src/devices"
 
 type AudioProcess struct {
 	Name string

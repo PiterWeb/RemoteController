@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/PiterWeb/RemoteController/src/bin"
+	"LibreRemotePlay/src/bin"
 	"github.com/go-ole/go-ole"
 	"github.com/moutend/go-wca/pkg/wca"
 	"github.com/pion/webrtc/v4"

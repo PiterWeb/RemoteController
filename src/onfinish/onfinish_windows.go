@@ -1,6 +1,6 @@
 package onfinish
 
-import "github.com/PiterWeb/RemoteController/src/devices/gamepad"
+import "LibreRemotePlay/src/devices/gamepad"
 
 func Execute() error {
 

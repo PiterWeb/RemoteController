@@ -1,8 +1,9 @@
-module github.com/PiterWeb/RemoteController
+module LibreRemotePlay
 
 go 1.26.5
 
 require (
+	fyne.io/systray v1.12.2
 	github.com/coder/websocket v1.8.12
 	github.com/jbdemonte/virtual-device v1.1.0
 	github.com/json-iterator/go v1.1.12
@@ -83,7 +84,7 @@ require (
 	github.com/pion/rtp v1.8.27 // indirect
 	github.com/pion/sctp v1.9.0 // indirect
 	github.com/pion/sdp/v3 v3.0.17 // indirect
-	github.com/wailsapp/wails/v2 v2.13.0
+	github.com/wailsapp/wails/v2 v2.16.0
 	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect

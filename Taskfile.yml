@@ -4,7 +4,7 @@ tasks:
   dev-all:
     deps: [build-front]
     cmds:
-      - wails dev
+      - wails dev -tags webkit2_41
     desc: Run the application in development mode
   dev-front:
     dir: frontend

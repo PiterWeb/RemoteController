@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/PiterWeb/RemoteController/src/bin"
+	"LibreRemotePlay/src/bin"
 )
 
 type (

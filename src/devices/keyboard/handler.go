@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/PiterWeb/RemoteController/src/devices"
+	"LibreRemotePlay/src/devices"
 	"github.com/go-vgo/robotgo"
 	"github.com/pion/webrtc/v4"
 )

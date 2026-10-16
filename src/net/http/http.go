@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/PiterWeb/RemoteController/src/cli"
+	"LibreRemotePlay/src/cli"
 )
 
 func InitHTTPAssets(ctx context.Context,serverMux *http.ServeMux, assets embed.FS) error {

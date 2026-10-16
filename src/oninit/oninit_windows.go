@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
-	"github.com/PiterWeb/RemoteController/src/cli"
-	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
-	net_http "github.com/PiterWeb/RemoteController/src/net/http"
+	"LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/devices/gamepad"
+	net_http "LibreRemotePlay/src/net/http"
 )
 
 func Execute(ctx context.Context, assets embed.FS) error {

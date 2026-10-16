@@ -12,8 +12,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/PiterWeb/RemoteController/src/cli"
-	"github.com/PiterWeb/RemoteController/src/devices"
+	"LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/devices"
 	"github.com/pion/webrtc/v4"
 )
 

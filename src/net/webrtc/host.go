@@ -7,12 +7,12 @@ import (
 	"runtime"
 	"strings"
 
-	// "github.com/PiterWeb/RemoteController/src/plugins"
-	// "github.com/PiterWeb/RemoteController/src/devices/audio"
-	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
-	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
-	"github.com/PiterWeb/RemoteController/src/devices/mouse"
-	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
+	// "LibreRemotePlay/src/plugins"
+	// "LibreRemotePlay/src/devices/audio"
+	"LibreRemotePlay/src/devices/gamepad"
+	"LibreRemotePlay/src/devices/keyboard"
+	"LibreRemotePlay/src/devices/mouse"
+	"LibreRemotePlay/src/net/webrtc/streaming_signal"
 	"github.com/pion/webrtc/v4"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )

@@ -3,7 +3,7 @@ package gamepad
 import (
 	"math"
 
-	"github.com/PiterWeb/RemoteController/src/devices"
+	"LibreRemotePlay/src/devices"
 )
 
 const (

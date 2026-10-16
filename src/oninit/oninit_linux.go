@@ -8,9 +8,9 @@ import (
 	"net/http"
 
 	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
-	"github.com/PiterWeb/RemoteController/src/cli"
-	net_http "github.com/PiterWeb/RemoteController/src/net/http"
-	"github.com/PiterWeb/RemoteController/src/net/websocket"
+	"LibreRemotePlay/src/cli"
+	net_http "LibreRemotePlay/src/net/http"
+	"LibreRemotePlay/src/net/websocket"
 )
 
 func Execute(ctx context.Context, assets embed.FS) error {

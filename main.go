@@ -1,18 +1,21 @@
 package main
 
 import (
+	"context"
 	"embed"
+	"fmt"
 	"log"
 
-	"github.com/PiterWeb/RemoteController/src/bindings"
-	_ "github.com/PiterWeb/RemoteController/src/cli"
-	appLogger "github.com/PiterWeb/RemoteController/src/logger"
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/logger"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/linux"
-	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"LibreRemotePlay/src/cli"
+	_ "LibreRemotePlay/src/cli"
+	appLogger "LibreRemotePlay/src/logger"
+	"LibreRemotePlay/src/net/webrtc/streaming_signal"
+	"LibreRemotePlay/src/oninit"
+	"LibreRemotePlay/src/state"
+
+	"fyne.io/systray"
+	"fyne.io/systray/example/icon"
+	"github.com/pkg/browser"
 )
 
 //go:embed frontend/build/*
@@ -26,48 +29,75 @@ func main() {
 
 	log.Println("LibreRemotePlay Starting app")
 
-	// Create an instance of the app structure
-	app := bindings.NewApp(assets)
+	ctx, cancelCtx := context.WithCancel(context.Background())
 
-	// Create application with options
-	// Create application with options
-	err := wails.Run(&options.App{
-		Title:             "LibreRemotePlay",
-		Width:             1024,
-		Height:            768,
-		DisableResize:     false,
-		Fullscreen:        false,
-		StartHidden:       false,
-		HideWindowOnClose: false,
-		BackgroundColour:  &options.RGBA{R: 75, G: 107, B: 251, A: 255},
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
-		Menu:                     nil,
-		Logger:                   nil,
-		LogLevel:                 logger.DEBUG,
-		OnStartup:                app.Startup,
-		OnBeforeClose:            app.BeforeClose,
-		OnShutdown:               app.Shutdown,
-		WindowStartState:         options.Normal,
-		EnableDefaultContextMenu: true,
-		Bind: []interface{}{
-			app,
-		},
-		Linux: &linux.Options{
-			WebviewGpuPolicy: linux.WebviewGpuPolicyOnDemand,
-		},
-		// Windows platform specific options
-		Windows: &windows.Options{
-			WebviewIsTransparent: false,
-			WindowIsTranslucent:  false,
-			DisableWindowIcon:    true,
-			Theme:                windows.Theme(windows.Acrylic),
-			WebviewUserDataPath:  "",
-		},
-	})
+	app := state.App{
+		Ctx: ctx,
+		CancelCtx: cancelCtx,
+		Assets: assets,
+	}
+	
+	go systray.Run(onSystrayReady(app), onSysTrayExit)
+	defer systray.Quit()
 
-	if err != nil {
-		log.Println(err)
+	go func() {
+		if err := oninit.Execute(ctx, assets); err != nil {
+			log.Println(err)
+		}
+	}()
+	
+	go func () {
+		if err := streaming_signal.InitWhipServer(ctx, streaming_signal.WhipConfig); err != nil {
+			log.Println(err)
+		}
+	}()
+	
+	<-ctx.Done()
+}
+
+func addQuitItem(app state.App) {
+	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
+	go func() {
+		for  {
+			select {
+				case <-mQuit.ClickedCh: 
+					log.Println("Requesting exit")
+					app.CancelCtx()
+				case <-app.Ctx.Done():
+					return
+			}
+		}
+	}()
+}
+
+func addOpenBrowserItem(app state.App) {
+	mOpenBrowser := systray.AddMenuItem("Open", "Open LibreRemotePlay browser tab")
+	go func() {
+		for  {
+			select {
+				case <-mOpenBrowser.ClickedCh: 
+					log.Println("Opening web browser")
+					url := fmt.Sprintf("http://localhost:%d", cli.GetConfig().GetHTTPPort())
+					err := browser.OpenURL(url)
+					if err != nil {
+						log.Println(err)
+					}
+				case <-app.Ctx.Done():
+					return
+			}
+		}
+	}()
+}
+
+func onSystrayReady(app state.App) func() {
+	return func() {
+		systray.SetIcon(icon.Data)
+		systray.SetTitle("LibreRemotePlay")
+		systray.SetTooltip("Desktop App")
+		
+		addQuitItem(app)
+		addOpenBrowserItem(app)
 	}
 }
+
+func onSysTrayExit() {}

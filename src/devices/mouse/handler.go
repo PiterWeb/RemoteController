@@ -6,7 +6,7 @@ import (
 	"encoding/binary"
 	"log"
 
-	"github.com/PiterWeb/RemoteController/src/devices"
+	"LibreRemotePlay/src/devices"
 	"github.com/go-vgo/robotgo"
 	"github.com/pion/webrtc/v4"
 	"github.com/wailsapp/wails/v2/pkg/runtime"

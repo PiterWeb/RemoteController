@@ -6,7 +6,7 @@ import (
 	"log"
 
 	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
-	"github.com/PiterWeb/RemoteController/src/cli"
+	"LibreRemotePlay/src/cli"
 )
 
 func Execute(ctx context.Context, assets embed.FS) error {
