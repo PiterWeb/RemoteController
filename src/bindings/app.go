@@ -124,7 +124,7 @@ func tryCreateHost(app state.App) http.HandlerFunc {
 
 		pidAudioChan := make(chan uint32)
 		
-		go net_webrtc.InitHost(app.Ctx, connCtx, req.Args.ICEServers, req.Args.OfferEncoded, answerResponse, pidAudioChan)
+		go net_webrtc.InitHost(connCtx, req.Args.ICEServers, req.Args.OfferEncoded, answerResponse, pidAudioChan)
 	
 		answer := <-answerResponse
 	
@@ -201,20 +201,17 @@ func getUsedPorts() http.HandlerFunc {
 	} 
 }
 
-// Gamepad
-
-func toogleGamepad() http.HandlerFunc {
+func toogleHelper(toogle func()) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		gamepad.GamepadEnabled.Toogle()
+		toogle()
 		w.WriteHeader(200)
 	}
 }
 
-func isGamepadEnabled() http.HandlerFunc {
+func isEnabledHelper(isEnabled func() bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		res := Res[bool]{
-			Result: gamepad.GamepadEnabled.IsEnabled(),
+			Result: isEnabled(),
 		}
 
 		rawRes, err := json.Marshal(res)
@@ -225,88 +222,47 @@ func isGamepadEnabled() http.HandlerFunc {
 		}
 
 		w.Write(rawRes)
-	} 
+	}
+}
+
+// Gamepad
+
+func toogleGamepad() http.HandlerFunc {
+	return toogleHelper(gamepad.GamepadEnabled.Toogle)
+}
+
+func isGamepadEnabled() http.HandlerFunc {
+	return isEnabledHelper(gamepad.GamepadEnabled.IsEnabled)
 }
 
 // Keyboard
 
 func toogleKeyboard() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		keyboard.KeyboardEnabled.Toogle()
-		w.WriteHeader(200)
-	}
+	return toogleHelper(keyboard.KeyboardEnabled.Toogle)
 }
 
 func isKeyboardEnabled() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		res := Res[bool]{
-			Result: keyboard.KeyboardEnabled.IsEnabled(),
-		}
-
-		rawRes, err := json.Marshal(res)
-		if err != nil {
-			log.Println("Error mashalling res: ", err)
-			w.WriteHeader(500)
-			return
-		}
-
-		w.Write(rawRes)
-	} 
+	return isEnabledHelper(keyboard.KeyboardEnabled.IsEnabled)
 }
 
 // Mouse
 
 func toogleMouse() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		mouse.MouseEnabled.Toogle()
-		w.WriteHeader(200)
-	}
+	return toogleHelper(mouse.MouseEnabled.Toogle)
 }
 
 func isMouseEnabled() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		res := Res[bool]{
-			Result: mouse.MouseEnabled.IsEnabled(),
-		}
-
-		rawRes, err := json.Marshal(res)
-		if err != nil {
-			log.Println("Error mashalling res: ", err)
-			w.WriteHeader(500)
-			return
-		}
-
-		w.Write(rawRes)
-	} 
+	return isEnabledHelper(mouse.MouseEnabled.IsEnabled)
 }
 
 // WHIP
 
 func toogleWhip() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		streaming_signal.WhipConfig.Enabled.Toogle()
-		w.WriteHeader(200)
-	}
+	return toogleHelper(streaming_signal.WhipConfig.Enabled.Toogle)
 }
 
 func isWhipEnabled() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		res := Res[bool]{
-			Result: streaming_signal.WhipConfig.Enabled.IsEnabled(),
-		}
-
-		rawRes, err := json.Marshal(res)
-		if err != nil {
-			log.Println("Error mashalling res: ", err)
-			w.WriteHeader(500)
-			return
-		}
-
-		w.Write(rawRes)
-	}
+	return isEnabledHelper(streaming_signal.WhipConfig.Enabled.IsEnabled)
 }
 
 // OS Detection
