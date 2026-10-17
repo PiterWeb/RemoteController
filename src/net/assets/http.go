@@ -1,5 +1,5 @@
 // HTTP server
-package http
+package assets
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"LibreRemotePlay/src/state"
 )
 
-func InitHTTPAssets(app state.App, serverMux *http.ServeMux) error {
+func ServeHTTPAssets(app state.App, serverMux *http.ServeMux) error {
 
 	config := cli.GetConfig()
 	clientPort := config.GetHTTPPort()

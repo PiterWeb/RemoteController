@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"LibreRemotePlay/src/cli"
 	_ "LibreRemotePlay/src/cli"
@@ -53,8 +55,18 @@ func main() {
 			log.Println("Error oninit: ", err)
 		}
 	}()
-	
-	<-ctx.Done()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+
+	for {
+		select {
+			case <-ctx.Done():
+				return
+			case <-c:
+				cancelCtx()
+		}
+	}
 }
 
 func addQuitItem(app state.App) {

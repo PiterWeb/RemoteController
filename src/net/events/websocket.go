@@ -1,5 +1,5 @@
 // Websocket server
-package websocket
+package events
 
 import (
 	"context"

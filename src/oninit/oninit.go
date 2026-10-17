@@ -7,9 +7,9 @@ import (
 
 	"LibreRemotePlay/src/bindings"
 	"LibreRemotePlay/src/cli"
-	net_http "LibreRemotePlay/src/net/http"
+	"LibreRemotePlay/src/net/assets"
 	"LibreRemotePlay/src/net/webrtc/streaming_signal"
-	"LibreRemotePlay/src/net/websocket"
+	"LibreRemotePlay/src/net/events"
 	"LibreRemotePlay/src/state"
 
 	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
@@ -30,13 +30,13 @@ func Execute(app state.App) error {
 
 	wsServerMux := http.NewServeMux()
 	httpServerMux.Handle("/ws", wsServerMux)
-	websocket.SetupWebsocketHandler(app.Ctx, wsServerMux)
+	events.SetupWebsocketHandler(app.Ctx, wsServerMux)
 
 	ips_channel := make(chan []string, 1)
 	errChan := make(chan error, 2)
 
 	go func() {
-		err := net_http.InitHTTPAssets(app, httpServerMux)
+		err := assets.ServeHTTPAssets(app, httpServerMux)
 
 		if err != nil {
 			errChan <- err

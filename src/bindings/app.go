@@ -3,14 +3,18 @@
 package bindings
 
 import (
-	"context"
-	"embed"
-	"fmt"
+	// "context"
+	// "embed"
 
 	//	"log"
+	"context"
+	"encoding/json"
+	"io"
+	"log"
 	"net/http"
+
 	//	"strings"
-	"sync"
+	// "sync"
 	// 	"time"
 	//
 	// 	"runtime"
@@ -20,11 +24,14 @@ import (
 	// 	"LibreRemotePlay/src/devices/gamepad"
 	// 	"LibreRemotePlay/src/devices/keyboard"
 	// 	"LibreRemotePlay/src/devices/mouse"
-	// 	net "LibreRemotePlay/src/net/webrtc"
+	net_webrtc "LibreRemotePlay/src/net/webrtc"
 	// 	"LibreRemotePlay/src/net/webrtc/streaming_signal"
 	// 	"LibreRemotePlay/src/onfinish"
 	// 	"LibreRemotePlay/src/oninit"
+	"LibreRemotePlay/src/net/webrtc/streaming_signal"
 	"LibreRemotePlay/src/state"
+
+	"github.com/pion/webrtc/v4"
 	// "github.com/pion/webrtc/v4"
 	// wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -36,22 +43,134 @@ type UsedPorts struct {
 }
 
 // App struct
-type App struct {
-	ctx    context.Context
-	assets embed.FS 
-	openPeer bool
-	mutex *sync.Mutex
-	pidAudioChan chan uint32
-	cancelConn context.CancelFunc
-}
+// type App struct {
+// 	ctx    context.Context
+// 	assets embed.FS 
+// 	openPeer bool
+// 	mutex *sync.Mutex
+// 	pidAudioChan chan uint32
+// 	cancelConn context.CancelFunc
+// }
 
 func SetupBindings(app state.App, mux *http.ServeMux) {
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Bindings")
+		w.Write([]byte("Bindings OK"))
 	})
-	
+
+	mux.Handle("PATCH /notify/open/peer", notifyOpenPeer(app))
+	mux.Handle("PATCH /notify/close/peer", notifyClosePeer(app))
+
+	mux.Handle("POST /conn/host", tryCreateHost(app))
 }
+
+func notifyOpenPeer(app state.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		app.Conn.Peer.Open()
+		log.Println("NotifyCreateClient")
+		w.WriteHeader(200)
+	}
+}
+
+func notifyClosePeer(app state.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		app.Conn.Peer.Close()
+		log.Println("NotifyCloseClient")
+		w.WriteHeader(200)
+	}
+}
+
+// Create a Host Peer, it receives the offer encoded and returns the encoded answer response
+func tryCreateHost(app state.App) http.HandlerFunc {
+
+	type Req struct {
+		ICEServers []webrtc.ICEServer `json:"ice_servers"`
+		OfferEncoded string `json:"offer_encoded"`
+	}
+	
+	type Res struct {
+		Response string `json:"data"`
+	}
+	
+	return func(w http.ResponseWriter, r *http.Request) {
+		// var ICEServers []webrtc.ICEServer
+		// var offerEncoded string
+		
+		if app.Conn.Peer.IsOpen() {
+			app.Conn.CancelCtx()
+		}
+
+		app.Conn.Peer.Open()
+		
+		answerResponse := make(chan string, 1) // Buffer of 1 to not block thread on cancel
+	
+		connCtx, cancelConn := context.WithCancel(app.Ctx)
+		
+		app.Conn.CancelCtx = cancelConn
+		app.Conn.Ctx = connCtx
+
+		rawReq, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Println("Error reading req body: ", err)
+			w.WriteHeader(500)
+			return
+		}
+
+		var req Req
+		err = json.Unmarshal(rawReq, &req)
+		if err != nil {
+			log.Println("Error unmarshalling req body: ", err)
+			w.WriteHeader(400)
+			return 
+		}
+		
+		log.Println(req.ICEServers)
+		streaming_signal.WhipConfig.ICEServers.Store(&req.ICEServers)
+
+		pidAudioChan := make(chan uint32)
+		
+		go net_webrtc.InitHost(app.Ctx, connCtx, req.ICEServers, req.OfferEncoded, answerResponse, pidAudioChan)
+	
+		answer := <-answerResponse
+	
+		if answer == net_webrtc.ERROR_ANSWER {
+			app.Conn.Peer.Close()
+			log.Println("Error on WebRTC host connection")
+			w.WriteHeader(500)
+		}
+
+		res := Res{
+			Response: answer,
+		}
+
+		resRaw, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Error marshaling response: ", err)
+			w.WriteHeader(500)
+			return
+		}
+		
+		w.Write(resRaw)
+	}
+}
+
+// // Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
+// func (a *App) TryClosePeerConnection() bool {
+// 
+// 	a.mutex.Lock()
+// 	defer a.mutex.Unlock()
+// 
+// 	if !a.openPeer {
+// 		return false
+// 	}
+// 
+// 	a.cancelConn()
+// 
+// 	a.openPeer = false
+// 
+// 	return true
+// 
+// }
 
 // // NewApp creates a new App application struct
 // func NewApp(assets embed.FS) *App {
@@ -133,23 +252,7 @@ func SetupBindings(app state.App, mux *http.ServeMux) {
 // 	}
 // }
 // 
-// func (a *App) NotifyCreateClient() {
-// 
-// 	a.mutex.Lock()
-// 	defer a.mutex.Unlock()
-// 
-// 	a.openPeer = true
-// 	println("NotifyCreateClient")
-// }
-// 
-// func (a *App) NotifyCloseClient() {
-// 
-// 	a.mutex.Lock()
-// 	defer a.mutex.Unlock()
-// 
-// 	a.openPeer = false
-// 	println("NotifyCloseClient")
-// }
+
 // 
 // // Create a Host Peer, it receives the offer encoded and returns the encoded answer response
 // func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) (value string) {

@@ -1,6 +1,6 @@
 package bindings
 
-func (a *App) OpenViGEmWizard() (err string) {
-
-	return ""
-}
+// func (a *App) OpenViGEmWizard() (err string) {
+// 
+// 	return ""
+// }

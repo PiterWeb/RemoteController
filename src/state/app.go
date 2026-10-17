@@ -10,8 +10,14 @@ type App struct {
 	Ctx context.Context
 	CancelCtx context.CancelFunc
 	Assets fs.FS
-	Peer *Peer
 	Dev bool
+	Conn *Conn
+}
+
+type Conn struct {
+	Ctx context.Context
+	CancelCtx context.CancelFunc
+	Peer *Peer
 }
 
 type Peer struct {
