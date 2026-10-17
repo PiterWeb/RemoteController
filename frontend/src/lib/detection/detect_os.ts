@@ -1,5 +1,5 @@
-import onwebsite, { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-import { GetCurrentOS } from '$lib/wailsjs/go/bindings/App';
+import onwebsite from '$lib/detection/onwebsite';
+import { GetCurrentOS } from '$lib/bindings/App';
 
 type OS = 'WINDOWS' | 'LINUX' | 'MACOS';
 
@@ -30,4 +30,4 @@ export async function isMacOS() {
     }
 }
 
-export const isDesktop = !(onwebsite || IS_RUNNING_EXTERNAL)
+export const isDesktop = !onwebsite

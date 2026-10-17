@@ -23,7 +23,7 @@
 	import Tooltip from '$lib/layout/Tooltip.svelte';
 	import MouseIcon from '$lib/layout/icons/MouseIcon.svelte';
 	import IsRunningExternal from '$lib/detection/IsRunningExternal.svelte';
-	// import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
+	// import { GetAudioProcess, SetAudioPid } from '$lib/bindings/App';
 
 	let selected_audio_src = $state(0);
 	let audio_srcs = $state<audio.AudioProcess[]>([]);
@@ -83,28 +83,28 @@
 	}
 
 	async function toogleWhip() {
-		const { IsWhipEnabled, ToogleWhip } = await import('$lib/wailsjs/go/bindings/App');
+		const { IsWhipEnabled, ToogleWhip } = await import('$lib/bindings/App');
 
 		await ToogleWhip();
 		whipEnabled = await IsWhipEnabled();
 	}
 
 	async function toogleKeyboard() {
-		const { IsKeyboardEnabled, ToogleKeyboard } = await import('$lib/wailsjs/go/bindings/App');
+		const { IsKeyboardEnabled, ToogleKeyboard } = await import('$lib/bindings/App');
 
 		await ToogleKeyboard();
 		keyboardEnabled = await IsKeyboardEnabled();
 	}
 
 	async function toogleGamepad() {
-		const { IsGamepadEnabled, ToogleGamepad } = await import('$lib/wailsjs/go/bindings/App');
+		const { IsGamepadEnabled, ToogleGamepad } = await import('$lib/bindings/App');
 
 		await ToogleGamepad();
 		gamepadEnabled = await IsGamepadEnabled();
 	}
 
 	async function toogleMouse() {
-		const { IsMouseEnabled, ToogleMouse } = await import('$lib/wailsjs/go/bindings/App');
+		const { IsMouseEnabled, ToogleMouse } = await import('$lib/bindings/App');
 		await ToogleMouse();
 		mouseEnabled = await IsMouseEnabled();
 	}
@@ -138,11 +138,11 @@
 				return;
 			}
 
-			const { IsWhipEnabled } = await import('$lib/wailsjs/go/bindings/App');
+			const { IsWhipEnabled } = await import('$lib/bindings/App');
 			whipEnabled = await IsWhipEnabled();
-			
+
 			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
-			const { GetUsedPorts } = await import('$lib/wailsjs/go/bindings/App');
+			const { GetUsedPorts } = await import('$lib/bindings/App');
 			const usedPorts = await GetUsedPorts();
 			httpExternalPort = usedPorts.HTTP;
 			whipPort = usedPorts.WHIP;
