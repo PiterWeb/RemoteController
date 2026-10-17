@@ -1,9 +1,6 @@
 version: "3"
 
 tasks:
-  dev-all:
-    deps: [dev-front, dev-back]
-    desc: Run the application in development mode
   dev-front:
     dir: frontend
     deps: [install-front]
@@ -11,20 +8,18 @@ tasks:
       - pnpm run dev
     desc: Run the frontend in development mode
   dev-back:
-    watch: true
-    sources: 
-      - 'main.go'
-      - 'src/**/**.go'
     env:
        LRP_DEV: true
     cmds:
-      - go build .
-      - ./LibreRemotePlay
+      - go build -o ./build/dev/bin/ . 
+      - ./build/dev/bin/LibreRemotePlay
     desc: Run the backend in development mode 
   build:
     deps: [build-front]
     cmds:
-      - go build .
+      - for: [amd64, arm64]
+        cmd: GOOS=linux GOOARCH={{.ITEM}} go build -o ./build/bin/LibreRemotePlay-{{.ITEM}} .
+      - GOOS=windows GOOARCH=amd64 go build -o ./build/bin/LibreRemotePlay.exe .
     desc: Build the application for all platforms
   build-linux-flatpak:
     deps: [build-front]
