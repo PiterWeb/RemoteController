@@ -10,7 +10,7 @@ import (
 	"LibreRemotePlay/src/cli"
 	_ "LibreRemotePlay/src/cli"
 	appLogger "LibreRemotePlay/src/logger"
-	"LibreRemotePlay/src/net/webrtc/streaming_signal"
+	"LibreRemotePlay/src/onfinish"
 	"LibreRemotePlay/src/oninit"
 	"LibreRemotePlay/src/state"
 
@@ -42,15 +42,15 @@ func main() {
 	go systray.Run(onSystrayReady(app), onSysTrayExit)
 	defer systray.Quit()
 
-	go func() {
-		if err := oninit.Execute(app); err != nil {
-			log.Println(err)
+	defer func() {
+		if err := onfinish.Execute(); err != nil {
+			log.Println("Error onfinish: ", err.Error())
 		}
 	}()
 	
-	go func () {
-		if err := streaming_signal.InitWhipServer(app, streaming_signal.WhipConfig); err != nil {
-			log.Println(err)
+	go func() {
+		if err := oninit.Execute(app); err != nil {
+			log.Println("Error oninit: ", err)
 		}
 	}()
 	
@@ -104,8 +104,8 @@ func onSystrayReady(app state.App) func() {
 		systray.SetTitle("LibreRemotePlay")
 		systray.SetTooltip("Desktop App")
 		
-		addQuitItem(app)
 		addOpenBrowserItem(app)
+		addQuitItem(app)
 	}
 }
 

@@ -2,78 +2,77 @@ package audio
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"os"
-	"os/exec"
-	"time"
-
-	"LibreRemotePlay/src/bin"
 	"github.com/go-ole/go-ole"
 	"github.com/moutend/go-wca/pkg/wca"
 	"github.com/pion/webrtc/v4"
-	"github.com/pion/webrtc/v4/pkg/media"
 )
 
 func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) error {
 
-	// Create exe temp file in temp dir
-	StdoutPCMApplicationLoopbackFile, err := os.CreateTemp("", "StdoutPCMApplicationLoopback-*.exe")
-
-	if err != nil {
-		return err
+	if AudioEnabled.IsEnabled() {
+		return nil
 	}
 
-	defer os.Remove(StdoutPCMApplicationLoopbackFile.Name())
-
-	if _, err := StdoutPCMApplicationLoopbackFile.Write(bin.StdoutPCMApplicationLoopback_exe); err != nil {
-		return err
-	}
-
-	if err := StdoutPCMApplicationLoopbackFile.Close(); err != nil {
-		return err
-	}
-
-	exePath := StdoutPCMApplicationLoopbackFile.Name()
-
-	pid := ctx.Value("pid").(uint32)
-
-	cmd := exec.CommandContext(ctx, exePath, fmt.Sprintf("%d", pid))
-
-	stdoutPipe, err := cmd.StdoutPipe()
-
-	if err != nil {
-		return err
-	}
-
-	buff := make([]byte, 1024)
-
-	tickerChan := time.NewTicker(time.Millisecond * 20).C
-
-	if err := cmd.Start(); err != nil {
-		return err
-	}
-
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case <-tickerChan:
-			if n, err := stdoutPipe.Read(buff); err != nil {
-				return err
-			} else if n == 0 {
-				continue
-			} else {
-				log.Printf("Audio bytes readed: %d", n)
-			}
-
-			if AudioEnabled.IsEnabled() {
-				if err = track.WriteSample(media.Sample{Data: buff, Duration: time.Millisecond * 20}); err != nil {
-					return err
-				}
-			}
-		}
-	}
+	return nil
+	
+// 	// Create exe temp file in temp dir
+// 	StdoutPCMApplicationLoopbackFile, err := os.CreateTemp("", "StdoutPCMApplicationLoopback-*.exe")
+// 
+// 	if err != nil {
+// 		return err
+// 	}
+// 
+// 	defer os.Remove(StdoutPCMApplicationLoopbackFile.Name())
+// 
+// 	if _, err := StdoutPCMApplicationLoopbackFile.Write(bin.StdoutPCMApplicationLoopback_exe); err != nil {
+// 		return err
+// 	}
+// 
+// 	if err := StdoutPCMApplicationLoopbackFile.Close(); err != nil {
+// 		return err
+// 	}
+// 
+// 	exePath := StdoutPCMApplicationLoopbackFile.Name()
+// 
+// 	pid := ctx.Value("pid").(uint32)
+// 
+// 	cmd := exec.CommandContext(ctx, exePath, fmt.Sprintf("%d", pid))
+// 
+// 	stdoutPipe, err := cmd.StdoutPipe()
+// 
+// 	if err != nil {
+// 		return err
+// 	}
+// 
+// 	buff := make([]byte, 1024)
+// 
+// 	tickerChan := time.NewTicker(time.Millisecond * 20).C
+// 
+// 	if err := cmd.Start(); err != nil {
+// 		return err
+// 	}
+// 
+// 	for {
+// 		select {
+// 		case <-ctx.Done():
+// 			return nil
+// 		case <-tickerChan:
+// 			if n, err := stdoutPipe.Read(buff); err != nil {
+// 				return err
+// 			} else if n == 0 {
+// 				continue
+// 			} else {
+// 				log.Printf("Audio bytes readed: %d", n)
+// 			}
+// 
+// 			if AudioEnabled.IsEnabled() {
+// 				if err = track.WriteSample(media.Sample{Data: buff, Duration: time.Millisecond * 20}); err != nil {
+// 					return err
+// 				}
+// 			}
+// 		}
+// 	}
 
 }
 

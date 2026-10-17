@@ -13,5 +13,5 @@ var ViGEmClient_x86 []byte
 //go:embed ViGEmBus_1.22.0_x64_x86_arm64.exe
 var ViGEmBus_exe []byte
 
-//go:embed StdoutPCMApplicationLoopback.exe
-var StdoutPCMApplicationLoopback_exe []byte
+// //go:embed StdoutPCMApplicationLoopback.exe
+// var StdoutPCMApplicationLoopback_exe []byte

@@ -12,9 +12,9 @@ import (
 
 var conns = map[string]*websocket.Conn{}
 
-func SetupWebsocketHandler(ctx context.Context, serverMux *http.ServeMux) {
+func SetupWebsocketHandler(ctx context.Context, mux *http.ServeMux) {
 
-	serverMux.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 
 		c, err := websocket.Accept(w, r, nil)
 		if err != nil {

@@ -33,7 +33,7 @@ func InitHTTPAssets(app state.App, serverMux *http.ServeMux) error {
 		return err
 	}
 	
-	serverMux.Handle("GET /", FileMiddleware(staticFS, http.FileServer(http.FS(staticFS))))
+	serverMux.Handle("/", FileMiddleware(staticFS, http.FileServer(http.FS(staticFS))))
 
 	httpServer := &http.Server{
 		Handler: serverMux,
