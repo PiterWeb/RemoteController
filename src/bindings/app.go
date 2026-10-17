@@ -33,7 +33,7 @@ type Req[T any] struct {
 
 func SetupBindings(app state.App, mux *http.ServeMux) {
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Bindings OK"))
 	})
 

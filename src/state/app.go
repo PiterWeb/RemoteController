@@ -22,23 +22,23 @@ type Conn struct {
 
 type Peer struct {
 	open bool
-	mutex *sync.RWMutex
+	Mutex *sync.RWMutex
 }
 
 func (p *Peer) IsOpen() bool {
-	p.mutex.RLock()
-	defer p.mutex.RUnlock()
+	p.Mutex.RLock()
+	defer p.Mutex.RUnlock()
 	return p.open
 }
 
 func (p *Peer) Open() {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
+	p.Mutex.Lock()
+	defer p.Mutex.Unlock()
 	p.open = true
 }
 
 func (p *Peer) Close() {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
+	p.Mutex.Lock()
+	defer p.Mutex.Unlock()
 	p.open = false
 }

@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	"LibreRemotePlay/src/cli"
@@ -39,6 +40,11 @@ func main() {
 		CancelCtx: cancelCtx,
 		Assets: assets,
 		Dev: os.Getenv("LRP_DEV") == "true",
+		Conn: &state.Conn{
+			Peer: &state.Peer{
+				Mutex: &sync.RWMutex{},
+			},
+		},
 	}
 	
 	go systray.Run(onSystrayReady(app), onSysTrayExit)

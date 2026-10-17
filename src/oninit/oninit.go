@@ -25,7 +25,7 @@ func Execute(app state.App) error {
 	httpServerMux := http.NewServeMux()
 
 	bindingsServerMux := http.NewServeMux()
-	httpServerMux.Handle("/bindings", bindingsServerMux)
+	httpServerMux.Handle("/bindings/", http.StripPrefix("/bindings", ContentLenghtMiddleware(bindingsServerMux)))
 	bindings.SetupBindings(app, bindingsServerMux)
 
 	wsServerMux := http.NewServeMux()
@@ -65,4 +65,12 @@ func Execute(app state.App) error {
 	
 	return <-errChan
 
+}
+
+func ContentLenghtMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Expose-Headers", "Content-Length")
+
+		next.ServeHTTP(w, r)
+	})
 }
