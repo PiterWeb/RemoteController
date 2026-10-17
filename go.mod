@@ -66,6 +66,7 @@ require (
 	github.com/pion/rtp v1.8.27 // indirect
 	github.com/pion/sctp v1.9.0 // indirect
 	github.com/pion/sdp/v3 v3.0.17 // indirect
+	github.com/rs/cors v1.11.1
 	github.com/wailsapp/wails/v2 v2.16.0
 	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/net v0.56.0 // indirect

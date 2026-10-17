@@ -12,6 +12,8 @@ import (
 
 	"LibreRemotePlay/src/cli"
 	"LibreRemotePlay/src/state"
+
+	"github.com/rs/cors"
 )
 
 func ServeHTTPAssets(app state.App, serverMux *http.ServeMux) error {
@@ -36,7 +38,7 @@ func ServeHTTPAssets(app state.App, serverMux *http.ServeMux) error {
 	serverMux.Handle("/", FileMiddleware(staticFS, http.FileServer(http.FS(staticFS))))
 
 	httpServer := &http.Server{
-		Handler: serverMux,
+		Handler: cors.Default().Handler(serverMux),
 		Addr:    addr,
 		BaseContext: func(l net.Listener) context.Context {
 			return app.Ctx
