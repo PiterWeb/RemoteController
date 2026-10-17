@@ -4,7 +4,6 @@ package webrtc
 import (
 	"context"
 	"log"
-	"runtime"
 	"strings"
 
 	// "LibreRemotePlay/src/plugins"
@@ -14,14 +13,14 @@ import (
 	"LibreRemotePlay/src/devices/mouse"
 	"LibreRemotePlay/src/net/webrtc/streaming_signal"
 	"github.com/pion/webrtc/v4"
-	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
+	// wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var defaultSTUNServers = []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"}
 
 const ERROR_ANSWER = "ERROR"
 
-func InitHost(wailsCtx context.Context, ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, pidChan <-chan uint32) {
+func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, pidChan <-chan uint32) {
 
 	connCtx, cancelConn := context.WithCancel(ctx)
 	
@@ -66,8 +65,8 @@ func InitHost(wailsCtx context.Context, ctx context.Context, ICEServers []webrtc
 	// 	panic(err)
 	// }
 
-	// Defer close of the wails signaling channel
-	defer wailsRuntime.EventsOff(wailsCtx, "streaming-signal-server")
+	// // Defer close of the wails signaling channel
+	// defer wailsRuntime.EventsOff(wailsCtx, "streaming-signal-server")
 
 	// Reload plugins in case a new plugin was added or configuration changed
 	// plugins.ReloadPlugins()
@@ -76,13 +75,10 @@ func InitHost(wailsCtx context.Context, ctx context.Context, ICEServers []webrtc
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 
 		gamepad.HandleGamepad(d)
-		if runtime.GOOS == "linux" {
-			streaming_signal.HandleStreamingSignal(connCtx, d)
-		} else {
-			streaming_signal.HandleStreamingSignal(wailsCtx, d)
-		}
+		streaming_signal.HandleStreamingSignal(connCtx, d)
+	
 		keyboard.HandleKeyboard(d)
-		mouse.HandleMouse(wailsCtx, d)
+		mouse.HandleMouse(connCtx, d)
 		// plugins.HandleServerPlugins(d)
 
 	})
@@ -103,8 +99,9 @@ func InitHost(wailsCtx context.Context, ctx context.Context, ICEServers []webrtc
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
 		log.Printf("Peer Connection State has changed: %s\n", s.String())
 
-		wailsRuntime.EventsEmit(wailsCtx, "connection_state", s.String())
-
+		// wailsRuntime.EventsEmit(wailsCtx, "connection_state", s.String())
+		// TODO: emit event WS
+		
 		if s == webrtc.PeerConnectionStateFailed {
 			cancelConn()
 			peerConnection.Close()
