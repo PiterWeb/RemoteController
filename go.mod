@@ -1,6 +1,6 @@
 module LibreRemotePlay
 
-go 1.26.5
+go 1.26.8
 
 require (
 	fyne.io/systray v1.12.2
@@ -24,7 +24,6 @@ require (
 	github.com/pion/transport/v3 v3.1.1 // indirect
 	github.com/pion/transport/v4 v4.0.1 // indirect
 	github.com/pion/turn/v4 v4.1.3 // indirect
-	github.com/rs/cors v1.11.1 // indirect
 	github.com/vcaesar/screenshot v0.11.1 // indirect
 )
 

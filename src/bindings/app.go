@@ -3,54 +3,33 @@
 package bindings
 
 import (
-	// "context"
-	// "embed"
-
-	//	"log"
 	"context"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
+	"runtime"
+	"strings"
 
-	//	"strings"
-	// "sync"
-	// 	"time"
-	//
-	// 	"runtime"
-	//
-	// 	"LibreRemotePlay/src/cli"
-	// 	"LibreRemotePlay/src/devices/audio"
-	// 	"LibreRemotePlay/src/devices/gamepad"
-	// 	"LibreRemotePlay/src/devices/keyboard"
-	// 	"LibreRemotePlay/src/devices/mouse"
+	"LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/devices/gamepad"
+	"LibreRemotePlay/src/devices/keyboard"
+	"LibreRemotePlay/src/devices/mouse"
 	net_webrtc "LibreRemotePlay/src/net/webrtc"
-	// 	"LibreRemotePlay/src/net/webrtc/streaming_signal"
-	// 	"LibreRemotePlay/src/onfinish"
-	// 	"LibreRemotePlay/src/oninit"
+
 	"LibreRemotePlay/src/net/webrtc/streaming_signal"
 	"LibreRemotePlay/src/state"
 
 	"github.com/pion/webrtc/v4"
-	// "github.com/pion/webrtc/v4"
-	// wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-type UsedPorts struct {
-	HTTP uint16
-	EasyConnect uint16
-	WHIP uint16
+type Res[T any] struct {
+	Result T `json:"result"`
 }
 
-// App struct
-// type App struct {
-// 	ctx    context.Context
-// 	assets embed.FS 
-// 	openPeer bool
-// 	mutex *sync.Mutex
-// 	pidAudioChan chan uint32
-// 	cancelConn context.CancelFunc
-// }
+type Req[T any] struct {
+	Args T `json:"args"`
+}
 
 func SetupBindings(app state.App, mux *http.ServeMux) {
 
@@ -58,10 +37,32 @@ func SetupBindings(app state.App, mux *http.ServeMux) {
 		w.Write([]byte("Bindings OK"))
 	})
 
-	mux.Handle("PATCH /notify/open/peer", notifyOpenPeer(app))
-	mux.Handle("PATCH /notify/close/peer", notifyClosePeer(app))
+	mux.Handle("PUT /notify/peer/open", notifyOpenPeer(app))
+	mux.Handle("PUT /notify/peer/close", notifyClosePeer(app))
 
 	mux.Handle("POST /conn/host", tryCreateHost(app))
+	mux.Handle("DELETE /conn/host", tryClosePeerConnection(app))
+
+	mux.Handle("GET /ports", getUsedPorts())
+	
+	mux.Handle("GET /gamepad", isGamepadEnabled())
+	mux.Handle("PUT /gamepad", toogleGamepad())
+
+	mux.Handle("GET /keyboard", isKeyboardEnabled())
+	mux.Handle("PUT /keyboard", toogleKeyboard())
+
+	mux.Handle("GET /mouse", isMouseEnabled())
+	mux.Handle("PUT /mouse", toogleMouse())
+
+	mux.Handle("GET /whip", isWhipEnabled())
+	mux.Handle("PUT /whip", toogleWhip())
+
+	mux.Handle("GET /os", getCurrentOS())
+
+	mux.Handle("POST /log", logPrintln())
+
+	mux.Handle("GET /vigem", openViGEmWizard())
+	
 }
 
 func notifyOpenPeer(app state.App) http.HandlerFunc {
@@ -83,18 +84,12 @@ func notifyClosePeer(app state.App) http.HandlerFunc {
 // Create a Host Peer, it receives the offer encoded and returns the encoded answer response
 func tryCreateHost(app state.App) http.HandlerFunc {
 
-	type Req struct {
+	type Args struct {
 		ICEServers []webrtc.ICEServer `json:"ice_servers"`
 		OfferEncoded string `json:"offer_encoded"`
 	}
 	
-	type Res struct {
-		Response string `json:"data"`
-	}
-	
 	return func(w http.ResponseWriter, r *http.Request) {
-		// var ICEServers []webrtc.ICEServer
-		// var offerEncoded string
 		
 		if app.Conn.Peer.IsOpen() {
 			app.Conn.CancelCtx()
@@ -116,7 +111,7 @@ func tryCreateHost(app state.App) http.HandlerFunc {
 			return
 		}
 
-		var req Req
+		var req Req[Args]
 		err = json.Unmarshal(rawReq, &req)
 		if err != nil {
 			log.Println("Error unmarshalling req body: ", err)
@@ -124,12 +119,12 @@ func tryCreateHost(app state.App) http.HandlerFunc {
 			return 
 		}
 		
-		log.Println(req.ICEServers)
-		streaming_signal.WhipConfig.ICEServers.Store(&req.ICEServers)
+		log.Println(req.Args.ICEServers)
+		streaming_signal.WhipConfig.ICEServers.Store(&req.Args.ICEServers)
 
 		pidAudioChan := make(chan uint32)
 		
-		go net_webrtc.InitHost(app.Ctx, connCtx, req.ICEServers, req.OfferEncoded, answerResponse, pidAudioChan)
+		go net_webrtc.InitHost(app.Ctx, connCtx, req.Args.ICEServers, req.Args.OfferEncoded, answerResponse, pidAudioChan)
 	
 		answer := <-answerResponse
 	
@@ -139,8 +134,8 @@ func tryCreateHost(app state.App) http.HandlerFunc {
 			w.WriteHeader(500)
 		}
 
-		res := Res{
-			Response: answer,
+		res := Res[string]{
+			Result: answer,
 		}
 
 		resRaw, err := json.Marshal(res)
@@ -154,229 +149,219 @@ func tryCreateHost(app state.App) http.HandlerFunc {
 	}
 }
 
-// // Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
-// func (a *App) TryClosePeerConnection() bool {
-// 
-// 	a.mutex.Lock()
-// 	defer a.mutex.Unlock()
-// 
-// 	if !a.openPeer {
-// 		return false
-// 	}
-// 
-// 	a.cancelConn()
-// 
-// 	a.openPeer = false
-// 
-// 	return true
-// 
-// }
+// Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
+func tryClosePeerConnection(app state.App) http.HandlerFunc {
+	
+	return func(w http.ResponseWriter, r *http.Request) {
+		
+		if !app.Conn.Peer.IsOpen() {
+			w.WriteHeader(409)
+			return
+		}
+	
+		app.Conn.CancelCtx()
+	
+		app.Conn.Peer.Close()
+		
+		w.WriteHeader(200)
+	}
 
-// // NewApp creates a new App application struct
-// func NewApp(assets embed.FS) *App {
-// 	return &App{
-// 		ctx:    context.Background(),
-// 		assets: assets,
-// 		openPeer: false,
-// 		mutex: &sync.Mutex{},
-// 		pidAudioChan: make(chan uint32),
-// 	}
-// }
-// 
-// // Startup is called at application Startup
-// func (a *App) Startup(ctx context.Context) {
-// 	// Perform your setup here
-// 
-// 	a.ctx = ctx
-// 	
-// 	go func() {
-// 		if err := oninit.Execute(a.ctx, a.assets); err != nil {
-// 			time.Sleep(time.Second * 5) // Add some time to load the UI
-// 			wailsRuntime.EventsEmit(ctx, "ERROR", err.Error())
-// 			log.Println(err)
-// 		}
-// 	}()
-// 	
-// 	go func () {
-// 		if err := streaming_signal.InitWhipServer(a.ctx, streaming_signal.WhipConfig); err != nil {
-// 			time.Sleep(time.Second * 5) // Add some time to load the UI
-// 			wailsRuntime.EventsEmit(ctx, "ERROR", err.Error())
-// 			log.Println(err)
-// 		}
-// 	}()
-// 
-// }
-// 
-// // BeforeClose is called when the application is about to quit,
-// // either by clicking the window close button or calling runtime.Quit.
-// // Returning true will cause the application to continue, false will continue shutdown as normal.
-// func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
-// 
-// 	a.mutex.Lock()
-// 	defer a.mutex.Unlock()
-// 
-// 	if !a.openPeer {
-// 		prevent = false
-// 		return prevent
-// 	}
-// 
-// 	// Show a dialog to confirm the user wants to quit
-// 	option, err := wailsRuntime.MessageDialog(ctx, wailsRuntime.MessageDialogOptions{
-// 		Type:          wailsRuntime.QuestionDialog,
-// 		Title:         "Quit",
-// 		Message:       "Are you sure you want to quit?",
-// 		Buttons:       []string{"Yes", "No"},
-// 		DefaultButton: "No",
-// 		CancelButton:  "No",
-// 	})
-// 
-// 	if err != nil {
-// 		return a.BeforeClose(ctx)
-// 	}
-// 
-// 	if option == "Yes" {
-// 		prevent = false
-// 		return prevent
-// 	}
-// 
-// 	prevent = true
-// 	return prevent
-// }
-// 
-// // Shutdown is called at application termination
-// func (a *App) Shutdown(ctx context.Context) {
-// 	// Perform your teardown here
-// 	a.TryClosePeerConnection()
-// 	if err := onfinish.Execute(); err != nil {
-// 		log.Printf("Error onfinish: %s", err.Error())
-// 	}
-// }
-// 
+}
 
-// 
-// // Create a Host Peer, it receives the offer encoded and returns the encoded answer response
-// func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) (value string) {
-// 
-// 	a.mutex.Lock()
-// 
-// 	if a.openPeer {
-// 		a.cancelConn()
-// 	}
-// 
-// 	a.openPeer = true
-// 	
-// 	answerResponse := make(chan string, 1) // Buffer of 1 to not block thread on cancel
-// 
-// 	connCtx, cancelConn := context.WithCancel(a.ctx)
-// 	
-// 	a.cancelConn = cancelConn
-// 	a.mutex.Unlock()
-// 	
-// 	log.Println(ICEServers)
-// 	streaming_signal.WhipConfig.ICEServers.Store(&ICEServers)
-// 	
-// 	go net.InitHost(a.ctx, connCtx, ICEServers, offerEncoded, answerResponse, a.pidAudioChan)
-// 
-// 	response := <-answerResponse
-// 
-// 	if response == net.ERROR_ANSWER {
-// 		a.mutex.Lock()
-// 		defer a.mutex.Unlock()
-// 		a.openPeer = false
-// 		log.Println("Error on WebRTC host connection")
-// 	}
-// 
-// 	return response
-// 
-// }
-// 
-// // Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
-// func (a *App) TryClosePeerConnection() bool {
-// 
-// 	a.mutex.Lock()
-// 	defer a.mutex.Unlock()
-// 
-// 	if !a.openPeer {
-// 		return false
-// 	}
-// 
-// 	a.cancelConn()
-// 
-// 	a.openPeer = false
-// 
-// 	return true
-// 
-// }
-// 
-// func (a *App) GetUsedPorts() UsedPorts {
-// 	
-// 	config := cli.GetConfig()
-// 	
-// 	return UsedPorts{
-// 		HTTP: config.GetHTTPPort(),
-// 		EasyConnect: config.GetEasyConnectPort(),
-// 		WHIP: config.GetWhipServerPort(),
-// 	}
-// }
-// 
-// // Gamepad
-// 
-// func (a *App) ToogleGamepad() {
-// 	gamepad.GamepadEnabled.Toogle()
-// }
-// 
-// func (a *App) IsGamepadEnabled() bool {
-// 	return gamepad.GamepadEnabled.IsEnabled()
-// }
-// 
-// // Keyboard
-// 
-// func (a *App) ToogleKeyboard() {
-// 	keyboard.KeyboardEnabled.Toogle()
-// }
-// 
-// func (a *App) IsKeyboardEnabled() bool {
-// 	return keyboard.KeyboardEnabled.IsEnabled()
-// }
-// 
-// // Mouse
-// 
-// func (a *App) ToogleMouse() {
-// 	mouse.MouseEnabled.Toogle()
-// }
-// 
-// func (a *App) IsMouseEnabled() bool {
-// 	return mouse.MouseEnabled.IsEnabled()
-// }
-// 
-// // WHIP
-// 
-// func (a *App) ToogleWhip() {
-// 	streaming_signal.WhipConfig.Enabled.Toogle()
-// }
-// 
-// func (a *App) IsWhipEnabled() bool {
-// 	return streaming_signal.WhipConfig.Enabled.IsEnabled()
-// }
-// 
-// // OS Detection
-// 
-// func (a *App) GetCurrentOS() string {
-// 	return strings.ToUpper(runtime.GOOS)
-// }
-// 
-// // Log
-// 
-// func (a *App) LogPrintln(info string) {
-// 	log.Println(info)
-// }
-// 
+func getUsedPorts() http.HandlerFunc {
+	
+	config := cli.GetConfig()
+
+	type UsedPorts struct {
+		HTTP uint16 `json:"http"`
+		EasyConnect uint16 `json:"easy_connect"`
+		WHIP uint16 `json:"whip"`
+	}
+
+	usedPorts := UsedPorts{
+		HTTP: config.GetHTTPPort(),
+		EasyConnect: config.GetEasyConnectPort(),
+		WHIP: config.GetWhipServerPort(),
+	}
+	
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		res := Res[UsedPorts]{
+			Result: usedPorts,
+		}
+
+		rawRes, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Error mashalling res: ", err)
+			w.WriteHeader(500)
+			return
+		}
+
+		w.Write(rawRes)
+	} 
+}
+
+// Gamepad
+
+func toogleGamepad() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		gamepad.GamepadEnabled.Toogle()
+		w.WriteHeader(200)
+	}
+}
+
+func isGamepadEnabled() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		res := Res[bool]{
+			Result: gamepad.GamepadEnabled.IsEnabled(),
+		}
+
+		rawRes, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Error mashalling res: ", err)
+			w.WriteHeader(500)
+			return
+		}
+
+		w.Write(rawRes)
+	} 
+}
+
+// Keyboard
+
+func toogleKeyboard() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		keyboard.KeyboardEnabled.Toogle()
+		w.WriteHeader(200)
+	}
+}
+
+func isKeyboardEnabled() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		res := Res[bool]{
+			Result: keyboard.KeyboardEnabled.IsEnabled(),
+		}
+
+		rawRes, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Error mashalling res: ", err)
+			w.WriteHeader(500)
+			return
+		}
+
+		w.Write(rawRes)
+	} 
+}
+
+// Mouse
+
+func toogleMouse() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		mouse.MouseEnabled.Toogle()
+		w.WriteHeader(200)
+	}
+}
+
+func isMouseEnabled() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		res := Res[bool]{
+			Result: mouse.MouseEnabled.IsEnabled(),
+		}
+
+		rawRes, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Error mashalling res: ", err)
+			w.WriteHeader(500)
+			return
+		}
+
+		w.Write(rawRes)
+	} 
+}
+
+// WHIP
+
+func toogleWhip() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		streaming_signal.WhipConfig.Enabled.Toogle()
+		w.WriteHeader(200)
+	}
+}
+
+func isWhipEnabled() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		res := Res[bool]{
+			Result: streaming_signal.WhipConfig.Enabled.IsEnabled(),
+		}
+
+		rawRes, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Error mashalling res: ", err)
+			w.WriteHeader(500)
+			return
+		}
+
+		w.Write(rawRes)
+	}
+}
+
+// OS Detection
+
+func getCurrentOS() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		res := Res[string]{
+			Result: strings.ToUpper(runtime.GOOS),
+		}
+
+		rawRes, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Error mashalling res: ", err)
+			w.WriteHeader(500)
+			return
+		}
+
+		w.Write(rawRes)
+	}
+}
+
+// Log
+
+func logPrintln() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		rawBody, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Println("Error reading req body: ", err)
+			w.WriteHeader(500)
+			return
+		}
+
+		var req Req[string]
+		err = json.Unmarshal(rawBody, &req)
+		if err != nil {
+			log.Println("Error unmarshalling req: ", err)
+			w.WriteHeader(400)
+			return
+		}
+
+		log.Println(req.Args)
+
+		w.WriteHeader(200)
+	}
+}
+
 // // Audio
 // 
-// func (a *App) SetAudioPid(pid uint32) {
+// func  SetAudioPid(pid uint32) {
 // 	a.pidAudioChan <- pid
 // }
 // 
-// func (a *App) GetAudioProcess() []audio.AudioProcess {
+// func  GetAudioProcess() []audio.AudioProcess {
 // 	return audio.GetAudioProcess()
 // }

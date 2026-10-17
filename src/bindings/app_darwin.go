@@ -1,6 +1,11 @@
 package bindings
 
-// func (a *App) OpenViGEmWizard() (err string) {
-// 
-// 	return ""
-// }
+import "net/http"
+
+func openViGEmWizard() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+	}
+	
+}
