@@ -11,7 +11,9 @@ import (
 	"LibreRemotePlay/src/devices/gamepad"
 	"LibreRemotePlay/src/devices/keyboard"
 	"LibreRemotePlay/src/devices/mouse"
+	"LibreRemotePlay/src/net/events"
 	"LibreRemotePlay/src/net/webrtc/streaming_signal"
+
 	"github.com/pion/webrtc/v4"
 	// wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -99,8 +101,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
 		log.Printf("Peer Connection State has changed: %s\n", s.String())
 
-		// wailsRuntime.EventsEmit(wailsCtx, "connection_state", s.String())
-		// TODO: emit event WS
+		events.EventsEmit(connCtx, events.EVENT_CONNECTION_STATE, []byte(s.String()))
 		
 		if s == webrtc.PeerConnectionStateFailed {
 			cancelConn()
