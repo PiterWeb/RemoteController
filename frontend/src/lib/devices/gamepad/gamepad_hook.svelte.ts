@@ -11,8 +11,6 @@ type GamepadButton = {
 	value: number;
 };
 
-export const gamepadLatency = $state({ value: 0 })
-
 export function cloneGamepad(gamepad: Gamepad): ClonedGamepad {
 
 	return {
@@ -50,9 +48,7 @@ export function handleGamepad(controllerChannel: RTCDataChannel, reduceBandwidth
 
       const serializedData = JSON.stringify(cloneGamepad(gamepad));
 			
-      if (gamepadLatency.value === 0) return controllerChannel.send(serializedData);
-      
-      setTimeout(() => controllerChannel.send(serializedData), gamepadLatency.value)
+      return controllerChannel.send(serializedData);      
 		});
 	};
 
