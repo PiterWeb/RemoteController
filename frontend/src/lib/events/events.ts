@@ -106,5 +106,9 @@ export function EventsOff(e: Events, ...additionalEventNames: Events[]): void {
 
 export function EventsEmit(e: Events, ...data: any): void {
   const ws = createWS(e)
-  ws.send(JSON.stringify(data))
+
+  ws.addEventListener("open", () => {
+    ws.send(JSON.stringify(data))
+    ws.close()
+  })
 }
