@@ -2,7 +2,7 @@ package bindings
 
 import (
 	"LibreRemotePlay/src/devices/gamepad" // "LibreRemotePlay/src/devices/gamepad"
-	"encoding/json"
+	"encoding/json/v2"
 	"log"
 	"net/http"
 )
