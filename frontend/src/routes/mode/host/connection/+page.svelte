@@ -17,9 +17,7 @@
 	import IsLinux from '$lib/detection/IsLinux.svelte';
 	import KeyboardIcon from '$lib/layout/icons/KeyboardIcon.svelte';
 	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
-	import type { audio } from '$lib/wailsjs/go/models';
-	import ws from '$lib/websocket/ws';
-	import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
+	import type { audio } from '$lib/bindings/models';
 	import Tooltip from '$lib/layout/Tooltip.svelte';
 	import MouseIcon from '$lib/layout/icons/MouseIcon.svelte';
 	import IsRunningExternal from '$lib/detection/IsRunningExternal.svelte';
@@ -129,24 +127,15 @@
 
 		// Handle start streaming button
 		(async () => {
-			if (IS_RUNNING_EXTERNAL) {
-				const cllbck = (ev: MessageEvent<string>) => {
-					if (ev.data == '{}') canStartStreaming = true;
-				};
-				ws().addEventListener('message', cllbck);
-				unlistener = () => ws().removeEventListener('message', cllbck);
-				return;
-			}
-
 			const { IsWhipEnabled } = await import('$lib/bindings/App');
 			whipEnabled = await IsWhipEnabled();
 
-			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+			const { EventsOn, Events } = await import('$lib/events/events');
 			const { GetUsedPorts } = await import('$lib/bindings/App');
 			const usedPorts = await GetUsedPorts();
 			httpExternalPort = usedPorts.HTTP;
 			whipPort = usedPorts.WHIP;
-			unlistener = EventsOn('streaming-signal-client', (d) => {
+			unlistener = EventsOn(Events.streaming_signal_client, (d) => {
 				if (d == '{}') canStartStreaming = true;
 			});
 		})();

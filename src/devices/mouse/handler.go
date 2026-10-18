@@ -9,8 +9,19 @@ import (
 	"LibreRemotePlay/src/devices"
 	"github.com/go-vgo/robotgo"
 	"github.com/pion/webrtc/v4"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
+
+type screenT struct {
+	IsCurrent bool `json:"isCurrent"`
+	IsPrimary bool `json:"isPrimary"`
+	// PhysicalSize is the physical size of the screen in pixels
+	PhysicalSize screenSizeT `json:"physicalSize"`
+}
+
+type screenSizeT struct {
+	Width  int `json:"width"`
+	Height int `json:"height"`
+}
 
 var MouseEnabled = new(devices.DeviceEnabled).Disable()
 
@@ -24,11 +35,15 @@ func HandleMouse(ctx context.Context, d *webrtc.DataChannel) {
 		log.Println("mouse data channel is open")
 	})
 
-	screens, err := runtime.ScreenGetAll(ctx)
-	
-	if err != nil {
-		return
-	}
+	// TODO: change mock values for screen
+	screens := []screenT{{
+		IsCurrent: true,
+		IsPrimary: true,
+		PhysicalSize: screenSizeT{
+			Width: 1920,
+			Height: 1080,
+		},
+	}}
 	
 	moveFun, unregisterMouse := moveMouseHandler(screens)
 

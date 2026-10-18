@@ -5,10 +5,9 @@ import (
 	"math"
 
 	"github.com/jbdemonte/virtual-device/mouse"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func moveMouseHandler(screens []runtime.Screen) (func(x, y, videoW, videoH int32), func() error) {
+func moveMouseHandler(screens []screenT) (func(x, y, videoW, videoH int32), func() error) {
 	
 	width := int32(1920)
 	height := int32(1080)
@@ -18,8 +17,8 @@ func moveMouseHandler(screens []runtime.Screen) (func(x, y, videoW, videoH int32
 			continue
 		}
 		
-		width = int32(s.Size.Width)
-		height = int32(s.Size.Height)
+		width = int32(s.PhysicalSize.Width)
+		height = int32(s.PhysicalSize.Height)
 	}
 	
 	m := mouse.NewGenericMouse()

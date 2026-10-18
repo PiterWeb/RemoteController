@@ -4,9 +4,7 @@ import { setStreaming, type SignalingData } from '$lib/webrtc/stream/stream_sign
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
-import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, getSortedVideoCodecs, RESOLUTIONS } from './stream_config.svelte';
-import ws from '$lib/websocket/ws';
 import log from '$lib/logger/logger';
 import LANMode from '$lib/webrtc/lan_mode.svelte';
 
@@ -103,11 +101,9 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 				candidate: event.candidate.toJSON(),
 				role: 'host'
 			};
-
-			if (IS_RUNNING_EXTERNAL) return ws().send(JSON.stringify(data));
 			
-			const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
-			EventsEmit('streaming-signal-server', JSON.stringify(data));
+			const { EventsEmit, Events } = await import('$lib/events/events');
+			EventsEmit(Events.streaming_signal_server, JSON.stringify(data));
 			return;
 		}
 
@@ -141,11 +137,8 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 		role: 'host'
 	};
 	
-	if (IS_RUNNING_EXTERNAL) ws().send(JSON.stringify(data));
-	else {
-		const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
-		EventsEmit('streaming-signal-server', JSON.stringify(data));
-	}
+	const { EventsEmit, Events } = await import('$lib/events/events');
+	EventsEmit(Events.streaming_signal_server, JSON.stringify(data));
 
 	async function onSignalArrive(data: string) {
 		if (!peerConnection) return;
@@ -172,16 +165,9 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 		
 	}
 
-	if (IS_RUNNING_EXTERNAL) {
-		const cllbck = (ev: MessageEvent<string>) =>  onSignalArrive(ev.data)
-		ws().addEventListener("message", cllbck)
-		unlistenerStreamingSignal = () => ws().removeEventListener("message", cllbck)
-		return
-	}
-
 	(async () => {
-		const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
-		unlistenerStreamingSignal = EventsOn('streaming-signal-client', (data: string) => onSignalArrive(data));
+		const { EventsOn, Events } = await import('$lib/events/events');
+		unlistenerStreamingSignal = EventsOn(Events.streaming_signal_client, (data: string) => onSignalArrive(data));
 	})()
 
 }

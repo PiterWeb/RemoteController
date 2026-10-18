@@ -16,16 +16,24 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		return
 	}
 
-	wsClient, _, err := websocket.Dial(ctx, fmt.Sprintf("ws://localhost:%d/ws", cli.GetConfig().GetHTTPPort()), nil)
+	wsClient, _, err := websocket.Dial(ctx, fmt.Sprintf("ws://localhost:%d/ws/streaming-signal-client", cli.GetConfig().GetHTTPPort()), nil)
 
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
+	wsServer, _, err := websocket.Dial(ctx, fmt.Sprintf("ws://localhost:%d/ws/streaming-signal-server", cli.GetConfig().GetHTTPPort()), nil)
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	
 	defer func() {
 		if err := recover(); err != nil {
 			wsClient.Close(websocket.StatusInternalError, "Fatal error on client")
+			wsServer.Close(websocket.StatusInternalError, "Fatal error on server")
 		}
 	}()
 
@@ -33,14 +41,14 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 
 	go func() {
 
-		defer wsClient.Close(websocket.StatusInternalError, "Client terminated")
+		defer wsServer.Close(websocket.StatusInternalError, "Client terminated")
 
 		for {
 			select {
 				case <-ctx.Done():
 					return
 				default:
-					t, data, err := wsClient.Read(ctx)
+					t, data, err := wsServer.Read(ctx)
 	
 					if err != nil {
 						

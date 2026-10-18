@@ -53,10 +53,10 @@ function getStoredPreferedCodecsOrdered() {
 
 try {
 	getSortedVideoCodecs().forEach(codec => {
-		log(codec.mimeType);
+		console.log(codec.mimeType);
 	})
 } catch (e) {
-  log(`Error getting codecs ${e}`, {err: true});
+  console.log(`Error getting codecs ${e}`, {err: true});
 }
 
 export function getSortedVideoCodecs() {

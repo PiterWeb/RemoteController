@@ -33,9 +33,9 @@
 		if (!IS_RUNNING_EXTERNAL) {
 			(async () => {
 			    try {
-    				const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+    				const { EventsOn, Events } = await import('$lib/events/events');
     
-    				EventsOn('ERROR', (err: string) => {
+    				EventsOn(Events.error, (err: string) => {
      					errorModal.openModal();
       
      					errorText = err;

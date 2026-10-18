@@ -1,9 +1,7 @@
 <script lang="ts">
-	import onwebsite, { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
+	import onwebsite from '$lib/detection/onwebsite';
 	import { _ } from 'svelte-i18n';
 	import { StartTutorial } from '$lib/tutorial/driver';
-	import IsLinux from '$lib/detection/IsLinux.svelte';
-
 </script>
 
 <button
@@ -27,7 +25,7 @@
 	>
 </h2>
 <div id="tutorial-play" class="flex gap-4 mt-4 md:flex-row flex-col">
-	{#if !onwebsite && !IS_RUNNING_EXTERNAL}
+	{#if !onwebsite}
 		<div
 			class="card md:w-96 md:h-52 bg-white rounded-lg shadow border-gray-200 border"
 		>
@@ -44,16 +42,7 @@
 		<div class="card-body">
 			<h2 class="card-title text-gray-800">{$_('client_card_title')}</h2>
 			<p class="text-gray-600">{$_('client_card_description')}</p>
-			<IsLinux>
-			    <button onclick={async () => {
-							const { BrowserOpenURL } = await import('$lib/wailsjs/runtime/runtime');
-							const { GetUsedPorts } = await import('$lib/wailsjs/go/bindings/App');
-							BrowserOpenURL(`http://localhost:${(await GetUsedPorts()).HTTP}/mode/client`)
-				}} class="btn btn-primary text-white">{$_('client_card_cta')}</button>
-			</IsLinux>
-			<IsLinux not>
 			<a href="/mode/client" class="btn btn-primary text-white">{$_('client_card_cta')}</a>
-			</IsLinux>
 		</div>
 	</div>
 </div>

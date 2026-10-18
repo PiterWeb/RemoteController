@@ -2,7 +2,7 @@ import log from "$lib/logger/logger";
 
 class WS extends WebSocket {
 
-  private static url = `ws://localhost:${window?.location?.port ?? 8090}/ws`
+  private static url = `ws://localhost:${8090}/ws`
 
     static #instance: WS | null;
     private constructor() {

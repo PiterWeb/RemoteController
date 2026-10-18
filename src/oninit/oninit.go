@@ -29,7 +29,7 @@ func Execute(app state.App) error {
 	bindings.SetupBindings(app, bindingsServerMux)
 
 	wsServerMux := http.NewServeMux()
-	httpServerMux.Handle("/ws", wsServerMux)
+	httpServerMux.Handle("/ws/", http.StripPrefix("/ws", wsServerMux))
 	events.SetupWebsocketHandler(app.Ctx, wsServerMux)
 
 	ips_channel := make(chan []string, 1)

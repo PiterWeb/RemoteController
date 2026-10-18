@@ -10,13 +10,18 @@ import (
 	"github.com/coder/websocket"
 )
 
-var conns = map[string]*websocket.Conn{}
+type topicT string
+type addrStrT string
+
+var conns = map[topicT]map[addrStrT]*websocket.Conn{}
 
 func SetupWebsocketHandler(ctx context.Context, mux *http.ServeMux) {
 
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 
-		c, err := websocket.Accept(w, r, nil)
+		c, err := websocket.Accept(w, r, &websocket.AcceptOptions{
+			OriginPatterns: []string{"localhost:5173"},
+		})
 		if err != nil {
 			log.Println(err)
 			return
@@ -42,16 +47,24 @@ func SetupWebsocketHandler(ctx context.Context, mux *http.ServeMux) {
 }
 
 func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
-	conns[r.RemoteAddr] = ws
+
+	addrStr := addrStrT(r.RemoteAddr)
+	topic := topicT(r.URL.Path)
+
+	if _, ok := conns[topic]; !ok {
+		conns[topic] = map[addrStrT]*websocket.Conn{}
+	}
+	
+	conns[topic][addrStr] = ws
 
 	defer func() {
 
 		// If panic it will recover and liberate resources
 		_ = recover()
 
-		for addr := range conns {
-			if r.RemoteAddr == addr {
-				delete(conns, addr)
+		for addr := range conns[topic] {
+			if addrStr == addr {
+				delete(conns[topic], addr)
 				break
 			}
 		}
@@ -65,9 +78,9 @@ func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
 			break
 		}
 
-		for addr, con := range conns {
+		for addr, con := range conns[topic] {
 
-			if r.RemoteAddr == addr {
+			if addrStr == addr {
 				continue
 			}
 

@@ -63,9 +63,9 @@ export async function CreateHost(options: CreateHostOptions) {
 		setLoadingMessage(get(_)('waiting-for-client-to-connect'));
 		setLoadingTitle(get(_)('make-sure-to-pass-the-code-to-the-client'));
 
-		const { EventsOnce } = await import('$lib/wailsjs/runtime/runtime');
+		const { EventsOnce, Events } = await import('$lib/events/events');
 
-		EventsOnce('connection_state', async (state: ConnectionState) => {
+		EventsOnce(Events.connection_state, async (state: ConnectionState) => {
 			toogleLoading();
 
 			try {
@@ -73,11 +73,7 @@ export async function CreateHost(options: CreateHostOptions) {
   				case ConnectionState.Connected:
   					showToast(get(_)('connected'), ToastType.SUCCESS);
   					host = true;
-  					if (await isLinux()) {
-              log("Connection stablished and isLinux")
-  						const { BrowserOpenURL } = await import('$lib/wailsjs/runtime/runtime');
-  						BrowserOpenURL(BROWSER_BASE_URL ?? "");
-  					} else log("Connection stablished and not isLinux")
+            log("Connection stablished")
   					goto('/mode/host/connection');
   					break;
   				case ConnectionState.Failed:
@@ -123,10 +119,10 @@ export function CloseHostConnection(fn?: () => void) {
 export async function ListenForConnectionChanges() {
 	if (IS_RUNNING_EXTERNAL) return;
 
-	const { EventsOn, EventsOff } = await import('$lib/wailsjs/runtime/runtime');
+	const { EventsOn, EventsOff, Events } = await import('$lib/events/events');
 
 	const connectionStateCancelEventListener = EventsOn(
-		'connection_state',
+		Events.connection_state,
     (state: ConnectionState) => {
       log(`WebRTC connection - state (${state})`)
 			switch (state.toUpperCase()) {
