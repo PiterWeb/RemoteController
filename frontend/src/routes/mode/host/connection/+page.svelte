@@ -151,72 +151,70 @@
 	<p>{$_('external-whip-explanation')}</p>
 </Tooltip>
 
-<IsRunningExternal not>
-	<section
-		class:hidden={streaming.value && !whipEnabled}
-		class="flex flex-row-reverse items-center gap-2"
+<section
+	class:hidden={streaming.value && !whipEnabled}
+	class="flex flex-row-reverse items-center gap-2"
+>
+	<label
+		id="label-external-whip-checkbox"
+		for="lan-mode-checkbox"
+		class="font-semibold text-white">{$_('external-whip')}</label
 	>
-		<label
-			id="label-external-whip-checkbox"
-			for="lan-mode-checkbox"
-			class="font-semibold text-white">{$_('external-whip')}</label
-		>
-		<input
-			id="lan-mode-checkbox"
-			type="checkbox"
-			class="checkbox checkbox-xs checkbox-primary"
-			checked={whipEnabled}
-			onchange={toogleWhip}
-		/>
-	</section>
+	<input
+		id="lan-mode-checkbox"
+		type="checkbox"
+		class="checkbox checkbox-xs checkbox-primary"
+		checked={whipEnabled}
+		onchange={toogleWhip}
+	/>
+</section>
 
-	<section class:hidden={!whipEnabled} class="text-white">
-		Whip URL: http://localhost:{whipPort}/whip
-	</section>
+<section class:hidden={!whipEnabled} class="text-white">
+	Whip URL: http://localhost:{whipPort}/whip
+</section>
 
-	<section class="w-full">
-		<h3 class="text-3xl text-white text-center">
-			{$_('toogle_devices')}
-		</h3>
-		<div class="flex flex-row justify-center gap-3 mt-6">
-			<button
-				onclick={toogleMouse}
-				class:btn-primary={mouseEnabled}
-				class:btn-neutral={!mouseEnabled}
-				class:border-gray-400={!mouseEnabled}
-				class="btn border"
-			>
-				<MouseIcon />
-			</button>
-			<button
-				onclick={toogleKeyboard}
-				class:btn-primary={keyboardEnabled}
-				class:btn-neutral={!keyboardEnabled}
-				class:border-gray-400={!keyboardEnabled}
-				class="btn border"
-			>
-				<KeyboardIcon />
-			</button>
-			<button
-				onclick={toogleGamepad}
-				class:btn-primary={gamepadEnabled}
-				class:btn-neutral={!gamepadEnabled}
-				class:border-gray-400={!gamepadEnabled}
-				class="btn border"
-			>
-				<GamepadIcon />
-			</button>
-		</div>
-		<div
-			class:hidden={!streaming.value || whipEnabled}
-			class="flex flex-row justify-center gap-3 mt-6"
+<section class="w-full">
+	<h3 class="text-3xl text-white text-center">
+		{$_('toogle_devices')}
+	</h3>
+	<div class="flex flex-row justify-center gap-3 mt-6">
+		<button
+			onclick={toogleMouse}
+			class:btn-primary={mouseEnabled}
+			class:btn-neutral={!mouseEnabled}
+			class:border-gray-400={!mouseEnabled}
+			class="btn border"
 		>
-			<button onclick={StopStreaming} disabled={!streaming.value} class="btn btn-primary">
-				{$_('stop-streaming')}
-			</button>
-		</div>
-	</section>
-</IsRunningExternal>
+			<MouseIcon />
+		</button>
+		<button
+			onclick={toogleKeyboard}
+			class:btn-primary={keyboardEnabled}
+			class:btn-neutral={!keyboardEnabled}
+			class:border-gray-400={!keyboardEnabled}
+			class="btn border"
+		>
+			<KeyboardIcon />
+		</button>
+		<button
+			onclick={toogleGamepad}
+			class:btn-primary={gamepadEnabled}
+			class:btn-neutral={!gamepadEnabled}
+			class:border-gray-400={!gamepadEnabled}
+			class="btn border"
+		>
+			<GamepadIcon />
+		</button>
+	</div>
+	<div
+		class:hidden={!streaming.value || whipEnabled}
+		class="flex flex-row justify-center gap-3 mt-6"
+	>
+		<button onclick={StopStreaming} disabled={!streaming.value} class="btn btn-primary">
+			{$_('stop-streaming')}
+		</button>
+	</div>
+</section>
 
 <!-- <section class="w-1/3 mx-auto" class:hidden={!streaming.value}>
 	<h3 class="text-3xl text-white text-center">
@@ -236,89 +234,78 @@
 		</select>
 </section> -->
 
-<IsLinux>
-	<div class="w-full h-full">
-		<h3 class="text-4xl text-white">{$_('relay-title')}</h3>
-		<p class="text-gray-300">http://localhost:{httpExternalPort}/mode/host/connection/</p>
-		<p class="text-lg text-gray-400">{$_('go-browser')}</p>
-		<p class="text-error">{$_('warning-go-browser')}</p>
-	</div>
-</IsLinux>
-
-<IsLinux not>
-	<div class:hidden={streaming.value} class="w-2/3 flex flex-col md:flex-row gap-12 align-middle">
-		<CodecList />
-		<section class="w-full">
-			<h3 class="text-3xl text-white text-center">{$_('resolutions')}</h3>
-			<select
-				class="select w-full mx-auto mt-6"
-				bind:value={selected_resolution}
-				id="resolution"
-				aria-label="resolution"
-			>
-				{#each Object.values(FIXED_RESOLUTIONS) as resolution}
-					<option selected={resolution === selected_resolution} value={resolution}>
-						{resolution}
-						{#if resolution !== FIXED_RESOLUTIONS.resolutionNative}
-							p
-						{/if}
-					</option>
-				{/each}
-			</select>
-		</section>
-		<section class="w-full">
-			<h3 class="text-3xl text-white text-center">{$_('framerate')}</h3>
-			<div class="flex flex-row gap-10 w-full mt-6">
-				<div class="w-full flex flex-col">
-					<h4 class="text-lg text-gray-300">{$_('ideal-framerate')}</h4>
-					<input
-						type="number"
-						class="input w-16 px-2 h-10 bg-neutral border border-gray-400 text-white text-center"
-						bind:value={idealFramerate}
-						pattern="0|[1-9]\d*"
-						min={MIN_FRAMES}
-						max={maxFramerate}
-						step="5"
-					/>
-					<input
-						type="range"
-						min={MIN_FRAMES}
-						max={maxFramerate}
-						bind:value={idealFramerate}
-						class="range range-primary bg-white range-lg my-10"
-						step="5"
-					/>
-				</div>
-				<div class="w-full flex flex-col">
-					<h4 class="text-lg text-gray-300">{$_('max-framerate')}</h4>
-					<input
-						type="number"
-						class="input w-16 px-2 h-10 bg-neutral border border-gray-400 text-white text-center"
-						bind:value={maxFramerate}
-						pattern="0|[1-9]\d*"
-						min={MIN_FRAMES}
-						max={MAX_FRAMES}
-						step="5"
-					/>
-					<input
-						type="range"
-						min={MIN_FRAMES}
-						max={MAX_FRAMES}
-						bind:value={maxFramerate}
-						class="range range-primary bg-white range-lg my-10"
-						step="5"
-					/>
-				</div>
+<div class:hidden={streaming.value} class="w-2/3 flex flex-col md:flex-row gap-12 align-middle">
+	<CodecList />
+	<section class="w-full">
+		<h3 class="text-3xl text-white text-center">{$_('resolutions')}</h3>
+		<select
+			class="select w-full mx-auto mt-6"
+			bind:value={selected_resolution}
+			id="resolution"
+			aria-label="resolution"
+		>
+			{#each Object.values(FIXED_RESOLUTIONS) as resolution}
+				<option selected={resolution === selected_resolution} value={resolution}>
+					{resolution}
+					{#if resolution !== FIXED_RESOLUTIONS.resolutionNative}
+						p
+					{/if}
+				</option>
+			{/each}
+		</select>
+	</section>
+	<section class="w-full">
+		<h3 class="text-3xl text-white text-center">{$_('framerate')}</h3>
+		<div class="flex flex-row gap-10 w-full mt-6">
+			<div class="w-full flex flex-col">
+				<h4 class="text-lg text-gray-300">{$_('ideal-framerate')}</h4>
+				<input
+					type="number"
+					class="input w-16 px-2 h-10 bg-neutral border border-gray-400 text-white text-center"
+					bind:value={idealFramerate}
+					pattern="0|[1-9]\d*"
+					min={MIN_FRAMES}
+					max={maxFramerate}
+					step="5"
+				/>
+				<input
+					type="range"
+					min={MIN_FRAMES}
+					max={maxFramerate}
+					bind:value={idealFramerate}
+					class="range range-primary bg-white range-lg my-10"
+					step="5"
+				/>
 			</div>
-		</section>
-	</div>
+			<div class="w-full flex flex-col">
+				<h4 class="text-lg text-gray-300">{$_('max-framerate')}</h4>
+				<input
+					type="number"
+					class="input w-16 px-2 h-10 bg-neutral border border-gray-400 text-white text-center"
+					bind:value={maxFramerate}
+					pattern="0|[1-9]\d*"
+					min={MIN_FRAMES}
+					max={MAX_FRAMES}
+					step="5"
+				/>
+				<input
+					type="range"
+					min={MIN_FRAMES}
+					max={MAX_FRAMES}
+					bind:value={maxFramerate}
+					class="range range-primary bg-white range-lg my-10"
+					step="5"
+				/>
+			</div>
+		</div>
+	</section>
+</div>
 
-	<button
-		onclick={createStream}
-		disabled={streaming.value || !canStartStreaming}
-		class="btn btn-primary">{$_('start-streaming')}</button
-	>
-</IsLinux>
+<button
+	onclick={createStream}
+	disabled={streaming.value || !canStartStreaming}
+	class="btn btn-primary">{$_('start-streaming')}</button
+>
 
 <style>
 	input[type='number'] {
