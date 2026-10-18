@@ -44,8 +44,8 @@ export async function handleEasyConnectClient() {
 			{ data: clientCode },
 			easyConnectID.value
 		);
-
-		log(`Host Code: ${hostCode}`);
+		
+		log(`Host Code: ${hostCode.data}`);
 
 		const { data: hostCodeStr } = hostCode;
 
