@@ -1,4 +1,4 @@
 allowBuilds:
   cypress: false
-  es5-ext: true
-  esbuild: true
+  es5-ext: false
+  esbuild: false
