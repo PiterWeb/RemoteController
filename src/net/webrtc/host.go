@@ -15,7 +15,6 @@ import (
 	"LibreRemotePlay/src/net/webrtc/streaming_signal"
 
 	"github.com/pion/webrtc/v4"
-	// wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var defaultSTUNServers = []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"}
