@@ -134,16 +134,16 @@ export async function ListenForConnectionChanges() {
 				case ConnectionState.Failed:
 					showToast(get(_)('connection-failed'), ToastType.ERROR);
           goto('/');
-          connectionStateCancelEventListener();
-					EventsOff('connection_state');
+          connectionStateCancelEventListener()();
+					EventsOff(Events.connection_state);
 					break;
         case ConnectionState.Closed:
 				case ConnectionState.Disconnected:
 					showToast(get(_)('connection-lost'), ToastType.INFO);
 					host = false;
 					goto('/');
-					connectionStateCancelEventListener();
-					EventsOff('connection_state');
+					connectionStateCancelEventListener()();
+					EventsOff(Events.connection_state);
 					break;
 			}
 		}

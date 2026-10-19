@@ -123,7 +123,7 @@
 			// audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
 		}, 5000);
 
-		let unlistener: () => void;
+		let unlistener = () => () => {};
 
 		// Handle start streaming button
 		(async () => {
@@ -141,7 +141,7 @@
 		})();
 
 		return () => {
-			unlistener();
+			unlistener()();
 			clearInterval(interval);
 		};
 	});

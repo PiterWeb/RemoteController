@@ -21,7 +21,7 @@ function initStreamingPeerConnection() {
 }
 
 let stream: MediaStream | undefined
-let unlistenerStreamingSignal: (() => void) | undefined
+let unlistenerStreamingSignal: (() => () => void) | undefined
 
 async function getDisplayMediaStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIONS.resolution720p, idealFrameRate = DEFAULT_IDEAL_FRAMERATE, maxFramerate = DEFAULT_MAX_FRAMERATE) {
 	try {
@@ -44,7 +44,7 @@ async function getDisplayMediaStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOL
 
 export function StopStreaming() {
 	try {
-		unlistenerStreamingSignal?.()
+		unlistenerStreamingSignal?.()()
 		unlistenerStreamingSignal = undefined
 		setStreaming(false)
 		stream?.getTracks().forEach(t => t.stop()) 
