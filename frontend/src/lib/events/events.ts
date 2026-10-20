@@ -43,6 +43,7 @@ export function EventsOn(e: Events, callback: Clbk): () => () => void {
       closedByUser = true
       removeWSEventToMap(e, ws)
       ws.removeEventListener("message", listener)
+      ws.close()
     }
     
     ws.addEventListener("message", listener)
@@ -71,6 +72,7 @@ export function EventsOnce(e: Events, callback: Clbk): () => () => void {
       closedByUser = true
       removeWSEventToMap(e, ws)
       ws.removeEventListener("message", listener)
+      ws.close()
     }
     
     const listener = createListener(callback, unlistener)
