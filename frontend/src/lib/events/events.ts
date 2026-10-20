@@ -6,7 +6,8 @@ export enum Events {
 }
 
 function createWS(path: Events) {
-  return new WebSocket(`ws://localhost:8090/ws/${path}`)
+  const baseUrl = location.port === "5173" ? `ws://${location.hostname}:8090` : location.origin.replace("http", "ws")
+  return new WebSocket(`${baseUrl}/ws/${path}`)
 }
 
 type Clbk = (...data: any) => void

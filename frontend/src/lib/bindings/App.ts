@@ -14,9 +14,9 @@ async function callBinding<U, T>(path: string, method: string = "GET", args?: Re
   
   const body = args ? JSON.stringify(args) : undefined
 
-  const origin = true ? "http://localhost:8090" : location.origin
+  const baseUrl = location.port === "5173" ? `http://${location.hostname}:8090` : location.origin
   
-  const res = await fetch(`${origin}/bindings${path}`, {
+  const res = await fetch(`${baseUrl}/bindings${path}`, {
     mode: "cors",
     method,
     body: body
