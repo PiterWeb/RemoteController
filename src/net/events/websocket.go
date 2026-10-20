@@ -2,6 +2,8 @@
 package events
 
 import (
+	"LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/state"
 	"context"
 	"io"
 	"log"
@@ -14,13 +16,23 @@ type addrStrT string
 
 var conns = map[topicT]map[addrStrT]*websocket.Conn{}
 
-func SetupWebsocketHandler(ctx context.Context, mux *http.ServeMux) {
+func SetupWebsocketHandler(app state.App, mux *http.ServeMux) {
 
+	acceptOptions := &websocket.AcceptOptions{}
+	
+	if app.Dev {
+		acceptOptions.OriginPatterns = []string{"localhost:5173"}
+	}
+
+	if cli.GetConfig().GetNetworkVisible() {
+		acceptOptions.OriginPatterns = []string{}
+		acceptOptions.InsecureSkipVerify = true	
+	}
+	
 	mux.HandleFunc("GET /{topic}", func(w http.ResponseWriter, r *http.Request) {
-
-		c, err := websocket.Accept(w, r, &websocket.AcceptOptions{
-			OriginPatterns: []string{"localhost:5173"},
-		})
+		
+		c, err := websocket.Accept(w, r, acceptOptions)
+		
 		if err != nil {
 			log.Println(err)
 			return
@@ -34,7 +46,7 @@ func SetupWebsocketHandler(ctx context.Context, mux *http.ServeMux) {
 			}
 		}()
 
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(app.Ctx)
 		defer cancel()
 
 		wsBroadcast(ctx, r, c)

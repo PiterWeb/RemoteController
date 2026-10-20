@@ -12,7 +12,7 @@ tasks:
        LRP_DEV: true
     cmds:
       - go build -o ./build/dev/bin/ . 
-      - ./build/dev/bin/LibreRemotePlay
+      - ./build/dev/bin/LibreRemotePlay -network-visible
     desc: Run the backend in development mode 
   build:
     deps: [build-front]
